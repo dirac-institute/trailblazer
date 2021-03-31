@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<h1 class="display-3"> Upload files </h1>
+<form action="{% url 'upload' %}" method="post", enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="upload">
+    {{form}}
+    <input type="submit" class="btn-primaryg" value="submit" >
+    </div>
+</form>
+{% endblock %}

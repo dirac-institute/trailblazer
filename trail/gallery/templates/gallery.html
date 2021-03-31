@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block page_content %}
+<h1 class="display-3"> Gallery </h1>
+
+{% for image in data %}
+<div class=”item”>
+    <a href="{% get_media_prefix %}{{ image.name }}">
+        <img src="{% get_media_prefix %}{{ image.name }}" width="300"  alt=”{{image.name}}” id=”showSimilarInPopup”>
+        <div class=”caption”>
+            {{image.caption}}
+        </div>
+    </a>
+</div>
+{% endfor %}
+{% endblock %}
