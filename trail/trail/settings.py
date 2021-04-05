@@ -88,10 +88,15 @@ WSGI_APPLICATION = 'trail.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': REPO_DIR / 'db.sqlite3',
-    }
+        'ENGINE': config.db.engine,
+        'NAME' : config.db.name,
+        'USER' : config.db.user,
+        'PASSWORD' : config.db.password,
+        'HOST' : config.db.host,
+        'PORT' : config.db.port
+     }
 }
+
 
 
 # Password validation
