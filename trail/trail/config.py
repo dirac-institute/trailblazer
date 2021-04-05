@@ -33,7 +33,7 @@ class Config():
 
     def _recurseDownDicts(self, confDict):
         """Recursively walks the dictionary keys and values and maps keys to
-        instance attributes. 
+        instance attributes.
 
         Parameters
         ----------
@@ -59,6 +59,22 @@ class Config():
         reprStr = reprStr[:-2]
 
         return reprStr+")"
+
+
+    def __eq__(self, other):
+        equal = True
+
+        for key, subConf in zip(self._keys, self._subConfs):
+            try:
+                equal = equal and getattr(self, key) == getattr(other, key)
+                equal = equal and getattr(self, subConf) == getattr(other, subConf)
+            except AttributeError:
+                # other does not have a key, but self has - not equal
+                # or other does not have a subConf, but self has - not equal
+                return False
+
+        return equal
+
 
     @classmethod
     def fromYaml(cls, filePath=None):
