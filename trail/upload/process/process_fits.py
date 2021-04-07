@@ -6,8 +6,11 @@ from ..models import ExampleFrame
 import matplotlib.pyplot as plt
 import astropy.visualization as aviz
 from astropy.time import Time
+import astropy.units as u
 from astropy.io import fits
 from astropy.wcs import WCS
+
+import numpy as np
 
 import astro_metadata_translator as amt
 from astro_metadata_translator.file_helpers import read_basic_metadata_from_file
@@ -67,26 +70,56 @@ def store_header(fitsPath):
 
     hdu = fits.open(fitsPath)
     header = hdu[0].header
+    image = hdu[1].data
+
+    dimX, dimY = image.shape
+    centerX = int(dimX/2)
+    centerY = int(dimY/2)
 
     # note test if a header doesn't actually have a valid WCS
     # what is the error raised
     wcs = WCS(header)
-    if "TAN" in wcs.wcs.ctype[0]:
-        queryData["ctype" ] = wcs.wcs.ctype
-        queryData["crval1"] = wcs.wcs.crval[0]
-        queryData["crval2"] = wcs.wcs.crval[1]
-        queryData["crpix1"] = wcs.wcs.crpix[0]
-        queryData["crpix2"] = wcs.wcs.crpix[1]
-        if wcs.wcs.has_cd():
-            queryData["cd11"] = wcs.wcs.cd[0, 0] 
-            queryData["cd12"] = wcs.wcs.cd[0, 1] 
-            queryData["cd21"] = wcs.wcs.cd[1, 0] 
-            queryData["cd22"] = wcs.wcs.cd[1, 1]
-        else:
-            queryData["cdelt1"] = wcs.wcs.get_cdelt()[0]
-            queryData["cdelt2"] = wcs.wcs.get_cdelt()[1]
+
+    queryData["ctype" ] = wcs.wcs.ctype
+    queryData["crpix1"] = wcs.wcs.crpix[0]
+    queryData["crpix2"] = wcs.wcs.crpix[1]
+
+    centerSkyCoord = wcs.pixel_to_world(centerX, centerY)
+    centerRa, centerDec = centerSkyCoord.ra.to(u.deg), centerSkyCoord.dec.to(u.deg)
+
+    cornerSkyCoord = wcs.pixel_to_world(0, 0)
+    cornerRa, cornerDec = cornerSkyCoord.ra.to(u.deg), cornerSkyCoord.dec.to(u.deg)
+
+    unitSphereCenter = np.array([
+        np.cos(centerDec) * np.cos(centerRa),
+        np.cos(centerDec) * np.sin(centerRa),
+        np.sin(centerDec)
+    ])
+
+    unitSphereCorner = np.array([
+        np.cos(cornerDec) * np.cos(cornerRa),
+        np.cos(cornerDec) * np.sin(cornerRa),
+        np.sin(cornerDec)
+    ])
+
+    unitRadius = np.linalg.norm(unitSphereCenter-unitSphereCorner)
+
+    try:
+        # figure out if and when this isn't degree
+        # what else is used translate_unit_to_astrpy...
+        cunit = wcs.wcs.cunit
+    except AttributeError:
+        cunit = u.deg
+    queryData["crval1"] = wcs.wcs.crval[0]
+    queryData["crval2"] = wcs.wcs.crval[1]
+    if cunit != u.deg:
+        crval1 = wcs.wcs.crval[0] * cunit
+        crval2 = wcs.wcs.crval[1] * cunit
+        queryData["crval1"] = crval1.to(u.deg)
+        queryData["crval2"] = crval2.to(u.deg)
+
     
-    # note: see what happens with filename
+
     translatedHDU = translatorClass(header, filename=fitsPath)
 
     queryData["datetimeBegin"] = translatedHDU.to_datetime_begin()
