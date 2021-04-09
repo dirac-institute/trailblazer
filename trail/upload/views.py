@@ -4,7 +4,7 @@ from django.urls import reverse_lazy  # , reverse
 from django.views.generic.edit import FormView
 from .forms import FileFieldForm
 
-from .process.process_fits import process_fits
+from .process_uploads.process_fits import process_fits
 
 """This code runs when a user visits the 'upload' URL."""
 

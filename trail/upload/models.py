@@ -12,20 +12,25 @@ class ExampleFrame(models.Model):
                                     name="SDSS unique identifiers.")
         ]
 
-    run = models.IntegerField()
-    camcol = models.IntegerField()
-    filter = models.CharField(max_length=1)
-    field = models.IntegerField()
+    # integer autoincrement primary fields is automatically added by Django
 
-    ctype = models.CharField(max_length=20, null=False)
-    crpix1 = models.FloatField(null=False)
-    crpix2 = models.FloatField(null=False)
-    crval1 = models.FloatField(null=False)
-    crval2 = models.FloatField(null=False)
+    # verbose_names should be lowercase, Django will capitalize
+    # https://docs.djangoproject.com/en/3.1/topics/db/models/#verbose-field-names
+    name = models.CharField("name of used translator.", max_length=10, null=False)
+    instrument = models.CharField("instrument name", max_length=20)
+    telescope = models.CharField("telescope", max_length=20, null=False)
+    science_program = models.CharField("science program image is a part of.", max_length=30)
 
-    cd11 = models.FloatField(null=False)
-    cd12 = models.FloatField(null=False)
-    cd21 = models.FloatField(null=False)
-    cd22 = models.FloatField(null=False)
+    obs_lon = models.FloatField("observatory longitude (deg)", null=False)
+    obs_lat = models.FloatField("observatory latitude (deg)", null=False)
+    obs_height = models.FloatField("observatory ASL height (m)", null=False)
 
-    t = models.DateTimeField(verbose_name="UTC time at exposure start.")
+    datetime_begin = models.DateTimeField("UTC at exposure start.", null=False)
+    datetime_end = models.DateTimeField("UTC at exposure end.", null=False)
+
+    center_x = models.FloatField("unit sphere coordinate of central pixel", null=False)
+    center_y = models.FloatField("unit sphere coordinate of central pixel", null=False)
+    center_z = models.FloatField("unit sphere coordinate of central pixel", null=False)
+    corner_x = models.FloatField("unit sphere coordinate of corner pixel", null=False)
+    corner_x = models.FloatField("unit sphere coordinate of corner pixel", null=False)
+    corner_x = models.FloatField("unit sphere coordinate of corner pixel", null=False)
