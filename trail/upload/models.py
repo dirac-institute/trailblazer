@@ -3,15 +3,7 @@ from django.db import models
 """Define the SQL metadata design here."""
 
 
-class ExampleFrame(models.Model):
-    # meta-class mixin ??
-    class Meta:
-        # Django doesn't do composite primary keys
-        constraints = [
-            models.UniqueConstraint(fields=['run', 'camcol', 'filter', 'field'],
-                                    name="SDSS unique identifiers.")
-        ]
-
+class Frame(models.Model):
     # integer autoincrement primary fields is automatically added by Django
 
     # verbose_names should be lowercase, Django will capitalize
@@ -28,9 +20,12 @@ class ExampleFrame(models.Model):
     datetime_begin = models.DateTimeField("UTC at exposure start.", null=False)
     datetime_end = models.DateTimeField("UTC at exposure end.", null=False)
 
+    radius = models.FloatField("distance between center and corner pixel", null=False)
+
     center_x = models.FloatField("unit sphere coordinate of central pixel", null=False)
     center_y = models.FloatField("unit sphere coordinate of central pixel", null=False)
     center_z = models.FloatField("unit sphere coordinate of central pixel", null=False)
+
     corner_x = models.FloatField("unit sphere coordinate of corner pixel", null=False)
-    corner_x = models.FloatField("unit sphere coordinate of corner pixel", null=False)
-    corner_x = models.FloatField("unit sphere coordinate of corner pixel", null=False)
+    corner_y = models.FloatField("unit sphere coordinate of corner pixel", null=False)
+    corner_z = models.FloatField("unit sphere coordinate of corner pixel", null=False)
