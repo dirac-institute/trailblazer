@@ -88,12 +88,12 @@ WSGI_APPLICATION = 'trail.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config.db.engine,
-        'NAME' : config.db.name,
-        'USER' : config.db.user,
-        'PASSWORD' : config.db.password,
-        'HOST' : config.db.host,
-        'PORT' : config.db.port
+        'ENGINE': dbConfig.engine,
+        'NAME' : dbConfig.name,
+        'USER' : dbConfig.user,
+        'PASSWORD' : dbConfig.password,
+        'HOST' : dbConfig.host,
+        'PORT' : dbConfig.port
      }
 }
 
