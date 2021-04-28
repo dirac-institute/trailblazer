@@ -12,7 +12,7 @@ CONF_FILE_ENVVAR = "TARILBLAZER_CONFIG"
 configuration file. When the env var does not exist, configuration is assumed
 to exist at its default location (see ``CONF_FILE_PATH``)."""
 
-CONF_FILE_PATH = "~/.trail/config.yaml"
+CONF_FILE_PATH = "~/.trail/secrets.yaml"
 """Default path at which it is expected the config file can be found. Will be
 ignored if ``CONF_FILE_ENVVAR`` env var exists."""
 
@@ -26,6 +26,8 @@ class Config():
     confDict : `dict`
         Dictionary whose keys will be mapped to attributes of the class.
     """
+    configKey = "*"
+
     def __init__(self, confDict):
         self._keys = []
         self._subConfs = []
@@ -40,6 +42,12 @@ class Config():
         confDict : `dict`
             Dictionary whose keys will be mapped to attributes of the class.
         """
+        if self.configKey != "*":
+            if self.configKey not in confDict:
+                raise ValueError(f"Required config key {self.configKey} does not "
+                                 "exist in the config dictionary.")
+            confDict = confDict[self.configKey]
+
         for key, val in confDict.items():
             if isinstance(val, dict):
                 self._subConfs.append(key)
@@ -49,7 +57,7 @@ class Config():
                 setattr(self, key, val)
 
     def __repr__(self):
-        reprStr = "Config("
+        reprStr = f"{self.__class__.__name__}("
 
         for key in self._subConfs:
             reprStr += f"{key}={getattr(self, key)}, "
@@ -78,7 +86,10 @@ class Config():
 
     @classmethod
     def fromYaml(cls, filePath=None):
-        """Create a new Config instance from a YAML file.
+        """Create a new Config instance from a YAML file. By default will
+        look at location pointed to by the environmental variable named by
+        `CONF_FILE_ENVVAR`. If the env var is not set it will default to
+        location set by `CONF_FILE_PATH`.
 
         Parameters
         ----------
@@ -107,3 +118,8 @@ class Config():
             confDict = yaml.safe_load(stream)
 
         return cls(confDict)
+
+
+
+class DbAuth(Config):
+    configKey = 'db'
