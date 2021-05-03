@@ -1,0 +1,35 @@
+reduced_HSCA21787010.fits:
+  wcs:
+    {'wcs_radius': 0.00023308908809495583, 'wcs_center_x': 0.9964149952862653, 'wcs_center_y': 0.06798914290893944, 'wcs_center_z': 0.050345144901766184, 'wcs_corner_x': 0.9964120360320852, 'wcs_corner_y': 0.06815406382084636, 'wcs_corner_z': 0.05018045471195688}
+  header:
+    {'obs_lon': -155.476667, 'obs_lat': 19.825555999999995, 'obs_height': 4139.000000000479, 'metadata_translator_name': 'HSC', 'telescope': 'Subaru', 'instrument': 'HSC', 'science_program': 'o20312', 'datetime_begin': '2020-05-28T14:32:17.921', 'datetime_end': '2020-05-28T14:32:59.809', 'exposure_duration': 40.0, 'physical_filter': 'HSC-R2'}
+reduced_frame-i-008108-5-0025.fits:
+  wcs:
+    {'wcs_radius': 0.0005429958662154268, 'wcs_center_x': 0.7839508241789587, 'wcs_center_y': -0.5365651578672179, 'wcs_center_z': 0.3122802213270305, 'wcs_corner_x': 0.7839130388040201, 'wcs_corner_y': -0.5368776125691581, 'wcs_corner_z': 0.31183774100497846}
+  header:
+    {'obs_lon': -105.82000000000005, 'obs_lat': 32.78000000000001, 'obs_height': 2797.9999999996007, 'metadata_translator_name': 'SDSS', 'telescope': 'SDSS 2.5m', 'instrument': 'Imager on SDSS 2.5m', 'science_program': '73 S', 'datetime_begin': '2009-10-17T01:53:10.590', 'datetime_end': '2009-10-17T01:54:04.497', 'exposure_duration': 53.907456, 'physical_filter': 'i'}
+reduced_bi327715.fits:
+    wcs:
+      {'wcs_radius': 0.010664244540320823, 'wcs_center_x': 0.6247845980535837, 'wcs_center_y': -0.24879049840726408, 'wcs_center_z': -0.7400996513560096, 'wcs_corner_x': 0.6228509496180825, 'wcs_corner_y': -0.2394182147117784, 'wcs_corner_z': -0.744805755230233}
+    header:
+      False
+reduced_calexp-0941420_23.fits:
+  wcs:
+    False
+  header:
+    False
+reduced_c4d_200306_000415_ori.fits.fz:
+  wcs:
+    False
+  header:
+    False
+reduced_A3671-C2018_F4-R-3.fit:
+  wcs:
+    False
+  header:
+    False
+reduced_bi327715.fits:
+  wcs:
+    {'wcs_radius': 0.010664244540320823, 'wcs_center_x': 0.6247845980535837, 'wcs_center_y': -0.24879049840726408, 'wcs_center_z': -0.7400996513560096, 'wcs_corner_x': 0.6228509496180825, 'wcs_corner_y': -0.2394182147117784, 'wcs_corner_z': -0.744805755230233}
+  header:
+    False

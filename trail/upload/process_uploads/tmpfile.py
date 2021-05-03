@@ -21,9 +21,20 @@ class TemporaryUploadedFileWrapper:
     upload : `django.core.files.uploadedfile.TemporaryUploadedFile`
         Uploaded file object.
     """
+    save_root = os.path.join(settings.STATIC_ROOT, "upload/fits/")
+    """Root of the location where upload will be permanently saved."""
+
+    special_extensions = {".gz", ".bz2", ".xz", ".fz"}
+    """File extensions recognized as processable archives."""
+
     def __init__(self, upload):
         self.tmpfile = upload
         self.filename = upload.name
+
+    def __repr__(self):
+        repr = super().__repr__()
+        clsPath = repr.split(self.__class__.__name__)[0]
+        return f"{clsPath}{self.__class__.__name__}({self.filename})>"
 
     @property
     def extension(self):
@@ -41,19 +52,18 @@ class TemporaryUploadedFileWrapper:
         If the names of uploaded files are `image.fits.tar.bz2`, `image.fits`
         and `image``returns `.fits.tar.bz2`, `.fits` and ``.
         """
-        special = {".gz", ".bz2", ".xz", ".fz"}
-
         fname = Path(self.filename)
         extensions = fname.suffixes
         if not extensions:
             return ""
 
-        ext = extensions.pop()
-
-        if extensions and ext in special:
+        # if we recognize the special extensions as one of the acceptable
+        # special extensions (tars, fz etc.) return all of them
+        if extensions[-1] in self.special_extensions:
             return "".join(extensions)
 
-        return ext
+        # otherwise just the last one
+        return extensions.pop()
 
     @property
     def basename(self):
@@ -77,8 +87,7 @@ class TemporaryUploadedFileWrapper:
         """
         #TODO: fix os.path when transitioning to S3
         # make the destination configurable
-        tgtPath = os.path.join(settings.STATIC_ROOT, f"upload/fits/{self.filename}")
-
+        tgtPath = os.path.join(self.save_root, self.filename)
         with open(tgtPath, "wb") as f:
             f.write(self.tmpfile.read())
 
