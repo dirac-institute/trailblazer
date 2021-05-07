@@ -8,7 +8,7 @@ class Frame(models.Model):
 
     # verbose_names should be lowercase, Django will capitalize
     # https://docs.djangoproject.com/en/3.1/topics/db/models/#verbose-field-names
-    metadata_translator_name = models.CharField("name of used translator.", max_length=10, null=False)
+    metadata_translator_name = models.CharField("name of used translator.", max_length=10)
     instrument = models.CharField("instrument name", max_length=20)
     telescope = models.CharField("telescope", max_length=20, null=False)
     science_program = models.CharField("science program image is a part of.", max_length=30)

@@ -1,35 +1,35 @@
 reduced_HSCA21787010.fits:
-  wcs:
-    {'wcs_radius': 0.00023308908809495583, 'wcs_center_x': 0.9964149952862653, 'wcs_center_y': 0.06798914290893944, 'wcs_center_z': 0.050345144901766184, 'wcs_corner_x': 0.9964120360320852, 'wcs_corner_y': 0.06815406382084636, 'wcs_corner_z': 0.05018045471195688}
-  header:
-    {'obs_lon': -155.476667, 'obs_lat': 19.825555999999995, 'obs_height': 4139.000000000479, 'metadata_translator_name': 'HSC', 'telescope': 'Subaru', 'instrument': 'HSC', 'science_program': 'o20312', 'datetime_begin': '2020-05-28T14:32:17.921', 'datetime_end': '2020-05-28T14:32:59.809', 'exposure_duration': 40.0, 'physical_filter': 'HSC-R2'}
+  runTest:
+    True
+  data:
+    {'metadata': {'obs_lon': -155.476667, 'obs_lat': 19.825555999999995, 'obs_height': 4139.000000000479, 'metadata_translator_name': 'HSC', 'telescope': 'Subaru', 'instrument': 'HSC', 'science_program': 'o20312', 'datetime_begin': '2020-05-28T14:33:27.105000', 'datetime_end': '2020-05-28T14:34:08.993000', 'exposure_duration': 40.0, 'physical_filter': 'HSC-R2'}, 'wcs': {'wcs_radius': 0.00023308908809495583, 'wcs_center_x': 0.9964149952862653, 'wcs_center_y': 0.06798914290893944, 'wcs_center_z': 0.050345144901766184, 'wcs_corner_x': 0.9964120360320852, 'wcs_corner_y': 0.06815406382084636, 'wcs_corner_z': 0.05018045471195688}}
 reduced_frame-i-008108-5-0025.fits:
-  wcs:
-    {'wcs_radius': 0.0005429958662154268, 'wcs_center_x': 0.7839508241789587, 'wcs_center_y': -0.5365651578672179, 'wcs_center_z': 0.3122802213270305, 'wcs_corner_x': 0.7839130388040201, 'wcs_corner_y': -0.5368776125691581, 'wcs_corner_z': 0.31183774100497846}
-  header:
-    {'obs_lon': -105.82000000000005, 'obs_lat': 32.78000000000001, 'obs_height': 2797.9999999996007, 'metadata_translator_name': 'SDSS', 'telescope': 'SDSS 2.5m', 'instrument': 'Imager on SDSS 2.5m', 'science_program': '73 S', 'datetime_begin': '2009-10-17T01:53:10.590', 'datetime_end': '2009-10-17T01:54:04.497', 'exposure_duration': 53.907456, 'physical_filter': 'i'}
+  runTest:
+    True
+  data:
+    {'metadata': {'obs_lon': -105.82000000000005, 'obs_lat': 32.78000000000001, 'obs_height': 2797.9999999996007, 'metadata_translator_name': 'SDSS', 'telescope': 'SDSS 2.5m', 'instrument': 'Imager on SDSS 2.5m', 'science_program': '73 S', 'datetime_begin': '2009-10-17T01:53:42.774000', 'datetime_end': '2009-10-17T01:54:36.681456', 'exposure_duration': 53.907456, 'physical_filter': 'i'}, 'wcs': {'wcs_radius': 0.0005429958662154268, 'wcs_center_x': 0.7839508241789587, 'wcs_center_y': -0.5365651578672179, 'wcs_center_z': 0.3122802213270305, 'wcs_corner_x': 0.7839130388040201, 'wcs_corner_y': -0.5368776125691581, 'wcs_corner_z': 0.31183774100497846}}
 reduced_bi327715.fits:
-    wcs:
-      {'wcs_radius': 0.010664244540320823, 'wcs_center_x': 0.6247845980535837, 'wcs_center_y': -0.24879049840726408, 'wcs_center_z': -0.7400996513560096, 'wcs_corner_x': 0.6228509496180825, 'wcs_corner_y': -0.2394182147117784, 'wcs_corner_z': -0.744805755230233}
-    header:
-      False
-reduced_calexp-0941420_23.fits:
-  wcs:
-    False
-  header:
-    False
-reduced_c4d_200306_000415_ori.fits.fz:
-  wcs:
-    False
-  header:
-    False
-reduced_A3671-C2018_F4-R-3.fit:
-  wcs:
-    False
-  header:
-    False
-reduced_bi327715.fits:
-  wcs:
+  runTest:
+    True
+  data:
     {'wcs_radius': 0.010664244540320823, 'wcs_center_x': 0.6247845980535837, 'wcs_center_y': -0.24879049840726408, 'wcs_center_z': -0.7400996513560096, 'wcs_corner_x': 0.6228509496180825, 'wcs_corner_y': -0.2394182147117784, 'wcs_corner_z': -0.744805755230233}
-  header:
-    False
+reduced_calexp-0941420_23.fits:
+  runTest:
+    True
+  data:
+    {'metadata': {'obs_lon': 70.81489, 'obs_lat': -30.166059999999995, 'obs_height': 2215.000000000556, 'metadata_translator_name': 'DECam', 'telescope': 'CTIO 4.0-m telescope', 'instrument': 'DECam', 'science_program': '2019A-0305', 'datetime_begin': '2020-03-06T00:04:47.594235', 'datetime_end': '2020-03-06T00:06:47.594235', 'exposure_duration': 120.0, 'physical_filter': 'g'}, 'wcs': [{'wcs_radius': 0.0002902328179442395, 'wcs_center_x': 0.08873459293460961, 'wcs_center_y': 0.9299890417661761, 'wcs_center_z': -0.35671634979568645, 'wcs_corner_x': 0.08888124546442465, 'wcs_corner_y': 0.9300663767547644, 'wcs_corner_z': -0.3564781326181976}]}
+reduced_c4d_200306_000415_ori.fits.fz:
+  runTest:
+    True
+  data:
+    {'metadata': {'obs_lon': -70.81489, 'obs_lat': -30.166059999999998, 'obs_height': 2215.0000000005593, 'metadata_translator_name': 'DECam', 'telescope': 'CTIO 4.0-m telescope', 'instrument': 'DECam', 'science_program': '2019A-0305', 'datetime_begin': '2020-03-06T00:05:24.594235', 'datetime_end': '2020-03-06T00:07:24.594235', 'exposure_duration': 120.0, 'physical_filter': 'g DECam SDSS c0001 4720.0 1520.0'}, 'wcs': [{'wcs_radius': 0.0003130436079344284, 'wcs_center_x': 0.11043853224842139, 'wcs_center_y': 0.9262561348954145, 'wcs_center_z': -0.3603510832000122, 'wcs_corner_x': 0.11062766805037845, 'wcs_corner_y': 0.9263266212893695, 'wcs_corner_z': -0.36011180173989904}, {'wcs_radius': 0.0003135017434293235, 'wcs_center_x': 0.10506899051009122, 'wcs_center_y': 0.9268673038821104, 'wcs_center_z': -0.3603852219882192, 'wcs_corner_x': 0.1052585107334163, 'wcs_corner_y': 0.9269388027346583, 'wcs_corner_z': -0.3601459452819389}, {'wcs_radius': 0.00031409820963772907, 'wcs_center_x': 0.09967939183946693, 'wcs_center_y': 0.9274506681743753, 'wcs_center_z': -0.36041542273523586, 'wcs_corner_x': 0.09986957724005117, 'wcs_corner_y': 0.9275231441364651, 'wcs_corner_z': -0.36017618554410247}, {'wcs_radius': 0.0003132197205933622, 'wcs_center_x': 0.11034309841942666, 'wcs_center_y': 0.9252230295821654, 'wcs_center_z': -0.36302444292636876, 'wcs_corner_x': 0.1105322947443866, 'wcs_corner_y': 0.9252942810425847, 'wcs_corner_z': -0.36278520544314685}, {'wcs_radius': 0.0003137078493671471, 'wcs_center_x': 0.10497222074838612, 'wcs_center_y': 0.925831961210154, 'wcs_center_z': -0.3630647496975051, 'wcs_corner_x': 0.10516197177793228, 'wcs_corner_y': 0.9259041759745186, 'wcs_corner_z': -0.3628256008121878}, {'wcs_radius': 0.0003142218513901279, 'wcs_center_x': 0.09958304898855203, 'wcs_center_y': 0.9264151670039564, 'wcs_center_z': -0.363095241912057, 'wcs_corner_x': 0.09977352591161767, 'wcs_corner_y': 0.9264882988574178, 'wcs_corner_z': -0.3628562740362247}, {'wcs_radius': 0.0003129200784723404, 'wcs_center_x': 0.10784728416536964, 'wcs_center_y': 0.9275922519662049, 'wcs_center_z': -0.3576892190022209, 'wcs_corner_x': 0.10803629229653425, 'wcs_corner_y': 0.9276624973424211, 'wcs_corner_z': -0.3574499273621976}, {'wcs_radius': 0.00031352103433361606, 'wcs_center_x': 0.10247305125120239, 'wcs_center_y': 0.9281890609269723, 'wcs_center_z': -0.3577210378811591, 'wcs_corner_x': 0.10266265214147477, 'wcs_corner_y': 0.9282603065253908, 'wcs_corner_z': -0.3574817242666623}, {'wcs_radius': 0.0003126605925838322, 'wcs_center_x': 0.10794177518599178, 'wcs_center_y': 0.9286084474266504, 'wcs_center_z': -0.35501397794673184, 'wcs_corner_x': 0.10813057039227975, 'wcs_corner_y': 0.928677949700161, 'wcs_corner_z': -0.35477464042310797}]}
+reduced_A3671-C2018_F4-R-3.fit:
+  runTest:
+    True
+  data:
+    {'metadata': {'obs_lon': -170.467, 'obs_lat': -43.983, 'obs_height': 1029.0, 'telescope': 'MOA-II telescope', 'instrument': 'MOA-cam3', 'science_program': 'A3671-C2018_F4-R-3', 'datetime_begin': '2020-12-09T12:33:40.032012+00:00', 'datetime_end': '2020-12-09T12:33:40.032012+00:00', 'exposure_duration': 300, 'physical_filter': 'R'}, 'wcs': {'wcs_radius': -999.999, 'wcs_center_x': -999.999, 'wcs_center_y': -999.999, 'wcs_center_z': -999.999, 'wcs_corner_x': -999.999, 'wcs_corner_y': -999.999, 'wcs_corner_z': -999.999}}
+reduced_bi327715.fits:
+  runTest:
+    True
+  data:
+    {'metadata': {'obs_lon': -70.804627, 'obs_lat': -30.1676541, 'obs_height': 2201.0, 'telescope': '0m4-18', 'instrument': 'ff09', 'science_program': 'ASAS', 'datetime_begin': '2020-11-20T01:04:29.222000+00:00', 'datetime_end': '2020-11-20T01:05:59.242000+00:00', 'exposure_duration': 90.0, 'physical_filter': ''}, 'wcs': {'wcs_radius': 0.010664244540320823, 'wcs_center_x': 0.6247845980535837, 'wcs_center_y': -0.24879049840726408, 'wcs_center_z': -0.7400996513560096, 'wcs_corner_x': 0.6228509496180825, 'wcs_corner_y': -0.2394182147117784, 'wcs_corner_z': -0.744805755230233}}

@@ -7,7 +7,8 @@ import yaml
 from django.test import TestCase
 
 from upload.process_uploads.tmpfile import TemporaryUploadedFileWrapper
-from upload.process_uploads import processors
+from upload.process_uploads.upload_processor import UploadProcessor
+from upload.process_uploads.processors.fits_processors import FitsProcessor
 
 
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
@@ -80,14 +81,14 @@ class TemporaryUploadedFileWrapperTestCase(TestCase):
         self.assertTrue(os.path.exists(tgtPath))
 
 
-class FitsProcessorTestCase(TestCase):
+class UploadProcessorTestCase(TestCase):
     """Tests the internal logic of FitsProcessor."""
     testDataDir = os.path.join(TESTDIR, "data")
 
     def setUp(self):
         self.tmpTestDir = tempfile.mkdtemp(dir=TESTDIR)
         TemporaryUploadedFileWrapper.save_root = self.tmpTestDir
-        processors.UploadProcessor.media_root = self.tmpTestDir
+        UploadProcessor.media_root = self.tmpTestDir
 
         fnames = os.listdir(self.testDataDir)
         self.fits = []
@@ -107,79 +108,50 @@ class FitsProcessorTestCase(TestCase):
         """Test FitsProcessor correctly recognizes files it can process."""
         for fits in self.fits:
             with self.subTest(filename=fits.filename):
-                self.assertTrue(processors.FitsProcessor.canProcess(fits))
+                self.assertTrue(FitsProcessor.canProcess(fits))
 
     def testStandardize(self):
         """Tests whether WCS and Header Metadata are standardized as expected."""
+
+        from upload.process_uploads.standardized_dataclasses import StandardizedHeaderKeys
+
         for fits in self.fits:
-            fitsProcessor = processors.FitsProcessor(fits)
-            expected = self.standardizedAnswers[fits.filename]
+            data = self.standardizedAnswers[fits.filename]
+            # TODO: make all fits pass tests. Live with this crutch for now
+            # TODO: Do the math how much cartesian unit circle coordinates move
+            # on the sky and then fix the isClose test to something reasonable
+            if not data["runTest"]:
+                continue
 
-            # TODO: make all fits pass both tests. Live with this crutch for now
-            # TODO: Do the math how much cartesian unit circle coordinates distance
-            # move on the sky and then fix the number of test decimals to something
-            # reasonable.
-            if expected["wcs"]:
-                expectedWcs = expected["wcs"]
-                with self.subTest(fitsname=fits.filename + " WCS"):
-                    try:
-                        producedWcs = fitsProcessor.standardizedWcs()
-                    except Exception as exc:
-                        self.fail(exc)
+            with self.subTest(fitsname=fits.filename + " INSTANTIATION"):
+                fitsProcessor = UploadProcessor.fromUpload(fits)
 
-                    # test expected keys are present. testStoreHeader will test
-                    # whether this indeed matches the DB schema later...
-                    self.assertEqual(expectedWcs.keys(), producedWcs.keys())
+            with self.subTest(fitsname=fits.filename + " PROCESSING"):
+                produced = fitsProcessor.standardizeHeader()
 
-                    # test produced results are actully correct
-                    for key in expectedWcs:
-                        self.assertAlmostEqual(expectedWcs[key], producedWcs[key], 3)
+            expected = StandardizedHeaderKeys.fromDict(data["data"], fitsProcessor.isMultiExt)
+            produced = StandardizedHeaderKeys.fromDict(produced, fitsProcessor.isMultiExt)
 
+            with self.subTest(fitsname=fits.filename + " STANDARDIZE"):
+                    self.assertTrue(produced.isCloseTo(expected))
 
-            if expected["header"]:
-                expectedHeader = expected["header"]
-                with self.subTest(fitsname=fits.filename + " HEADER"):
-                    try:
-                        producedHeader = fitsProcessor.standardizedHeaderMetadata()
-                    except Exception as exc:
-                        self.fail(exc)
-                        
-                    self.assertEqual(expectedHeader.keys(), producedHeader.keys())
-
-                    approximatelyEqualKeys = ("obs_lon", "obs_lat", "obs_height")
-                    for key in approximatelyEqualKeys:
-                        self.assertAlmostEqual(expectedHeader[key], producedHeader[key], 5)
-
-                    for key in expectedHeader:
-                        if key in approximatelyEqualKeys:
-                            self.assertAlmostEqual(expectedHeader[key], producedHeader[key], 5)
-                        else:
-                            self.assertEqual(expectedHeader[key], producedHeader[key])
-
-    def testStoreHeader(self):
+    def testStoreHeaders(self):
         """Tests whether store header executes on an SDSS frame; this verifies
         the created standardized dictionary has correcly named keys.
         """
         data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
-        fitsProcessor = processors.FitsProcessor(fits)
-        try:
-            fitsProcessor.storeHeader()
-        except Exception as exc:
-            self.fail(exc)
+        fitsProcessor = UploadProcessor.fromUpload(fits)
+        fitsProcessor.storeHeaders()
 
     def testStoreThumbnails(self):
         """Tests whether two thumbnails appear at the expected location."""
         data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
-        fitsProcessor = processors.FitsProcessor(fits)
-
-        try:
-            fitsProcessor.storeThumbnails()
-        except Exception as exc:
-            self.fail(exc)
+        fitsProcessor = UploadProcessor.fromUpload(fits)
+        fitsProcessor.storeThumbnails()
 
         large = os.path.join(self.tmpTestDir, fits.basename+'_large.png')
         small = os.path.join(self.tmpTestDir, fits.basename+'_small.png')

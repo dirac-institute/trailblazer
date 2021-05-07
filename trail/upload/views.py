@@ -4,7 +4,12 @@ from django.urls import reverse_lazy  # , reverse
 from django.views.generic.edit import FormView
 from .forms import FileFieldForm
 
-from .process_uploads.process_fits import process_fits
+# These uploads are required here so that the subclasses register
+# themselves
+from upload.process_uploads.processors import *
+from upload.process_uploads.standardizers import *
+
+from upload.process_uploads.process import process_upload
 
 """This code runs when a user visits the 'upload' URL."""
 
@@ -20,7 +25,7 @@ class FileFieldView(FormView):
         files = request.FILES.getlist('file_field')
         if form.is_valid():
             for f in files:
-                process_fits(f)
+                process_upload(f)
             return self.form_valid(form)
         else:
             return self.form_invalid(form)

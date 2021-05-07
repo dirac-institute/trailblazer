@@ -1,14 +1,14 @@
+"""Functions invoked by views."""
+
+
 from .tmpfile import TemporaryUploadedFileWrapper
-from .processors import UploadProcessor
+from upload.process_uploads.upload_processor import UploadProcessor
 
 
-"""Views invoked when upload gets submitted."""
+__all__ = ["process_upload", ]
 
 
-__all__ = ["process_fits", ]
-
-
-def process_fits(img):
+def process_upload(img):
     """Given a uploaded file, normalizes and inserts header data into the DB,
     creates and stores small and large thumbnails and saves a copy of the
     uploaded file.
@@ -19,6 +19,6 @@ def process_fits(img):
         Uploaded fits image
     """
     upload = TemporaryUploadedFileWrapper(img)
-    uplPrc = UploadProcessor(upload)
-    uplPrc.process(upload)
+    uploadProcessor = UploadProcessor.fromUpload(upload)
+    uploadProcessor.process()
     upload.save()
