@@ -1,14 +1,102 @@
+<!DOCTYPE HTML>
+<!--
+	   Page creted from a modified template by HTML5 UP
+	   html5up.net | @ajlkn
+	   Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 {% load static %}
+<html>
+    {% block head %}
+    <head>
+        {% block head.content %}
+        <title>{% block head.title %} Trailblazer {% endblock %} </title>
+        <meta charset="utf-8" />
+		    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+		    <noscript><link rel="stylesheet" href="{% static 'assets/css/noscript.css" /></noscript>
+        {% block head.extend %} {% endblock %}
+        {% endblock %}
+    </head>
+    {% endblock %}
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <body class="is-preload">
+        {% block body.content %}
 
-{% block page_header %}{% endblock %}
+        <!-- Wrapper -->
+        {% block content.wrapper %} <div id="wrapper"> {% endblock %}
+            {% block content.header %}
+            <!-- Header -->
+            <header id="header">
+                {% block content.header.content %}
+                <a href="/" class="logo">{% block content.header.title %} Trailblazer {% endblock %}</a>
+                <p>{% block content.header.subtitle  %} An open data repository for astronomical data products affected by satellites. {% endblock %}</p>
+                {% endblock %}
+            </header>
+            {% endblock %}
 
-{% block page_content %}{% endblock %}
+            <!-- Nav -->
+            {% block content.navigation %}
+            <nav id="nav">
+                {% block content.navigation.content %}
+                <ul class="links">
+                    <li class="active"><a href="/gallery">Gallery</a></li>
+                    <li><a href="/query">Query</a></li>
+                    <li><a href="/upload">Upload</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+                <ul class="icons">
+                    <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+                    <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                    <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                    <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+                </ul>
+                {% endblock %}
+            </nav>
+            {% endblock %}
 
-{% block page_footer %}{% endblock %}
+            <!-- Main -->
+            {% block content.main %}
+            <div id="main">
+                {% block content.main.content %}{% endblock %}
+            </div>
+            {% endblock %}
 
+				    <!-- Footer -->
+            {% block content.footer %}
+					  <footer id="footer">
+                {% block content.footer.content %}
+						    <section>
+								    <h3>Social</h3>
+								    <ul class="icons alt">
+									      <li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+									      <li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+									      <li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+									      <li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+								    </ul>
+						    </section>
+                {% endblock %}
+					  </footer>
+            {% endblock %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+				    <!-- Copyright -->
+					  <div id="copyright">
+						    <ul><li>&copy; UW</li><li>Design: <a href="https://html5up.net">SE</a></li></ul>
+					  </div>
+            <!-- End of wrapper -->
+            {% endblock %}
+			  </div>
+
+		    <!--
+             Scripts
+             The template basic scripts are always needed, the scripts extended block can be used to add more.
+        -->
+			  <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+			  <script src="{% static 'assets/js/jquery.scrollex.min.js' %}"></script>
+			  <script src="{% static 'assets/js/jquery.scrolly.min.js' %}"></script>
+			  <script src="{% static 'assets/js/browser.min.js' %}"></script>
+			  <script src="{% static 'assets/js/breakpoints.min.js' %}"></script>
+			  <script src="{% static 'assets/js/util.js' %}"></script>
+			  <script src="{% static 'assets/js/main.js' %}"></script>
+        {% block content.scripts.extended %} {% endblock %}
+	  </body>
+</html>

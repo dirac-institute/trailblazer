@@ -16,7 +16,7 @@ def get_images(count):
         for i, imageName in enumerate(imageNames):
             images.append({"name": imageName,
                            "path": os.path.join(path, imageName),
-                           "caption": i})
+                           "caption": imageName})
         return images
 
 
