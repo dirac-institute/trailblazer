@@ -1,14 +1,14 @@
 """Functions invoked by views."""
 
 
-from .tmpfile import TemporaryUploadedFileWrapper
-from upload.process_uploads.upload_processor import UploadProcessor
+from .upload_wrapper import TemporaryUploadedFileWrapper
+from .upload_processor import UploadProcessor
 
 
 __all__ = ["process_upload", ]
 
 
-def process_upload(img):
+def process_uploads(uploads):
     """Given a uploaded file, normalizes and inserts header data into the DB,
     creates and stores small and large thumbnails and saves a copy of the
     uploaded file.
@@ -18,7 +18,8 @@ def process_upload(img):
     img : `django.core.files.uploadedfile.TemporaryUploadedFile`
         Uploaded fits image
     """
-    upload = TemporaryUploadedFileWrapper(img)
-    uploadProcessor = UploadProcessor.fromUpload(upload)
-    uploadProcessor.process()
-    upload.save()
+    for upload in uploads:
+        uploadWrapper = TemporaryUploadedFileWrapper(upload)
+        uploadProcessor = UploadProcessor.fromUpload(uploadWrapper)
+        uploadProcessor.process()
+        uploadWrapper.save()

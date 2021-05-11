@@ -17,7 +17,7 @@ class UploadProcessor(ABC):
 
     Parameters
     ----------
-    uploadWrapper : `tmpfile.temporaryUploadedFileWrapper`
+    uploadWrapper : `upload_wrapper.temporaryUploadedFileWrapper`
     """
 
     processors = dict()
@@ -46,7 +46,7 @@ class UploadProcessor(ABC):
 
         Parameters
         ----------
-        upload : `tmpfile.TemporaryUploadedFileWrapper`
+        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
 
         Returns
@@ -63,7 +63,7 @@ class UploadProcessor(ABC):
 
         Parameters
         ----------
-        upload : `tmpfile.TemporaryUploadedFileWrapper`
+        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
 
         Returns
@@ -99,7 +99,7 @@ class UploadProcessor(ABC):
 
         Parameters
         ----------
-        upload : `tmpfile.TemporaryUploadedFileWrapper`
+        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
 
         Returns
@@ -120,7 +120,7 @@ class UploadProcessor(ABC):
 
         Parameters
         ----------
-        upload : `tmpfile.TemporaryUploadedFileWrapper`
+        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
         """
         # TODO: get some error handling here

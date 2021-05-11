@@ -6,7 +6,7 @@ import yaml
 
 from django.test import TestCase
 
-from upload.process_uploads.tmpfile import TemporaryUploadedFileWrapper
+from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.processors.fits_processors import FitsProcessor
 

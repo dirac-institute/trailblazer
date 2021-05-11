@@ -34,7 +34,7 @@ class FitsProcessor(UploadProcessor):
 
     Parameters
     ----------
-    upload : `tmpfile.TemporaryUploadedFileWrapper`
+    upload : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
     """
 
