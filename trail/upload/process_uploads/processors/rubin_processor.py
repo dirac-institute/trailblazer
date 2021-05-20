@@ -1,9 +1,19 @@
 """
-Class for processing calibrated FITS files produced by Vera C. Rubin pipeline.
+Class for processing calibrated FITS files produced by Vera C. Rubin Science
+Pipelines.
+
+Images processed by Rubin do *not* store the entire focal plane worth of data
+in their FITS files, but only a single CCD image, alongside a mask and a
+variance plane data.
+
+We don't want to process variance or mask planes.
 """
 
 from upload.process_uploads.processors.fits_processors import MultiExtensionFits
 from upload.process_uploads.header_standardizer import HeaderStandardizer
+
+
+__all__ = ["RubinCalexpFits", ]
 
 
 class RubinCalexpFits(MultiExtensionFits):
@@ -12,12 +22,6 @@ class RubinCalexpFits(MultiExtensionFits):
 
     def __init__(self, upload):
         super().__init__(upload)
-
-        # Rubin flavored DECam processed images do *not* store the entire
-        # focal plane worth of data in their FITS files, but only a single CCD
-        # but alongside they store mask and variance as image-like data. We
-        # don't want to process those images because, for us, they contain no
-        # interesting data. 
         self.primary = self.hdulist["PRIMARY"].header
         self.standardizer = HeaderStandardizer.fromHeader(self.primary,
                                                           filename=upload.filename)

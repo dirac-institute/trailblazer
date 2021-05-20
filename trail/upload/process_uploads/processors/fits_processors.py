@@ -50,27 +50,6 @@ class FitsProcessor(UploadProcessor):
         self.isMultiExt = len(self.hdulist) > 1
 
     @staticmethod
-    def _isImageLikeHDU(hdu):
-        if not any((isinstance(hdu, CompImageHDU),
-                    isinstance(hdu, PrimaryHDU),
-                    isinstance(hdu, ImageHDU))):
-            return False
-
-        # Lets be reasonable, here - people store all kind of stuff even in
-        # ImageHDUs, let's make sure we don't crash the server by saving 120k x
-        # 8000k table disguised as an image (I'm looking at you SDSS!)
-        if hdu.data is None:
-            return False
-
-        if len(hdu.data.shape) != 2:
-            return False
-
-        if hdu.shape[0] > 6000 or hdu.shape[1] > 6000:
-            return False
-
-        return True
-
-    @staticmethod
     def _isMultiExtFits(hdulist):
         """Returns `True` when given HDUList contains more than 1 HDU.
 
@@ -288,11 +267,10 @@ class MultiExtensionFits(FitsProcessor):
         super().__init__(upload)
 
         # multiext fits usually encode metadata, which we use to resolve which
-        # standardizer to use, in primary header. Primary header usually do not
-        # contain an image. Only image headers contains valid WCSs. Images do
-        # not, however, contain enough metadata to resolve which standardizer
-        # to use. Just to be sure that this isn't a special multiext fits that
-        # has data in primary (which I don't know how we would process atm...):
+        # standardizer to use, in primary header. Primary header does not usually
+        # contain an image. Only image headers contain valid WCSs. Image headers
+        # do not, however, contain enough metadata to resolve which standardizer
+        # to use.
         self.primary = self.hdulist["PRIMARY"].header
         self.standardizer = HeaderStandardizer.fromHeader(self.primary,
                                                           filename=upload.filename)
@@ -301,6 +279,27 @@ class MultiExtensionFits(FitsProcessor):
         for hdu in self.hdulist:
             if self._isImageLikeHDU(hdu):
                 self.exts.append(hdu)
+
+    @staticmethod
+    def _isImageLikeHDU(hdu):
+        if not any((isinstance(hdu, CompImageHDU),
+                    isinstance(hdu, PrimaryHDU),
+                    isinstance(hdu, ImageHDU))):
+            return False
+
+        # Lets be reasonable, here - people store all kind of stuff even in
+        # ImageHDUs, let's make sure we don't crash the server by saving 120k x
+        # 8000k table disguised as an image (I'm looking at you SDSS!)
+        if hdu.data is None:
+            return False
+
+        if len(hdu.data.shape) != 2:
+            return False
+
+        if hdu.shape[0] > 6000 or hdu.shape[1] > 6000:
+            return False
+
+        return True
 
     @classmethod
     def canProcess(cls, upload, returnHdulist=False):
@@ -334,8 +333,6 @@ class MultiExtensionFits(FitsProcessor):
             return standardizedHeader
 
     def storeThumbnails(self):
-        # TODO: I think a focal plane plot would be nicer, but that does need
-        # more work than this
         for i, ext in enumerate(self.exts):
             large, small = self._createThumbnails(self._upload.basename + f"_ext{i}",
                                                   ext.data)
