@@ -23,109 +23,247 @@ from upload.process_uploads.header_standardizer import HeaderStandardizer
 __all__ = ["DecamFits", ]
 
 
+row_layout = {
+    1:  {"indices": ( (2, 0),  (3, 0),  (4, 0)),
+         "names":   ( "S31",   "S30",   "S29"), "rtype": "even"},
+    2:  {"indices": ( (1, 1),  (2, 1),  (3, 1),  (4, 1)),
+         "names":   ( "S28",   "S27",   "S26",   "S25"), "rtype": "odd"},
+    3:  {"indices": ( (1, 2),  (2, 2),  (3, 2),  (4, 2), (5, 2)),
+         "names":   ( "S24",   "S23",   "S22",   "S21",  "S20"), "rtype": "even"},
+    4:  {"indices": ( (0, 3),  (1, 3),  (2, 3),  (3, 3), (4, 3), (5, 3)),
+         "names":   ( "S19",   "S18",   "S17",   "S16",  "S15",  "S14"), "rtype": "odd"},
+    5:  {"indices": ( (0, 4),  (1, 4),  (2, 4),  (3, 4), (4, 4), (5, 4)),
+         "names":   ( "S13",   "S12",   "S11",   "S10",  "S9",  "S8"), "rtype": "odd"},
+    6:  {"indices": ( (0, 5),  (1, 5),  (2, 5),  (3, 5), (4, 5), (5, 5), (6, 5)),
+         "names":   ( "S7",    "S6",    "S5",    "S4",   "S3",   "S2",   "S1"), "rtype":"even"},
+    7:  {"indices": ( (0, 6),  (1, 6),  (2, 6),  (3, 6), (4, 6), (5, 6), (6, 6)),
+         "names":   ( "N7",    "N6",    "N5",    "N4",   "N3",   "N2",   "N1"), "rtype":"even"},
+    8:  {"indices": ( (0, 7),  (1, 7),  (2, 7),  (3, 7), (4, 7), (5, 7)),
+         "names":   ( "N13",   "N12",   "N11",   "N10",  "N9",  "N8"),"rtype": "odd"},
+    9:  {"indices": ( (0, 8),  (1, 8),  (2, 8),  (3, 8), (4, 8), (5, 8)),
+         "names":   ( "N19",   "N18",   "N17",   "N16",  "N15",  "N14"),"rtype": "odd"},
+    10: {"indices": ( (1, 9),  (2, 9),  (3, 9),  (4, 9), (5, 9)),
+         "names":   ( "N24",   "N23",   "N22",   "N21",  "N20"), "rtype": "even"},
+    11: {"indices": ((1, 10), (2, 10), (3, 10), (4, 10)),
+         "names":   ( "N28",   "N27",   "N26",   "N25"), "rtype": "odd"},
+    12: {"indices": ((2, 11), (3, 11), (4, 11)),
+         "names":   ( "N31",   "N30",   "N29"), "rtype": "even"},
+}
+"""A row-based layour of the DECam focal plane science detectors."""
+
+
 class Detector:
-    def __init__(self, row, col,idxtype, label=None):
-        self.row = row
-        self.col = col
-        self.rowType = idxtype
-        self.label = label
+    """A single DECam science CCD detector.""""""
 
-
-class DecamFocalPlane:
-    row_layout = {
-        1:  {"indices": ( (2, 0),  (3, 0),  (4, 0)),
-             "names":   ( "S31",   "S30",   "S29"), "rtype": "even"},
-        2:  {"indices": ( (1, 1),  (2, 1),  (3, 1),  (4, 1)),
-             "names":   ( "S28",   "S27",   "S26",   "S25"), "rtype": "odd"},
-        3:  {"indices": ( (1, 2),  (2, 2),  (3, 2),  (4, 2), (5, 2)),
-             "names":   ( "S24",   "S23",   "S22",   "S21",  "S20"), "rtype": "even"},
-        4:  {"indices": ( (0, 3),  (1, 3),  (2, 3),  (3, 3), (4, 3), (5, 3)),
-             "names":   ( "S19",   "S18",   "S17",   "S16",  "S15",  "S14"), "rtype": "odd"},
-        5:  {"indices": ( (0, 4),  (1, 4),  (2, 4),  (3, 4), (4, 4), (5, 4)),
-             "names":   ( "S13",   "S12",   "S11",   "S10",  "S9",  "S8"), "rtype": "odd"},
-        6:  {"indices": ( (0, 5),  (1, 5),  (2, 5),  (3, 5), (4, 5), (5, 5), (6, 5)),
-             "names":   ( "S7",    "S6",    "S5",    "S4",   "S3",   "S2",   "S1"), "rtype":"even"},
-        7:  {"indices": ( (0, 6),  (1, 6),  (2, 6),  (3, 6), (4, 6), (5, 6), (6, 6)),
-             "names":   ( "N7",    "N6",    "N5",    "N4",   "N3",   "N2",   "N1"), "rtype":"even"},
-        8:  {"indices": ( (0, 7),  (1, 7),  (2, 7),  (3, 7), (4, 7), (5, 7)),
-             "names":   ( "N13",   "N12",   "N11",   "N10",  "N9",  "N8"),"rtype": "odd"},
-        9:  {"indices": ( (0, 8),  (1, 8),  (2, 8),  (3, 8), (4, 8), (5, 8)),
-             "names":   ( "N19",   "N18",   "N17",   "N16",  "N15",  "N14"),"rtype": "odd"},
-        10: {"indices": ( (1, 9),  (2, 9),  (3, 9),  (4, 9), (5, 9)),
-             "names":   ( "N24",   "N23",   "N22",   "N21",  "N20"), "rtype": "even"},
-        11: {"indices": ((1, 10), (2, 10), (3, 10), (4, 10)),
-             "names":   ( "N28",   "N27",   "N26",   "N25"), "rtype": "odd"},
-        12: {"indices": ((2, 11), (3, 11), (4, 11)),
-             "names":   ( "N31",   "N30",   "N29"), "rtype": "even"},
-    }
+    Attributes
+    ----------
+    scaling : `float`
+        Detector size scaling factor. Detector's scaled size is the detector's
+        physical size divided by the scaling factor.
+    idx : `tuple`, optional
+        Detector zero-based index (row, col), as counted from the center of a
+        detector.
+    label : `str`, optional
+        Detector label, for example S1, S3 etc.
+    xdim : `int`, optional
+        Detector's physical width, in pixels. Defaults to 4096.
+    ydim : `int`, optional
+        Detector's physical height, in pixels. Defaults to 2048
+    """
+    index_detector_map = {name:index for row in row_layout.values()
+                          for name, index in zip(row["names"], row["indices"])}
+    """Map between detector index and detector label."""
 
     detector_index_map = {name:index for row in row_layout.values()
                           for name, index in zip(row["names"], row["indices"])}
+    """Map between detector labels and their positional indices."""
+
     detector_type_map = {name:row["rtype"] for row in row_layout.values()
                          for name in row["names"]}
+    """Map between detector labels and their row type."""
+
+    dimX = 4096
+    """Default, assumed, width, in pixels, of a detector."""
+
+    dimY = 2048
+    """Default, assumed, height, in pixels, of a detector."""
+
+    def __init__(self, scaling, idx=None, label=None, xdim=None, ydim=None):
+        if idx is not None:
+            self.row, self.col = idx
+            self.label = self.index_detector_map[idx]
+            self.rowType = self.detector_type_map[self.label]
+        elif label is not None:
+            self.row, self.col = self.detector_index_map[label]
+            self.label = label
+            self.rowType = self.detector_type_map[label]
+
+        self.scale = scaling
+        self.setDimensions(xdim, ydim)
+
+    def setDimensions(self, xdim=None, ydim=None):
+        """Updates the detector dimensions using the default or provided values
+        and recalculates relavant detector's scaled dimensions.
+
+        Parameters
+        ----------
+        xdim : `int`
+            New detector width.
+        ydim : `int`
+            New detector height.
+        """
+        self.xdim = xdim if xdim is not None else self.dimX
+        self.ydim = ydim if ydim is not None else self.dimY
+
+        self.scaledX = int(self.xdim/self.scale)
+        self.scaledY = int(self.ydim/self.scale)
+
+
+class DecamFocalPlane:
+    """Represents the science only CCDs of the DECam focal plane.
+    All CCDs are assumed to have the same size and the same scaling factor.
+
+    Parameters
+    ----------
+    scaling : `float`
+        Scaling factor for which the focal plane size in pixels will be reduced
+        by in order to be displayed.
+    detectorSize : `tuple`, optional
+        Physical detector size in pixels as a tuple (width, height). Defaults
+        to (4096, 2048) as set in `Detector`.
+    ccdGap : `int`, optional
+        Physical size of the gap between detectors, in pixels. Defaults to 208.
+    rowOffset : `int`, optional
+        Physical offset, in pixels, between 'even' and 'odd' rows.
+    """
+    detector_labels = [name for row in row_layout.values() for name in row["names"]]
+    """A list of all detector labels."""
 
     nRows = 7
-    nCols = 12
-    dimX = 4096
-    dimY = 2048
-    ccd_gap = 208
-    row_offset = dimX/2
+    """Number of detector rows in the focal plane."""
 
-    def __init__(self, scaling, xdim=None, ydim=None, ccdGap=None, rowOffset=None):
-        self.xdim = self.dimX if xdim is None else xdim
-        self.ydim = self.dimY if ydim is None else ydim
+    nCols = 12
+    """Number of columns in the focal plane."""
+
+    ccd_gap = 208
+    """Default, assumed, gap size in pixels, between two detectors."""
+
+    row_offset = Detector.dimX/2
+    """Default, assumed, offset between even and odd rows."""
+
+    def __init__(self, scaling, detectorSize=None, ccdGap=None, rowOffset=None):
+        self.scale = scaling
         self.gap = self.ccd_gap if ccdGap is None else ccdGap
         self.rowOffset = self.row_offset if rowOffset is None else rowOffset
-        self.scale = scaling
+        self.__initAssumedDetectorDimensions(detectorSize)
 
-        self.scaledX = int(self.xdim/scaling)
-        self.scaledY = int(self.ydim/scaling)
-        self.scaledGap = int(self.gap/scaling)
+        self.detectors = {}
+        for label in self.detector_labels:
+            self.detectors[label] = Detector(scaling, label=label)
+
+        self.planeImage = None
+
+    def __initAssumedDetectorDimensions(self, detectorSize=None):
+        """In general there is no reason to assume all detectors have the same
+        sizes, gaps or offsets. But for DECam they do and this lets us perform
+        an easy and quick generation of in-focal-plane-image-array coordinate
+        calculations.
+
+        Unfortunately it also requires pre-calculating and storing a lot of
+        not-very-clear quantities.
+        """
+        if detectorSize is None:
+            xdim, ydim = Detector.dimX, Detector.dimY
+        else:
+            xdim, ydim = detectorSize
+
+        self.xdim = xdim
+        self.ydim = ydim
+
+        self.scaledX = int(self.xdim/self.scale)
+        self.scaledY = int(self.ydim/self.scale)
+
+        self.scaledGap = int(self.gap/self.scale)
         self.scaledRowOffset = int(self.scaledX/2)
 
         self.scaledGappedX = self.scaledX + self.scaledGap
         self.scaledGappedY = self.scaledY + self.scaledGap
         self.scaledGappedOffsetX = self.scaledGappedX*1.5 + self.scaledGap
 
-        self.planeImage = None
+    def _even_row_coords(self, i, j):
+        return (i*self.scaledGappedX), int(j*self.scaledGappedY)
 
-        self.detectors = {}
-        for row in self.row_layout.values():
-            for col, name in zip(row["indices"], row["names"]):
-                self.detectors[name] = Detector(row=col[0], col=col[1],
-                                                idxtype=row["rtype"], label=name)
-
-    def even_row_indices(self, i, j):
-        return int(i*self.scaledGappedX), int(j*self.scaledGappedY)
-
-    def odd_row_indices(self, i, j):
+    def _odd_row_coords(self, i, j):
         return (self.scaledRowOffset + i*self.scaledGappedX), j*self.scaledGappedY
 
-    def slice(self, detectorLabel):
+    def get_coords(self, detectorLabel):
+        """Get start and end coordinates of the scaled detector.
+
+        Parameters
+        ----------
+        detectorLabel : `str`
+            Label of the detector in the focal plane.
+
+        Returns
+        -------
+        xCoordinates : `tuple`
+            Tuple of start and end coordinates in the x axis.
+        yCoordinates : `tuple`
+            Tuple of start and end coordinates in the y axis.
+        """
         detector = self.detectors[detectorLabel]
-
         if detector.rowType == "even":
-            coords = self.even_row_indices(detector.row, detector.col)
+            coords = self._even_row_coords(detector.row, detector.col)
+        elif detector.rowType == "odd":
+            coords = self._odd_row_coords(detector.row, detector.col)
         else:
-            coords = self.odd_row_indices(detector.row, detector.col)
+            raise ValueError("Unrecognized row type. Expected 'odd' or 'even' "
+                             "got {detector.rowType} instead.")
 
-        return (slice(coords[0], coords[0]+self.scaledX),
-                slice(coords[1], coords[1]+self.scaledY))
+        return (coords[0], coords[0]+self.scaledX), (coords[1], coords[1]+self.scaledY)
 
-    def add_detector(self, hdu):
-        name = hdu["DETPOS"]
-        row, col = self.detector_index_map[name]
-        rtype = self.detector_type_map(name)
-        self.detectors[hdu["DETPOS"]] = Detector(row, col, rtype, label=hdu["DETPOS"])
-        
+    def get_slice(self, detectorLabel):
+        """Get array slice that covers the area of the detector.
+
+        Parameters
+        ----------
+        detectorLabel : `str`
+            Label of the detector in the focal plane.
+
+        Returns
+        -------
+        xSlice : `slice`
+            An edge-to-edge slice of the detector, i.e. [start:end], in x axis.
+        ySlice : `tuple`
+            An edge-to-edge slice of the detector, i.e. [start:end], in y axis.
+        """
+        coords = self.get_coords(detectorLabel)
+        return slice(*coords[0]), slice(*coords[1])
 
     def add_image(self, image, detectorLabel):
+        """Will place the given image at the location of the given detector
+        label.
+
+        Parameters
+        ----------
+        image : `np.array`
+            A 2D array representing the image that will be placed at the
+            location of the detector
+        detectorLabel : `str`
+            The label of the detector.
+
+        Note
+        ----
+        Depending on the scaling factor used, materializing the full focal
+        plane can require a lot of memory. The plane image will not be
+        materialized until the firt image is placed in it. 
+        """
         if self.planeImage is None:
             self.planeImage = np.zeros((self.nRows*self.scaledGappedX,
                                         self.nCols*self.scaledGappedY),
                                        dtype=np.uint8)
 
-        start, end = self.slice(detectorLabel)
+        start, end = self.get_slice(detectorLabel)
         self.planeImage[start, end] = image
 
 
@@ -204,8 +342,8 @@ class DecamFits(MultiExtensionFits):
 
         xdim = self.exts[0].header["NAXIS2"]
         ydim = self.exts[0].header["NAXIS1"]
-        largePlane = DecamFocalPlane(scaling=scaling[0], xdim=xdim, ydim=ydim)
-        smallPlane = DecamFocalPlane(scaling=scaling[1], xdim=xdim, ydim=ydim)
+        largePlane = DecamFocalPlane(scaling[0], (xdim, ydim))
+        smallPlane = DecamFocalPlane(scaling[1], (xdim, ydim))
 
         # TODO: a note to fix os.path dependency when transitioning to S3
         # and fix saving method from plt to boto3
