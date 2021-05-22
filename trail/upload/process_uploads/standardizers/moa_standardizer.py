@@ -15,6 +15,7 @@ __all__ = ["MoaStandardizer", ]
 class MoaStandardizer(HeaderStandardizer):
 
     name = "moa_standardizer"
+    priority = 1
 
     def __init__(self, header, **kwargs):
         super().__init__(header, **kwargs)
@@ -36,7 +37,6 @@ class MoaStandardizer(HeaderStandardizer):
         standardizedKeys["telescope"] = self.header["OBSTEL"].strip()
         standardizedKeys["instrument"] = self.header["CAMERA"].strip()
 
-        
         run = self.header["RUN"].strip()
         field = self.header["FIELD"].strip()
         filter = self.header["COLOUR"].strip()
@@ -68,7 +68,6 @@ class MoaStandardizer(HeaderStandardizer):
         standardizedKeys["physical_filter"] = self.header["COLOUR"].strip()
 
         return standardizedKeys
-
 
     def standardizeWcs(self, **kwargs):
         # no matter how hard I try, I do not understand how it would ever be

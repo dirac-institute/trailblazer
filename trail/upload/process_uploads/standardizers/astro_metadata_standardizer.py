@@ -1,6 +1,6 @@
 """
 Class that interfaces astro_metadata_translator module to standardize header
-metadata. 
+metadata.
 """
 
 
@@ -15,6 +15,7 @@ __all__ = ["AstroMetadataTranslator", ]
 class AstroMetadataTranslator(HeaderStandardizer):
 
     name = "astro_metadata_translator"
+    priority = 2
 
     def __init__(self, header, filename=None, **kwargs):
         super().__init__(header, **kwargs)

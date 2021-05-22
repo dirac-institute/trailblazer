@@ -46,6 +46,14 @@ class HeaderStandardizer(ABC):
     standardizers = dict()
     """All registered header standardizers."""
 
+    name = None
+    """Standardizer's name. Only named standardizers will be registered."""
+
+    priority = 0
+    """Priority. Standardizers with high priority are prefered over
+    standardizers with low priority when processing header metadata.
+    """
+
     @abstractmethod
     def __init__(self, header, **kwargs):
         self.header = header
@@ -186,12 +194,23 @@ class HeaderStandardizer(ABC):
         ValueError
             None of the registered processors can process the  upload.
         """
-        for standardizerCls in cls.standardizers.values():
-            if standardizerCls.canStandardize(header, **kwargs):
-                return standardizerCls
+        standardizers = []
+        for standardizer in cls.standardizers.values():
+            if standardizer.canStandardize(header):
+                standardizers.append(standardizer)
+        standardizers.sort(key=lambda standardizer: standardizer.priority, reverse=True)
 
-        raise ValueError("None of the known standardizers can handle this header.\n "
-                         f"Known standardizers: {list(cls.standardizers.keys())}")
+        if standardizers:
+            if len(standardizers) > 1:
+                # I think this should never be an issue really, but just in case
+                names = [proc.name for proc in standardizers]
+                warnings.warn("Multiple standardizers declared ability to process "
+                              f"the given upload: {names}. \n Using {names[-1]} "
+                              "to process FITS.")
+            return standardizers[0]
+        else:
+            raise ValueError("None of the known standardizers can handle this upload.\n "
+                             f"Known standardizers: {list(cls.standardizers.keys())}")
 
     @classmethod
     def fromHeader(cls, header, **kwargs):

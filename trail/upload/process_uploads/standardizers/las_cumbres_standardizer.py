@@ -13,6 +13,7 @@ __all__ = ["LasCumbresStandardizer", ]
 class LasCumbresStandardizer(HeaderStandardizer):
 
     name = "las_cumbres_standardizer"
+    priority = 1
 
     def __init__(self, header, **kwargs):
         super().__init__(header, **kwargs)

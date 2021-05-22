@@ -270,6 +270,7 @@ class DecamFocalPlane:
 class DecamFits(MultiExtensionFits):
 
     name = "DECamCommunityFits"
+    priority = 2
 
     def __init__(self, upload):
         super().__init__(upload)

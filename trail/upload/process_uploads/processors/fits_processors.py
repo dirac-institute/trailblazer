@@ -38,9 +38,6 @@ class FitsProcessor(UploadProcessor):
             Uploaded file.
     """
 
-    #name = "FitsProcessor"
-    #"""Processor's name."""
-
     extensions = [".fit", ".fits", ".fits.fz"]
     """File extensions this processor can handle."""
 
@@ -220,6 +217,7 @@ class FitsProcessor(UploadProcessor):
 class SingleExtensionFits(FitsProcessor):
 
     name = "SingleExtensionFits"
+    priority = 1
 
     def __init__(self, upload):
         super().__init__(upload)
@@ -255,13 +253,14 @@ class SingleExtensionFits(FitsProcessor):
 
     def storeThumbnails(self):
         large, small = self._createThumbnails(self._upload.basename, self.imageData)
-        plt.imsave(small["savepath"], small["thumb"])
-        plt.imsave(large["savepath"], large["thumb"])
+        plt.imsave(small["savepath"], small["thumb"], pil_kwargs={"quality": 10})
+        plt.imsave(large["savepath"], large["thumb"], pil_kwargs={"quality": 30})
 
 
 class MultiExtensionFits(FitsProcessor):
 
     name = "MultiExtensionFits"
+    priority = 1
 
     def __init__(self, upload):
         super().__init__(upload)
@@ -282,14 +281,13 @@ class MultiExtensionFits(FitsProcessor):
 
     @staticmethod
     def _isImageLikeHDU(hdu):
-        if not any((isinstance(hdu, CompImageHDU),
-                    isinstance(hdu, PrimaryHDU),
+        if not any((isinstance(hdu, CompImageHDU), isinstance(hdu, PrimaryHDU),
                     isinstance(hdu, ImageHDU))):
             return False
 
-        # Lets be reasonable, here - people store all kind of stuff even in
-        # ImageHDUs, let's make sure we don't crash the server by saving 120k x
-        # 8000k table disguised as an image (I'm looking at you SDSS!)
+        # People store all kind of stuff even in ImageHDUs, let's make sure we
+        # don't crash the server by saving 120k x 8000k table disguised as an
+        # image (I'm looking at you SDSS!)
         if hdu.data is None:
             return False
 

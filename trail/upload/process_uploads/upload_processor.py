@@ -23,6 +23,14 @@ class UploadProcessor(ABC):
     processors = dict()
     """All registered upload processing classes."""
 
+    name = None
+    """Processor's name. Only named processors will be registered."""
+
+    priority = 0
+    """Priority. Processors with high priority are prefered over processors
+    with low priority when processing an upload.
+    """
+
     media_root = settings.MEDIA_ROOT
     """Root of the location where thumbnails will be stored."""
 
@@ -59,7 +67,9 @@ class UploadProcessor(ABC):
 
     @classmethod
     def getProcessor(cls, upload):
-        """Get the processor class that can handle given upload.
+        """Get the processor class that can handle given upload. If multiple
+        processors declare the ability to process the given upload the
+        processor with highest prirority is selected.
 
         Parameters
         ----------
@@ -80,6 +90,7 @@ class UploadProcessor(ABC):
         for processor in cls.processors.values():
             if processor.canProcess(upload):
                 processors.append(processor)
+        processors.sort(key=lambda processor: processor.priority, reverse=True)
 
         if processors:
             if len(processors) > 1:
@@ -88,7 +99,7 @@ class UploadProcessor(ABC):
                 warnings.warn("Multiple processors declared ability to process "
                               f"the given upload: {names}. \n Using {names[-1]} "
                               "to process FITS.")
-            return processors[-1]
+            return processors[0]
         else:
             raise ValueError("None of the known processors can handle this upload.\n "
                              f"Known processors: {list(cls.processors.keys())}")
