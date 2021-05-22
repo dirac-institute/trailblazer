@@ -8,7 +8,7 @@ from django.test import TestCase
 
 from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
-from upload.process_uploads.processors.fits_processors import FitsProcessor
+from upload.process_uploads.fits_processor import FitsProcessor
 
 
 TESTDIR = os.path.abspath(os.path.dirname(__file__))

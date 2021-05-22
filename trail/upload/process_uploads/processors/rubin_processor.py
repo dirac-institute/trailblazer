@@ -9,8 +9,7 @@ variance plane data.
 We don't want to process variance or mask planes.
 """
 
-from upload.process_uploads.processors.fits_processors import MultiExtensionFits
-from upload.process_uploads.header_standardizer import HeaderStandardizer
+from upload.process_uploads.processors import MultiExtensionFits
 
 
 __all__ = ["RubinCalexpFits", ]
@@ -23,9 +22,6 @@ class RubinCalexpFits(MultiExtensionFits):
 
     def __init__(self, upload):
         super().__init__(upload)
-        self.primary = self.hdulist["PRIMARY"].header
-        self.standardizer = HeaderStandardizer.fromHeader(self.primary,
-                                                          filename=upload.filename)
         # this is the image header
         self.exts = [self.hdulist[1], ]
 

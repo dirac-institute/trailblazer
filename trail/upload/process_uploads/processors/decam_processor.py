@@ -15,9 +15,7 @@ from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-from upload.process_uploads.processors.fits_processors import MultiExtensionFits
-from upload.process_uploads.header_standardizer import HeaderStandardizer
+from .multi_extension_fits import MultiExtensionFits
 
 
 __all__ = ["DecamFits", ]
@@ -274,7 +272,6 @@ class DecamFits(MultiExtensionFits):
 
     def __init__(self, upload):
         super().__init__(upload)
-
         # Override the default processed exts to filter only science images
         # from all image-like exts, ignoring focus and guider chips.
         self.exts = self._getScienceImages(self.exts)
