@@ -22,7 +22,7 @@ class RubinCalexpFits(MultiExtensionFits):
 
     def __init__(self, upload):
         super().__init__(upload)
-        # this is the image header
+        # this is the only image header
         self.exts = [self.hdulist[1], ]
 
     @classmethod

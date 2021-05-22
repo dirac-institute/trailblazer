@@ -67,20 +67,6 @@ class MultiExtensionFits(FitsProcessor):
     def standardizeHeaderMetadata(self):
         return self.standardizer.standardizeMetadata()
 
-    def standardizeHeader(self, short=True):
-        standardizedWcs = {"wcs" : self.standardizeWcs()}
-        standardizedMetadata = {"metadata" : self.standardizeHeaderMetadata()}
-
-        if short:
-            standardizedMetadata.update(standardizedWcs)
-            return standardizedMetadata
-        else:
-            standardizedHeader = {}
-            for wcs in standardizedWcs["wcs"].values():
-                standardizedHeader[key] = dict(standardizedMetadata["metadata"],
-                                               **wcs)
-            return standardizedHeader
-
     def storeThumbnails(self):
         for i, ext in enumerate(self.exts):
             large, small = self._createThumbnails(self._upload.basename + f"_ext{i}",

@@ -34,19 +34,11 @@ class SingleExtensionFits(FitsProcessor):
     def standardizeHeaderMetadata(self):
         return self.standardizer.standardizeMetadata()
 
-    def standardizeHeader(self, short=True):
-        standardizedWcs = {"wcs" : self.standardizeWcs()}
-        standardizedMetadata = {"metadata" : self.standardizeHeaderMetadata()}
-        if short:
-            standardizedMetadata.update(standardizedWcs)
-        else:
-            standardizedMetadata = dict(standardizedMetadata["metadata"],
-                                        **standardizedWcs["wcs"])
-        return standardizedMetadata
-
     @transaction.atomic
-    def storeHeaders(self, short=True):
-        frame = Frame(**self.standardizeHeader(short=False))
+    def storeHeaders(self):
+        header = self.standardizeHeader()
+        flattened = dict(**header["metadata"], **header["wcs"])
+        frame = Frame(**flattened)
         frame.save()
 
     def storeThumbnails(self):

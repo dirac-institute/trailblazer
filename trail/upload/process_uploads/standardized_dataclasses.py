@@ -121,48 +121,32 @@ StandardizedMetadataKeys = make_dataclass("StandardizedMetadataKeys",
 class StandardizedHeaderKeys:
     metadata: StandardizedMetadataKeys = None
     wcs: list[StandardizedWcsKeys] = field(default_factory=list)
-    isMulitExt: InitVar[bool] = False
 
     @classmethod
-    def fromDict(cls, data, isMultiExt=False):
+    def fromDict(cls, data):
         meta, wcs = None, []
+        if "metadata" in data and "wcs" in data:
+            meta = StandardizedMetadataKeys(**data["metadata"])
 
-        if isMultiExt:
-            # check if we were given long-format standardized header. In short
-            # format, metadata and WCS data are separate. In long format they
-            # are combined for each standardized header
-            if "metadata" in data and "wcs" in data:
-                # in short format, with mutli-ext, wcs is a dict keys of which
-                # are indices of EXTs and values are standardized keys.
-                meta = StandardizedMetadataKeys(**data["metadata"])
-
-                # sometimes multiExt Fits have only 1 valid image extension
-                # otherwsie we expect a list.
-                if isinstance(data["wcs"], dict):
-                    wcs.append(StandardizedWcsKeys(**data["wcs"]))
-                else:
-                    for ext in data["wcs"]:
-                        wcs.append(StandardizedWcsKeys(**ext))
+            # sometimes multiExt Fits have only 1 valid image extension
+            # otherwsie we expect a list.
+            if isinstance(data["wcs"], dict):
+                wcs.append(StandardizedWcsKeys(**data["wcs"]))
             else:
-                # in long format, with multi-ext, keys are indices of EXTs and
-                # values contain both meta and wcs keys.
-                for key, val in data.items():
-                    wcs.append(StandardizedWcsKeys.fromDictSubset(val))
-                meta = StandardizedMetadataKeys.fromDictSubset(val)
+                for ext in data["wcs"]:
+                    wcs.append(StandardizedWcsKeys(**ext))
         else:
-            if "metadata" in data and "wcs" in data:
-                # short format again
-                meta = StandardizedMetadataKeys(**data["metadata"])
-                wcs = StandardizedWcsKeys(**data["wcs"])
-            else:
-                # long format
-                meta = StandardizedMetadataKeys.fromDictSubset(data)
-                wcs = StandardizedWcsKeys.fromDictSubset(data)
+            meta = StandardizedMetadataKeys.fromDictSubset(data)
+            wcs = StandardizedWcsKeys.fromDictSubset(data)
 
         if type(wcs) != list:
             wcs = [wcs, ]
 
         return cls(metadata=meta, wcs=wcs)
+
+    @property
+    def isMultiExt(self):
+        return len(self.wcs) > 1
 
     def _dataToComponent(self, data, component):
         compValue = None
@@ -213,19 +197,11 @@ class StandardizedHeaderKeys:
 
         return True
 
-    def toDict(self, short=True):
+    def toDict(self):
         if self.isMultiExt:
-            wcsDicts = {}
-            for i, wcs in enumerate(self.wcs):
-                pass
-        if short:
-            standardizedMetadata.update(standardizedWcs)
-            return standardizedMetadata
+            wcsDicts = {"wcs": [wcs.toDict() for wcs in self.wcs]}
         else:
-            standardizedHeader = {}
-            for key, val in standardizedWcs.values():
-                standardizedHeader[key] = dict(standardizedMetadata["primary"],
-                                               **val)
-            return standardizedHeader
-
-
+            wcsDicts = {"wcs": self.wcs[0].toDict()}
+        metadataDict = {"metadata": self.metadata.toDict()}
+        metadataDict.update(wcsDicts)
+        return metadataDict

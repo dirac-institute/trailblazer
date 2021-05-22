@@ -175,18 +175,10 @@ class FitsProcessor(UploadProcessor):
         raise NotImplemented()
 
     @abstractmethod
-    def standardizeHeader(self, short=True):
+    def standardizeHeader(self):
         """Convenience function that standardizes the WCS and header metadata
         information and returns a dictionary of standardized metadata and wcs
         keys.
-
-        Parameters
-        ----------
-        short : `bool`, optional
-            When dealing with FITS files with multiple extensions will inject
-            the shared header metadata into each standardized WCS dictionary.
-            Otherwise, the long format is used, which separates the metadata
-            and WCS data. Short format is used by default.
 
         Returns
         -------
@@ -194,7 +186,8 @@ class FitsProcessor(UploadProcessor):
             Dictionary containing standardized header metadata, per FITS file,
             and standardized WCS data, per image-like header in the FITS file.
         """
-        raise NotImplemented()
+        return {"metadata": self.standardizeHeaderMetadata(),
+                "wcs": self.standardizeWcs()}
 
     @abstractmethod
     def storeHeaders(self):

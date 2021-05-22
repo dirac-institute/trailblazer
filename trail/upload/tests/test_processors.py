@@ -136,8 +136,8 @@ class UploadProcessorTestCase(TestCase):
             with self.subTest(fitsname=fits.filename + " PROCESSING"):
                 produced = fitsProcessor.standardizeHeader()
 
-            expected = StandardizedHeaderKeys.fromDict(data, fitsProcessor.isMultiExt)
-            produced = StandardizedHeaderKeys.fromDict(produced, fitsProcessor.isMultiExt)
+            expected = StandardizedHeaderKeys.fromDict(data)
+            produced = StandardizedHeaderKeys.fromDict(produced)
 
             with self.subTest(fitsname=fits.filename + " STANDARDIZE"):
                 self.assertTrue(produced.isCloseTo(expected))
@@ -164,4 +164,3 @@ class UploadProcessorTestCase(TestCase):
         small = os.path.join(self.tmpTestDir, fits.basename+'_small.jpg')
         self.assertTrue(os.path.exists(large))
         self.assertTrue(os.path.exists(small))
-
