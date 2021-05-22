@@ -60,8 +60,6 @@ class StandardizedKeysMixin:
 
     @classmethod
     def fromDictSubset(cls, data):
-        """
-        """
         return cls(**get_dict_subset(data, cls.keys))
 
     def values(self):
@@ -76,6 +74,7 @@ class StandardizedKeysMixin:
             if not (getattr(self, key) and type(getattr(self, key)) == keytype):
                 return False
         return True
+
 
 @dataclass(order=True)
 class StandardizedWcsBase(ABC, StandardizedKeysMixin):
@@ -127,7 +126,6 @@ class StandardizedHeaderKeys:
     @classmethod
     def fromDict(cls, data, isMultiExt=False):
         meta, wcs = None, []
-        #data = data.copy()
 
         if isMultiExt:
             # check if we were given long-format standardized header. In short
@@ -137,11 +135,17 @@ class StandardizedHeaderKeys:
                 # in short format, with mutli-ext, wcs is a dict keys of which
                 # are indices of EXTs and values are standardized keys.
                 meta = StandardizedMetadataKeys(**data["metadata"])
-                for ext in data["wcs"]:
-                    wcs.append(StandardizedWcsKeys(**ext))
+
+                # sometimes multiExt Fits have only 1 valid image extension
+                # otherwsie we expect a list.
+                if isinstance(data["wcs"], dict):
+                    wcs.append(StandardizedWcsKeys(**data["wcs"]))
+                else:
+                    for ext in data["wcs"]:
+                        wcs.append(StandardizedWcsKeys(**ext))
             else:
                 # in long format, with multi-ext, keys are indices of EXTs and
-                # values contain both meta and wcs keys. 
+                # values contain both meta and wcs keys.
                 for key, val in data.items():
                     wcs.append(StandardizedWcsKeys.fromDictSubset(val))
                 meta = StandardizedMetadataKeys.fromDictSubset(val)
@@ -210,6 +214,10 @@ class StandardizedHeaderKeys:
         return True
 
     def toDict(self, short=True):
+        if self.isMultiExt:
+            wcsDicts = {}
+            for i, wcs in enumerate(self.wcs):
+                pass
         if short:
             standardizedMetadata.update(standardizedWcs)
             return standardizedMetadata

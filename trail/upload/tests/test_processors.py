@@ -110,6 +110,14 @@ class UploadProcessorTestCase(TestCase):
             with self.subTest(filename=fits.filename):
                 self.assertTrue(FitsProcessor.canProcess(fits))
 
+    def testProcessorMatch(self):
+        """Tests whether the correct processors are matched to correct files."""
+        for fits in self.fits:
+            expected = self.standardizedAnswers[fits.filename]
+            with self.subTest(fitsname=fits.filename):
+                fitsProcessor = UploadProcessor.fromUpload(fits)
+                self.assertEqual(fitsProcessor.name, expected["processor"])
+
     def testStandardize(self):
         """Tests whether WCS and Header Metadata are standardized as expected."""
 
@@ -117,10 +125,9 @@ class UploadProcessorTestCase(TestCase):
 
         for fits in self.fits:
             data = self.standardizedAnswers[fits.filename]
-            # TODO: make all fits pass tests. Live with this crutch for now
             # TODO: Do the math how much cartesian unit circle coordinates move
             # on the sky and then fix the isClose test to something reasonable
-            if not data["runTest"]:
+            if not data["runProcessing"]:
                 continue
 
             with self.subTest(fitsname=fits.filename + " INSTANTIATION"):
@@ -129,11 +136,11 @@ class UploadProcessorTestCase(TestCase):
             with self.subTest(fitsname=fits.filename + " PROCESSING"):
                 produced = fitsProcessor.standardizeHeader()
 
-            expected = StandardizedHeaderKeys.fromDict(data["data"], fitsProcessor.isMultiExt)
+            expected = StandardizedHeaderKeys.fromDict(data, fitsProcessor.isMultiExt)
             produced = StandardizedHeaderKeys.fromDict(produced, fitsProcessor.isMultiExt)
 
             with self.subTest(fitsname=fits.filename + " STANDARDIZE"):
-                    self.assertTrue(produced.isCloseTo(expected))
+                self.assertTrue(produced.isCloseTo(expected))
 
     def testStoreHeaders(self):
         """Tests whether store header executes on an SDSS frame; this verifies
@@ -153,8 +160,8 @@ class UploadProcessorTestCase(TestCase):
         fitsProcessor = UploadProcessor.fromUpload(fits)
         fitsProcessor.storeThumbnails()
 
-        large = os.path.join(self.tmpTestDir, fits.basename+'_large.png')
-        small = os.path.join(self.tmpTestDir, fits.basename+'_small.png')
+        large = os.path.join(self.tmpTestDir, fits.basename+'_large.jpg')
+        small = os.path.join(self.tmpTestDir, fits.basename+'_small.jpg')
         self.assertTrue(os.path.exists(large))
         self.assertTrue(os.path.exists(small))
 
