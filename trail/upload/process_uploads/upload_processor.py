@@ -126,7 +126,7 @@ class UploadProcessor(ABC):
         processorCls = cls.getProcessor(upload)
         return processorCls(upload)
 
-    def process(self):#, upload):
+    def process(self):
         """Process the given upload.
 
         Parameters

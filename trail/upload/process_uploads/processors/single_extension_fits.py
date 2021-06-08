@@ -20,7 +20,7 @@ class SingleExtensionFits(FitsProcessor):
     priority = 1
 
     def __init__(self, upload):
-        super().__init__(upload)    
+        super().__init__(upload)
         self.imageData = self.hdulist["PRIMARY"].data
 
     @classmethod
