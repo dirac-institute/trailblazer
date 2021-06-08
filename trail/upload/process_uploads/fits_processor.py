@@ -174,7 +174,6 @@ class FitsProcessor(UploadProcessor):
         # All Header operations are performed by Standardizers.
         raise NotImplemented()
 
-    @abstractmethod
     def standardizeHeader(self):
         """Convenience function that standardizes the WCS and header metadata
         information and returns a dictionary of standardized metadata and wcs
