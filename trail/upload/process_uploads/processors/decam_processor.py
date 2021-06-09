@@ -23,29 +23,29 @@ __all__ = ["DecamFits", ]
 
 row_layout = {
     1:  {"indices": ( (2, 0),  (3, 0),  (4, 0)),
-         "names":   ( "S31",   "S30",   "S29"), "rtype": "even"},
+         "names":   ( "S29",   "S30",   "S31"), "rtype": "even"},
     2:  {"indices": ( (1, 1),  (2, 1),  (3, 1),  (4, 1)),
-         "names":   ( "S28",   "S27",   "S26",   "S25"), "rtype": "odd"},
+         "names":   ( "S25",   "S26",   "S27",   "S28"), "rtype": "odd"},
     3:  {"indices": ( (1, 2),  (2, 2),  (3, 2),  (4, 2), (5, 2)),
-         "names":   ( "S24",   "S23",   "S22",   "S21",  "S20"), "rtype": "even"},
+         "names":   ( "S20",   "S21",   "S22",   "S23",  "S24"), "rtype": "even"},
     4:  {"indices": ( (0, 3),  (1, 3),  (2, 3),  (3, 3), (4, 3), (5, 3)),
-         "names":   ( "S19",   "S18",   "S17",   "S16",  "S15",  "S14"), "rtype": "odd"},
+         "names":   ( "S14",   "S15",   "S16",   "S17",  "S18",  "S19"), "rtype": "odd"},
     5:  {"indices": ( (0, 4),  (1, 4),  (2, 4),  (3, 4), (4, 4), (5, 4)),
-         "names":   ( "S13",   "S12",   "S11",   "S10",  "S9",  "S8"), "rtype": "odd"},
+         "names":   ( "S8",   "S9",   "S10",   "S11",  "S12",  "S13"), "rtype": "odd"},
     6:  {"indices": ( (0, 5),  (1, 5),  (2, 5),  (3, 5), (4, 5), (5, 5), (6, 5)),
-         "names":   ( "S7",    "S6",    "S5",    "S4",   "S3",   "S2",   "S1"), "rtype":"even"},
+         "names":   ( "S1",    "S2",    "S3",    "S4",   "S5",   "S6",   "S7"), "rtype":"even"},
     7:  {"indices": ( (0, 6),  (1, 6),  (2, 6),  (3, 6), (4, 6), (5, 6), (6, 6)),
-         "names":   ( "N7",    "N6",    "N5",    "N4",   "N3",   "N2",   "N1"), "rtype":"even"},
+         "names":   ( "N1",    "N2",    "N3",    "N4",   "N5",   "N6",   "N7"), "rtype":"even"},
     8:  {"indices": ( (0, 7),  (1, 7),  (2, 7),  (3, 7), (4, 7), (5, 7)),
-         "names":   ( "N13",   "N12",   "N11",   "N10",  "N9",  "N8"),"rtype": "odd"},
+         "names":   ( "N8",   "N9",   "N10",   "N11",  "N12",  "N13"),"rtype": "odd"},
     9:  {"indices": ( (0, 8),  (1, 8),  (2, 8),  (3, 8), (4, 8), (5, 8)),
-         "names":   ( "N19",   "N18",   "N17",   "N16",  "N15",  "N14"),"rtype": "odd"},
+         "names":   ( "N14",   "N15",   "N16",   "N17",  "N18",  "N19"),"rtype": "odd"},
     10: {"indices": ( (1, 9),  (2, 9),  (3, 9),  (4, 9), (5, 9)),
-         "names":   ( "N24",   "N23",   "N22",   "N21",  "N20"), "rtype": "even"},
+         "names":   ( "N20",   "N21",   "N22",   "N23",  "N24"), "rtype": "even"},
     11: {"indices": ((1, 10), (2, 10), (3, 10), (4, 10)),
-         "names":   ( "N28",   "N27",   "N26",   "N25"), "rtype": "odd"},
+         "names":   ( "N25",   "N26",   "N27",   "N28"), "rtype": "odd"},
     12: {"indices": ((2, 11), (3, 11), (4, 11)),
-         "names":   ( "N31",   "N30",   "N29"), "rtype": "even"},
+         "names":   ( "N29",   "N30",   "N31"), "rtype": "even"},
 }
 """A row-based layour of the DECam focal plane science detectors."""
 
@@ -254,7 +254,7 @@ class DecamFocalPlane:
         ----
         Depending on the scaling factor used, materializing the full focal
         plane can require a lot of memory. The plane image will not be
-        materialized until the firt image is placed in it. 
+        materialized until the firt image is placed in it.
         """
         if self.planeImage is None:
             self.planeImage = np.zeros((self.nRows*self.scaledGappedX,
@@ -324,7 +324,7 @@ class DecamFits(MultiExtensionFits):
     def _createFocalPlaneImage(self, focalPlane):
         for ext in self.exts:
             # no matter how painful this is, if we don't, normalize will mutate
-            # in place....
+            # in science data in place....
             image = ext.data.copy()
             image = self.normalizeImage(image)
 
