@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 
+from .config import DbAuth, SiteConfig
+
+siteConfig = SiteConfig.fromYaml()
+dbConfig = DbAuth.fromYaml()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,14 +29,7 @@ REPO_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-home = str(Path.home())
-try:
-    secret_key_file = os.path.join(home, '.trail/secret_key.txt')
-    with open(secret_key_file) as f:
-        SECRET_KEY = f.read().strip()
-except FileNotFoundError:
-    print('Unable to find secret key file {secret_key_file}.')
-
+SECRET_KEY = siteConfig.secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
