@@ -39,10 +39,9 @@ class AstroMetadataTranslator(HeaderStandardizer):
         standardizedKeys["obs_lat"] = location.lat.value
         standardizedKeys["obs_height"] = location.height.value
 
-        # translator names are easy everyday names
-        # the rest I don't know how they'll vary over different
-        # instruments but I can assume potentially by a lot?
-        standardizedKeys["metadata_translator_name"] = self.obsInfo._translator.name
+        # default name behaviour is not followed, we append the translator's
+        # name to the standardizer name instead for more verbosity
+        standardizedKeys["standardizer_name"] = f"{self.name}.{self.obsInfo._translator.name}"
         standardizedKeys["telescope"] = self.obsInfo.telescope
         standardizedKeys["instrument"] = self.obsInfo.instrument
         standardizedKeys["science_program"] = self.obsInfo.science_program

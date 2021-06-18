@@ -270,8 +270,8 @@ class DecamFits(MultiExtensionFits):
     name = "DECamCommunityFits"
     priority = 2
 
-    def __init__(self, upload):
-        super().__init__(upload)
+    def __init__(self, uploadInfo, uploadedFile):
+        super().__init__(uploadInfo, uploadedFile)
         # Override the default processed exts to filter only science images
         # from all image-like exts, ignoring focus and guider chips.
         self.exts = self._getScienceImages(self.exts)
@@ -288,8 +288,8 @@ class DecamFits(MultiExtensionFits):
         return exts
 
     @classmethod
-    def canProcess(cls, upload, returnHdulist=False):
-        canProcess, hdulist = super().canProcess(upload, returnHdulist=True)
+    def canProcess(cls, uploadedFile, returnHdulist=False):
+        canProcess, hdulist = super().canProcess(uploadedFile, returnHdulist=True)
 
         # Data examples I have seen Community Pipeines exclusively utilize the
         # CompImageHDU headers and at any time in history there was at most 1
@@ -345,8 +345,8 @@ class DecamFits(MultiExtensionFits):
 
         # TODO: a note to fix os.path dependency when transitioning to S3
         # and fix saving method from plt to boto3
-        smallPath = os.path.join(self.media_root, self._upload.basename+'_plane_small.jpg')
-        largePath = os.path.join(self.media_root, self._upload.basename+'_plane_large.jpg')
+        smallPath = os.path.join(self.media_root, self.uploadedFile.basename+'_plane_small.jpg')
+        largePath = os.path.join(self.media_root, self.uploadedFile.basename+'_plane_large.jpg')
 
         smallThumb = self._createFocalPlaneImage(smallPlane)
         plt.imsave(smallPath, smallThumb.planeImage.T, pil_kwargs={"quality":30})

@@ -1,13 +1,12 @@
 reduced_HSCA21787010.fits:
   runProcessing:
     True
-  processor:
-    SingleExtensionFits
   metadata:
     obs_lon: -155.476667
     obs_lat: 19.825555999999995
     obs_height: 4139.000000000479
-    metadata_translator_name: 'HSC'
+    standardizer_name: 'astro_metadata_translator.HSC'
+    processor_name: 'SingleExtensionFits'
     telescope: 'Subaru'
     instrument: 'HSC'
     science_program: 'o20312'
@@ -26,13 +25,12 @@ reduced_HSCA21787010.fits:
 reduced_frame-i-008108-5-0025.fits:
   runProcessing:
     True
-  processor:
-    SingleExtensionFits
   metadata:
     obs_lon: -105.82000000000005
     obs_lat: 32.78000000000001
     obs_height: 2797.9999999996007
-    metadata_translator_name: 'SDSS'
+    standardizer_name: 'astro_metadata_translator.SDSS'
+    processor_name: 'SingleExtensionFits'
     telescope: 'SDSS 2.5m'
     instrument: 'Imager on SDSS 2.5m'
     science_program: '73 S'
@@ -51,13 +49,12 @@ reduced_frame-i-008108-5-0025.fits:
 reduced_calexp-0941420_23.fits:
   runProcessing:
     True
-  processor:
-    RubinCalexpFits
   metadata:
     obs_lon: 70.81489
     obs_lat: -30.166059999999995
     obs_height: 2215.000000000556
-    metadata_translator_name: 'DECam'
+    standardizer_name: 'astro_metadata_translator.DECam'
+    processor_name: 'RubinCalexpFits'
     telescope: 'CTIO 4.0-m telescope'
     instrument: 'DECam'
     science_program: '2019A-0305'
@@ -76,13 +73,12 @@ reduced_calexp-0941420_23.fits:
 reduced_c4d_200306_000415_ori.fits.fz:
   runProcessing:
     True
-  processor:
-    DECamCommunityFits
   metadata:
     obs_lon: -70.81489
     obs_lat: -30.166059999999998
     obs_height: 2215.0000000005593
-    metadata_translator_name: 'DECam'
+    standardizer_name: 'astro_metadata_translator.DECam'
+    processor_name: 'DECamCommunityFits'
     telescope: 'CTIO 4.0-m telescope'
     instrument: 'DECam'
     science_program: '2019A-0305'
@@ -528,12 +524,12 @@ reduced_c4d_200306_000415_ori.fits.fz:
 reduced_A3671-C2018_F4-R-3.fit:
   runProcessing:
     True
-  processor:
-    SingleExtensionFits
   metadata:
     obs_lon: -170.467
     obs_lat: -43.983
     obs_height: 1029.0
+    standardizer_name: 'moa_standardizer'
+    processor_name: 'SingleExtensionFits'
     telescope: 'MOA-II telescope'
     instrument: 'MOA-cam3'
     science_program: 'A3671-C2018_F4-R-3'
@@ -552,12 +548,12 @@ reduced_A3671-C2018_F4-R-3.fit:
 reduced_bi327715.fits:
   runProcessing:
     True
-  processor:
-    SingleExtensionFits
   metadata:
     obs_lon: -70.804627
     obs_lat: -30.1676541
     obs_height: 2201.0
+    standardizer_name: 'las_cumbres_standardizer'
+    processor_name: 'SingleExtensionFits'
     telescope: '0m4-18'
     instrument: 'ff09'
     science_program: 'ASAS'

@@ -12,7 +12,7 @@ from astropy.io.fits.hdu.image import PrimaryHDU
 from astropy.io.fits.hdu.compressed import CompImageHDU
 
 from upload.process_uploads.fits_processor import FitsProcessor
-from upload.models import Frame
+from upload.models import Metadata, Wcs
 
 
 __all__ = ["MultiExtensionFits", ]
@@ -23,8 +23,8 @@ class MultiExtensionFits(FitsProcessor):
     name = "MultiExtensionFits"
     priority = 1
 
-    def __init__(self, upload):
-        super().__init__(upload)
+    def __init__(self, uploadInfo, uploadedFile):
+        super().__init__(uploadInfo, uploadedFile)
         self.exts = []
         for hdu in self.hdulist:
             if self._isImageLikeHDU(hdu):
@@ -51,8 +51,8 @@ class MultiExtensionFits(FitsProcessor):
         return True
 
     @classmethod
-    def canProcess(cls, upload, returnHdulist=False):
-        canProcess, hdulist = super().canProcess(upload, returnHdulist=True)
+    def canProcess(cls, uploadedFile, returnHdulist=False):
+        canProcess, hdulist = super().canProcess(uploadedFile, returnHdulist=True)
         canProcess = canProcess and cls._isMultiExtFits(hdulist)
         if returnHdulist:
             return canProcess, hdulist
@@ -69,12 +69,18 @@ class MultiExtensionFits(FitsProcessor):
 
     def storeThumbnails(self):
         for i, ext in enumerate(self.exts):
-            large, small = self._createThumbnails(self._upload.basename + f"_ext{i}",
+            large, small = self._createThumbnails(self.uploadedFile.basename + f"_ext{i}",
                                                   ext.data)
         plt.imsave(small["savepath"], small["thumb"])
         plt.imsave(large["savepath"], large["thumb"])
 
     @transaction.atomic
     def storeHeaders(self):
-        # TODO: need to standardize the schema to be able to implement this
-        pass
+        header = self.standardizeHeader()
+
+        self.uploadInfo.save()
+        meta = Metadata(upload_info=self.uploadInfo, **header["metadata"])
+        meta.save()
+
+        wcs = [Wcs(metadata=meta, **ext) for ext in header["wcs"]]
+        Wcs.objects.bulk_create(wcs)

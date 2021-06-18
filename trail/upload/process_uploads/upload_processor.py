@@ -8,8 +8,20 @@ import warnings
 
 from django.conf import settings
 
+from upload.models import UploadInfo
+from .upload_wrapper import TemporaryUploadedFileWrapper
 
-__all__ = ["UploadProcessor", ]
+
+__all__ = ["UploadProcessor", "get_ip"]
+
+
+def get_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 class UploadProcessor(ABC):
@@ -17,7 +29,10 @@ class UploadProcessor(ABC):
 
     Parameters
     ----------
-    uploadWrapper : `upload_wrapper.temporaryUploadedFileWrapper`
+    uploadInfo : `uploads.model.UploadInfo`
+        Object containing the time and date of upload and originating IP.
+    uploadedFile : `upload_wrapper.temporaryUploadedFileWrapper`
+        Uploaded file.
     """
 
     processors = dict()
@@ -35,8 +50,9 @@ class UploadProcessor(ABC):
     """Root of the location where thumbnails will be stored."""
 
     @abstractmethod
-    def __init__(self, uploadWrapper, *args, **kwargs):
-        self._upload = uploadWrapper
+    def __init__(self, uploadInfo, uploadedFile, *args, **kwargs):
+        self.uploadInfo = uploadInfo
+        self.uploadedFile = uploadedFile
 
     def __init_subclass__(cls, **kwargs):
         # Registers subclasses of this class with set `name` class parameters
@@ -48,13 +64,13 @@ class UploadProcessor(ABC):
 
     @classmethod
     @abstractmethod
-    def canProcess(self, upload):
+    def canProcess(self, uploadedFile):
         """Returns ``True`` when the processor knows how to process the given
         upload (file) type.
 
         Parameters
         ----------
-        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
+        uploadedFile : `upload_wrapper.TemporaryUploadedFileWrapper.
             Uploaded file.
 
         Returns
@@ -66,29 +82,29 @@ class UploadProcessor(ABC):
         raise NotImplemented()
 
     @classmethod
-    def getProcessor(cls, upload):
-        """Get the processor class that can handle given upload. If multiple
-        processors declare the ability to process the given upload the
+    def getProcessor(cls, uploadedFile):
+        """Get the processor class that can handle given file. If multiple
+        processors declare the ability to process the given file the
         processor with highest prirority is selected.
 
         Parameters
         ----------
-        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
+        uploadedFile : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
 
         Returns
         -------
         processor : `cls`
-            Processor class that can process the given upload.`
+            Processor class that can process the given upload.
 
         Raises
         ------
         ValueError
-            None of the registered processors can process the  upload.
+            None of the registered processors can process the  file.
         """
         processors = []
         for processor in cls.processors.values():
-            if processor.canProcess(upload):
+            if processor.canProcess(uploadedFile):
                 processors.append(processor)
         processors.sort(key=lambda processor: processor.priority, reverse=True)
 
@@ -105,36 +121,66 @@ class UploadProcessor(ABC):
                              f"Known processors: {list(cls.processors.keys())}")
 
     @classmethod
-    def fromUpload(cls, upload):
-        """Return an instantiated Processor that can process the upload.
+    def fromFileWrapper(cls, uploadedFile, ip=None):
+        """Return a single Processor that can process the file. If not given,
+        the origin of upload is assumed to be coming from a local server.
 
         Parameters
         ----------
-        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
+        uploadedFile : `upload_wrapper.TemporaryUploadedFileWrapper`
             Uploaded file.
+        ip : `str`, optional
+            Originating IP. Defaults to `localhost`.
 
         Returns
         -------
         processor : `object`
-            Instance of a Processor class that can process the given upload
+            Instance of a Processor class that can process the given upload.
 
         Raises
         ------
         ValueError
-            None of the registered processors can process the  upload.
+            None of the registered processors can process the upload.
         """
-        processorCls = cls.getProcessor(upload)
-        return processorCls(upload)
+        uploadInfo = UploadInfo() if ip is None else UploadInfo(ip=ip)
+        processorCls = cls.getProcessor(uploadedFile)
+        return processorCls(uploadInfo, uploadedFile)
 
-    def process(self):
-        """Process the given upload.
+    @classmethod
+    def fromRequest(cls, request):
+        """Return Processor(s) that can process the request. 
 
         Parameters
         ----------
-        upload : `upload_wrapper.TemporaryUploadedFileWrapper`
-            Uploaded file.
+        request : `django.requst.HttpRequest`
+            HTTP Request made to the server.
+
+        Returns
+        -------
+        processors : `list`
+            List of Processors that can process the files given in the request.
+
+        Raises
+        ------
+        ValueError
+            None of the registered processors can process one of the uploads.
         """
+        ip = get_ip(request)
+        uploadInfo = UploadInfo(ip=ip)
+
+        processors = []
+        for uploadedFile in request.FILES.getlist("file_field"):
+            uploadedFile = TemporaryUploadedFileWrapper(uploadedFile)
+            processorCls = cls.getProcessor(uploadedFile)
+            processors.append(processorCls(uploadInfo, uploadedFile))
+
+        return processors
+
+    def process(self):
+        """Process the given upload."""
         # TODO: get some error handling here
+        self.uploadInfo.save()
         self.storeHeaders()
         #self.detect_trails()
         self.storeThumbnails()
+        self.uploadedFile.save()

@@ -37,17 +37,18 @@ wcsAttributes = np.array([
                          dtype=dtype)
 
 metaAttrs = np.array([
-    ("obs_lon",                float, None, True,  True),
-    ("obs_lat",                float, None, True,  True),
-    ("obs_height",             float, None, True,  True),
-    ("telescope",                str, None, True,  False),
-    ("datetime_begin",           str, None, True,  False),
-    ("datetime_end",             str, None, True,  False),
-    ("metadata_translator_name", str, None, False, False),
-    ("instrument",               str, None, False, False),
-    ("science_program",          str, None, False, False),
-    ("exposure_duration",        str, None, False, False),
-    ("physical_filter",          str, None, False, False)],
+    ("obs_lon",           float, None, True,  True),
+    ("obs_lat",           float, None, True,  True),
+    ("obs_height",        float, None, True,  True),
+    ("telescope",          str, None, True,  False),
+    ("datetime_begin",     str, None, True,  False),
+    ("datetime_end",       str, None, True,  False),
+    ("processor_name",     str, None, False, False),
+    ("standardizer_name",  str, None, False, False),
+    ("instrument",         str, None, False, False),
+    ("science_program",    str, None, False, False),
+    ("exposure_duration",  str, None, False, False),
+    ("physical_filter",    str, None, False, False)],
                      dtype=dtype)
 
 

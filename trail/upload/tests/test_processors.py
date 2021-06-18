@@ -114,9 +114,9 @@ class UploadProcessorTestCase(TestCase):
         """Tests whether the correct processors are matched to correct files."""
         for fits in self.fits:
             expected = self.standardizedAnswers[fits.filename]
+            fitsProcessor = UploadProcessor.fromFileWrapper(fits)
             with self.subTest(fitsname=fits.filename):
-                fitsProcessor = UploadProcessor.fromUpload(fits)
-                self.assertEqual(fitsProcessor.name, expected["processor"])
+                self.assertEqual(fitsProcessor.name, expected["metadata"]["processor_name"])
 
     def testStandardize(self):
         """Tests whether WCS and Header Metadata are standardized as expected."""
@@ -131,7 +131,7 @@ class UploadProcessorTestCase(TestCase):
                 continue
 
             with self.subTest(fitsname=fits.filename + " INSTANTIATION"):
-                fitsProcessor = UploadProcessor.fromUpload(fits)
+                fitsProcessor = UploadProcessor.fromFileWrapper(fits)
 
             with self.subTest(fitsname=fits.filename + " PROCESSING"):
                 produced = fitsProcessor.standardizeHeader()
@@ -149,7 +149,7 @@ class UploadProcessorTestCase(TestCase):
         data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
-        fitsProcessor = UploadProcessor.fromUpload(fits)
+        fitsProcessor = UploadProcessor.fromFileWrapper(fits)
         fitsProcessor.storeHeaders()
 
     def testStoreThumbnails(self):
@@ -157,7 +157,7 @@ class UploadProcessorTestCase(TestCase):
         data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
-        fitsProcessor = UploadProcessor.fromUpload(fits)
+        fitsProcessor = UploadProcessor.fromFileWrapper(fits)
         fitsProcessor.storeThumbnails()
 
         large = os.path.join(self.tmpTestDir, fits.basename+'_large.jpg')

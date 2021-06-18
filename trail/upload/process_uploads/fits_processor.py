@@ -35,12 +35,12 @@ class FitsProcessor(UploadProcessor):
     extensions = [".fit", ".fits", ".fits.fz"]
     """File extensions this processor can handle."""
 
-    def __init__(self, upload):
-        super().__init__(upload)
-        self.hdulist = fits.open(self._upload.tmpfile.temporary_file_path())
+    def __init__(self, uploadInfo, uploadedFile):
+        super().__init__(uploadInfo, uploadedFile)
+        self.hdulist = fits.open(uploadedFile.tmpfile.temporary_file_path())
         self.primary = self.hdulist["PRIMARY"].header
         self.standardizer = HeaderStandardizer.fromHeader(self.primary,
-                                                          filename=upload.filename)
+                                                          filename=uploadedFile.filename)
         self.isMultiExt = len(self.hdulist) > 1
 
     @staticmethod
@@ -117,13 +117,13 @@ class FitsProcessor(UploadProcessor):
 
     @classmethod
     @abstractmethod
-    def canProcess(cls, upload, returnHdulist=False):
+    def canProcess(cls, uploadedFile, returnHdulist=False):
         # docstring inherited from baseclass; TODO: check it's True
         canProcess, hdulist = False, None
 
-        if upload.extension in cls.extensions:
+        if uploadedFile.extension in cls.extensions:
             try:
-                hdulist = fits.open(upload.tmpfile.temporary_file_path())
+                hdulist = fits.open(uploadedFile.tmpfile.temporary_file_path())
             except OSError:
                 # OSError - file is corrupted, or isn't a fits
                 # FileNotFoundError - upload is bad file, reraise!
@@ -179,13 +179,23 @@ class FitsProcessor(UploadProcessor):
         information and returns a dictionary of standardized metadata and wcs
         keys.
 
+        Inserts the `processor_name` or `standardizer_name` into the metadata,
+        if either key had not already been inserted by the processor or
+        standardizer.
+
         Returns
         -------
         standardizedHeader : `dict`
             Dictionary containing standardized header metadata, per FITS file,
             and standardized WCS data, per image-like header in the FITS file.
         """
-        return {"metadata": self.standardizeHeaderMetadata(),
+        meta = self.standardizeHeaderMetadata()
+        if "processor_name" not in meta:
+            meta["processor_name"] = self.name
+        if "standardizer_name" not in meta:
+            meta["standardizer_name"] = self.standardizer.name
+
+        return {"metadata": meta,
                 "wcs": self.standardizeWcs()}
 
     @abstractmethod

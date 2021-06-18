@@ -8,7 +8,7 @@ from django.db import transaction
 import matplotlib.pyplot as plt
 
 from upload.process_uploads.fits_processor import FitsProcessor
-from upload.models import Frame
+from upload.models import Metadata, Wcs
 
 
 __all__ = ["SingleExtensionFits", ]
@@ -19,13 +19,13 @@ class SingleExtensionFits(FitsProcessor):
     name = "SingleExtensionFits"
     priority = 1
 
-    def __init__(self, upload):
-        super().__init__(upload)
+    def __init__(self, uploadInfo, uploadedFile):
+        super().__init__(uploadInfo, uploadedFile)
         self.imageData = self.hdulist["PRIMARY"].data
 
     @classmethod
-    def canProcess(cls, upload):
-        canProcess, hdulist = super().canProcess(upload, returnHdulist=True)
+    def canProcess(cls, uploadedFile):
+        canProcess, hdulist = super().canProcess(uploadedFile, returnHdulist=True)
         return canProcess and not cls._isMultiExtFits(hdulist)
 
     def standardizeWcs(self):
@@ -37,11 +37,15 @@ class SingleExtensionFits(FitsProcessor):
     @transaction.atomic
     def storeHeaders(self):
         header = self.standardizeHeader()
-        flattened = dict(**header["metadata"], **header["wcs"])
-        frame = Frame(**flattened)
-        frame.save()
+
+        self.uploadInfo.save()
+        meta = Metadata(upload_info=self.uploadInfo, **header["metadata"])
+        meta.save()
+
+        wcs = Wcs(metadata=meta, **header["wcs"])
+        wcs.save()
 
     def storeThumbnails(self):
-        large, small = self._createThumbnails(self._upload.basename, self.imageData)
+        large, small = self._createThumbnails(self.uploadedFile.basename, self.imageData)
         plt.imsave(small["savepath"], small["thumb"], pil_kwargs={"quality": 10})
         plt.imsave(large["savepath"], large["thumb"], pil_kwargs={"quality": 30})

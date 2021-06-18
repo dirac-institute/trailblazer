@@ -20,14 +20,14 @@ class RubinCalexpFits(MultiExtensionFits):
     name = "RubinCalexpFits"
     priority = 2
 
-    def __init__(self, upload):
-        super().__init__(upload)
+    def __init__(self, uploadInfo, uploadedFile):
+        super().__init__(uploadInfo, uploadedFile)
         # this is the only image header
         self.exts = [self.hdulist[1], ]
 
     @classmethod
-    def canProcess(cls, upload, returnHdulist=False):
-        canProcess, hdulist = super().canProcess(upload, returnHdulist=True)
+    def canProcess(cls, uploadedFile, returnHdulist=False):
+        canProcess, hdulist = super().canProcess(uploadedFile, returnHdulist=True)
         # Unfortunately, there is no signature line left by Rubin pipeline,
         # so we are making a best guess estimate here.
         primary = hdulist["PRIMARY"].header
