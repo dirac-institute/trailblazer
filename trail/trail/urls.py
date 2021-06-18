@@ -24,6 +24,10 @@ urlpatterns = [
     path(r'gallery/', include('gallery.urls')),
     path(r'query/', include('query.urls')),
     path(r'upload/', include('upload.urls')),
-    re_path(r'^index/', TemplateView.as_view(template_name='index.html')),
-    re_path(r'^$', TemplateView.as_view(template_name='index.html')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    re_path(r'^about/', TemplateView.as_view(template_name='about.html')),
+    # in the new template the index is the gallery, we don't need so many apps
+    re_path(r'^index/', include('gallery.urls')),
+    re_path(r'^',  include('gallery.urls')),
+    # re_path(r'^index/', TemplateView.as_view(template_name='index.html')),
+    # re_path(r'^$', TemplateView.as_view(template_name='index.html')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

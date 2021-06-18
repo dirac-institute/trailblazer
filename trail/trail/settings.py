@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'upload',
     'query',
     'blazer',
+    'trail',
 ]
 
 MIDDLEWARE = [
