@@ -1,91 +1,81 @@
 <!DOCTYPE HTML>
 <!--
-	   Page creted from a modified template by HTML5 UP
+	   Page creted from a modified template 'Massively' by HTML5 UP
 	   html5up.net | @ajlkn
 	   Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 {% load static %}
 <html>
-    {% block head %}
     <head>
-        {% block head.content %}
-        <title>{% block head.title %} Trailblazer {% endblock %} </title>
+        {% block head %}
         <meta charset="utf-8" />
 		    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
 		    <noscript><link rel="stylesheet" href="{% static 'assets/css/noscript.css" /></noscript>
+        <title>{% block head.title %} Trailblazer {% endblock %} </title>
         {% block head.extend %} {% endblock %}
         {% endblock %}
     </head>
-    {% endblock %}
-
     <body class="is-preload">
-        {% block body.content %}
-
         <!-- Wrapper -->
-        {% block content.wrapper %} <div id="wrapper"> {% endblock %}
-            {% block content.header %}
+        <div id="wrapper">
             <!-- Header -->
+            {% block page_header %}
             <header id="header">
-                {% block content.header.content %}
-                <a href="/" class="logo">{% block content.header.title %} Trailblazer {% endblock %}</a>
-                <p>{% block content.header.subtitle  %} An open data repository for astronomical data products affected by satellites. {% endblock %}</p>
+                {% block page_header.content %}
+                <a href="/" class="logo">{% block page_header.title %} Trailblazer {% endblock %}</a>
+                <p>{% block page_header.subtitle  %} An open data repository for astronomical data products affected by satellites. {% endblock %}</p>
+                {% block page_header.extend %}{% endblock %}
                 {% endblock %}
             </header>
             {% endblock %}
-
             <!-- Nav -->
-            {% block content.navigation %}
+            {% block navigation %}
             <nav id="nav">
-                {% block content.navigation.content %}
+                {% block navigation.content %}
                 <ul class="links">
-                    <li class="active"><a href="/gallery">Gallery</a></li>
-                    <li><a href="/query">Query</a></li>
-                    <li><a href="/upload">Upload</a></li>
-                    <li><a href="/about">About</a></li>
+                    <li class="{% block gallery-nav-state%}{% endblock %}"><a href="/gallery">Gallery</a></li>
+                    <li class="{% block query-nav-state  %}{% endblock %}"><a href="/query">Query</a></li>
+                    <li class="{% block upload-nav-state %}{% endblock %}"><a href="/upload">Upload</a></li>
+                    <li class="{% block about-nav-state  %}{% endblock %}"><a href="/about">About</a></li>
                 </ul>
-                <ul class="icons">
-                    <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-                    <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-                    <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-                    <li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-                </ul>
+						    <ul class="icons">
+								    <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+								    <li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+								    <li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+								    <li><a href="https://github.com/dirac-institute/trailblazer" target="_blank" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						    </ul>
                 {% endblock %}
             </nav>
             {% endblock %}
-
             <!-- Main -->
-            {% block content.main %}
+            {% block main %}
             <div id="main">
-                {% block content.main.content %}{% endblock %}
+                {% block content %}{% endblock %}
             </div>
             {% endblock %}
-
 				    <!-- Footer -->
-            {% block content.footer %}
-					  <footer id="footer">
-                {% block content.footer.content %}
+            {% block page_footer %}
+				    <footer id="footer">
+                {% block page_footer.content %}
 						    <section>
 								    <h3>Social</h3>
 								    <ul class="icons alt">
 									      <li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
 									      <li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
 									      <li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
-									      <li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+									      <li><a href="https://github.com/dirac-institute/trailblazer" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
 								    </ul>
 						    </section>
                 {% endblock %}
-					  </footer>
+				    </footer>
             {% endblock %}
-
 				    <!-- Copyright -->
-					  <div id="copyright">
+				    <div id="copyright">
 						    <ul><li>&copy; UW</li><li>Design: <a href="https://html5up.net">SE</a></li></ul>
-					  </div>
-            <!-- End of wrapper -->
-            {% endblock %}
+				    </div>
+            <!-- End of Wrapper -->
 			  </div>
-
 		    <!--
              Scripts
              The template basic scripts are always needed, the scripts extended block can be used to add more.

@@ -1,15 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
-
-{% block header.title %} About {% endblock %}
-
+{% block about-nav-state%}active{% endblock %}
 
 <!-- There is no social footer on this page so we can replace the whole thing with nothing.  -->
-{% block content.footer %} {% endblock %}
+{% block page_footer %} {% endblock %}
 
-
-{% block content.main.content %}
+{% block content %}
 <!-- Post -->
 <section class="post">
 		<header class="major">
@@ -452,4 +449,4 @@ print 'It took ' + i + ' iterations to sort the deck.';
 		<div id="copyright">
 				<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
 		</div>
-{% endblock %}
+    {% endblock %}
