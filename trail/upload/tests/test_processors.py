@@ -6,6 +6,7 @@ import yaml
 
 from django.test import TestCase
 
+from upload.models import Wcs, Metadata, StandardizedHeader
 from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.fits_processor import FitsProcessor
@@ -120,9 +121,6 @@ class UploadProcessorTestCase(TestCase):
 
     def testStandardize(self):
         """Tests whether WCS and Header Metadata are standardized as expected."""
-
-        from upload.process_uploads.standardized_dataclasses import StandardizedHeaderKeys
-
         for fits in self.fits:
             data = self.standardizedAnswers[fits.filename]
             # TODO: Do the math how much cartesian unit circle coordinates move
@@ -136,11 +134,11 @@ class UploadProcessorTestCase(TestCase):
             with self.subTest(fitsname=fits.filename + " PROCESSING"):
                 produced = fitsProcessor.standardizeHeader()
 
-            expected = StandardizedHeaderKeys.fromDict(data)
-            produced = StandardizedHeaderKeys.fromDict(produced)
+            expected = StandardizedHeader.fromDict(data)
+            produced = StandardizedHeader.fromDict(produced)
 
             with self.subTest(fitsname=fits.filename + " STANDARDIZE"):
-                self.assertTrue(produced.isCloseTo(expected))
+                self.assertTrue(produced.isClose(expected))
 
     def testStoreHeaders(self):
         """Tests whether store header executes on an SDSS frame; this verifies
