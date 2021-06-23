@@ -63,7 +63,7 @@ class MoaStandardizer(HeaderStandardizer):
             instrument=self.header["CAMERA"].strip(),
             science_program=sciProg,
             exposure_duration=self.header["EXPTIME"],
-            filter=self.header["COLOUR"].strip()
+            filter_name=self.header["COLOUR"].strip()
         )
 
         return meta

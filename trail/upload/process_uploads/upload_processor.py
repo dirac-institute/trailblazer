@@ -95,12 +95,12 @@ class UploadProcessor(ABC):
             `True` when the processor knows how to handle uploaded file and
             `False` otherwise
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     @abstractmethod
     def process(self):
         """Process the given upload."""
-        raise NotImplemented()
+        raise NotImplementedError()
 
     @classmethod
     def getProcessor(cls, uploadedFile):

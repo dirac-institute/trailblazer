@@ -91,13 +91,13 @@ class Metadata(models.Model, StandardizedKeysMixin):
     _closeEqualityKeys = ['obs_lon', 'obs_lat', 'obs_height']
     """Standardized keys that are tested only in approximate equality."""
 
-    # This will need to be fixed, cascading can orphan medata entries
+    # This will need to be fixed, cascading can orphan metadata entries
     upload_info = models.ForeignKey(UploadInfo, on_delete=models.PROTECT)
 
     # verbose_names should be lowercase, Django will capitalize
     # https://docs.djangoproject.com/en/3.1/topics/db/models/#verbose-field-names
-    processor_name = models.CharField("name of used translator.", max_length=20)
-    standardizer_name = models.CharField("name of used translator.", max_length=20)
+    processor_name = models.CharField("name of translator used to process FITS header information", max_length=20)
+    standardizer_name = models.CharField("name of standardizer used to process FITS header information", max_length=20)
     instrument = models.CharField("instrument name", max_length=20, null=True)
     telescope = models.CharField("telescope", max_length=20, null=True)
     science_program = models.CharField("science program image is a part of.",
@@ -111,7 +111,7 @@ class Metadata(models.Model, StandardizedKeysMixin):
     datetime_begin = models.DateTimeField("UTC at exposure start.")
     datetime_end = models.DateTimeField("UTC at exposure end.")
     exposure_duration = models.FloatField("exposure time (s)", null=True)
-    filter = models.CharField("physical filter", max_length=30, null=True)
+    filter_name = models.CharField("filter name", max_length=30, null=True)
 
     def isClose(self, other, **kwargs):
         """Tests approximate equality between objects.

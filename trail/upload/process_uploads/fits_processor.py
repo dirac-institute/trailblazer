@@ -182,7 +182,7 @@ class FitsProcessor(UploadProcessor):
     @classmethod
     @abstractmethod
     def canProcess(cls, uploadedFile, returnHdulist=False):
-        # docstring inherited from baseclass; TODO: check it's True
+        # docstring inherited from UploadProcessor; TODO: check it's True
         canProcess, hdulist = False, None
 
         if uploadedFile.extension in cls.extensions:
@@ -224,7 +224,7 @@ class FitsProcessor(UploadProcessor):
         components of the resulting projected points, as well as the distance
         between the center and corner coordiantes, are calculated.
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     @abstractmethod
     def createThumbnails(self):
@@ -243,7 +243,7 @@ class FitsProcessor(UploadProcessor):
         saved to their save locations in order to avoid out-of-memory errors.
         To create the images see `_createThumbnails` method.
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def standardizeHeaderMetadata(self):
         """Standardize selected header keywords from the primary header unit.

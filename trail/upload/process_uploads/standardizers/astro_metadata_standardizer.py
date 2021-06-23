@@ -7,7 +7,7 @@ metadata.
 from upload.process_uploads.header_standardizer import HeaderStandardizer
 from upload.models import Metadata
 
-from astro_metadata_translator import MetadataTranslator, ObservationInfo
+from astro_metadata_translator import ObservationInfo
 
 
 __all__ = ["AstroMetadataTranslator", ]
@@ -45,6 +45,6 @@ class AstroMetadataTranslator(HeaderStandardizer):
             instrument=self.obsInfo.instrument,
             science_program=self.obsInfo.science_program,
             exposure_duration=self.obsInfo.exposure_time.value,
-            filter=self.obsInfo.physical_filter
+            filter_name=self.obsInfo.physical_filter
         )
         return meta

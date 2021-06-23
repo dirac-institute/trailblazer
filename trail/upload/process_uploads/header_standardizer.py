@@ -106,12 +106,12 @@ class HeaderStandardizer(ABC):
             wcs = WCS(header)
 
         centerSkyCoord = wcs.pixel_to_world(centerX, centerY)
-        centerRa = centerSkyCoord.ra.to(u.deg)
-        centerDec = centerSkyCoord.dec.to(u.deg)
+        centerRa = centerSkyCoord.ra.to(u.rad)
+        centerDec = centerSkyCoord.dec.to(u.rad)
 
         cornerSkyCoord = wcs.pixel_to_world(0, 0)
-        cornerRa = cornerSkyCoord.ra.to(u.deg)
-        cornerDec = cornerSkyCoord.dec.to(u.deg)
+        cornerRa = cornerSkyCoord.ra.to(u.rad)
+        cornerDec = cornerSkyCoord.dec.to(u.rad)
 
         unitSphereCenter = np.array([
             np.cos(centerDec) * np.cos(centerRa),
@@ -164,7 +164,7 @@ class HeaderStandardizer(ABC):
             `True` when the processor knows how to handle uploaded file and
             `False` otherwise
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     @classmethod
     def getStandardizer(cls, header, **kwargs):
@@ -231,7 +231,7 @@ class HeaderStandardizer(ABC):
         Raises
         ------
         ValueError
-            None of the registered processors can process the  upload.
+            None of the registered processors can process the upload.
         """
         # TODO: get some error handling here
         standardizerCls = cls.getStandardizer(header, **kwargs)
@@ -248,14 +248,14 @@ class HeaderStandardizer(ABC):
         standardizedHeaderMetadata : `upload.model.Metadata`
             Metadata object containing standardized values.
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def standardizeWcs(self, hdu=None):
         """Standardize WCS data a given header.
 
         Parameters
         ----------
-        hdu : `obhect` or `None`, optional
+        hdu : `object` or `None`, optional
             An Astropy image-like HDU unit. Useful when dealing with
             mutli-extension fits files where metadata is in the PrimaryHDU but
             the WCS and image data are stored in the extensions.

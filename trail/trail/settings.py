@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gallery',
     'upload',
-    'query',,
+    'query',
     'trail',
 ]
 

@@ -58,7 +58,7 @@ class LasCumbresStandardizer(HeaderStandardizer):
             instrument=self.header["INSTRUME"],
             science_program=self.header["PROPID"],
             exposure_duration=self.header["EXPTIME"],
-            filter=self.header["FILTER"]
+            filter_name=self.header["FILTER"]
         )
 
         return meta
