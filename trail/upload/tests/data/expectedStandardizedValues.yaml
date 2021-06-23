@@ -13,7 +13,7 @@ reduced_HSCA21787010.fits:
     datetime_begin: '2020-05-28T14:33:27.105000'
     datetime_end: '2020-05-28T14:34:08.993000'
     exposure_duration: 40.0
-    physical_filter: 'HSC-R2'
+    filter: 'HSC-R2'
   wcs:
     wcs_radius: 0.00023308908809495583
     wcs_center_x: 0.9964149952862653
@@ -37,7 +37,7 @@ reduced_frame-i-008108-5-0025.fits:
     datetime_begin: '2009-10-17T01:53:42.774000'
     datetime_end: '2009-10-17T01:54:36.681456'
     exposure_duration: 53.907456
-    physical_filter: 'i'
+    filter: 'i'
   wcs:
     wcs_radius: 0.0005429958662154268
     wcs_center_x: 0.7839508241789587
@@ -61,7 +61,7 @@ reduced_calexp-0941420_23.fits:
     datetime_begin: '2020-03-06T00:04:47.594235'
     datetime_end: '2020-03-06T00:06:47.594235'
     exposure_duration: 120.0
-    physical_filter: 'g'
+    filter: 'g'
   wcs:
     wcs_radius: 0.0002902328179442395
     wcs_center_x: 0.08873459293460961
@@ -85,7 +85,7 @@ reduced_c4d_200306_000415_ori.fits.fz:
     datetime_begin: '2020-03-06T00:05:24.594235'
     datetime_end: '2020-03-06T00:07:24.594235'
     exposure_duration: 120.0
-    physical_filter: 'g DECam SDSS c0001 4720.0 1520.0'
+    filter: 'g DECam SDSS c0001 4720.0 1520.0'
   wcs:
     - wcs_radius: 8.998409511363093e-05
       wcs_center_x: 0.11036658318223383
@@ -536,7 +536,7 @@ reduced_A3671-C2018_F4-R-3.fit:
     datetime_begin: '2020-12-09T12:33:40.032012+00:00'
     datetime_end: '2020-12-09T12:33:40.032012+00:00'
     exposure_duration: 300
-    physical_filter: 'R'
+    filter: 'R'
   wcs:
     wcs_radius: -999.999
     wcs_center_x: -999.999
@@ -560,7 +560,7 @@ reduced_bi327715.fits:
     datetime_begin: '2020-11-20T01:04:29.222000+00:00'
     datetime_end: '2020-11-20T01:05:59.242000+00:00'
     exposure_duration: 90.0
-    physical_filter: ''
+    filter: ''
   wcs:
     wcs_radius: 0.010664244540320823
     wcs_center_x: 0.6247845980535837

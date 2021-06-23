@@ -6,10 +6,11 @@ from abc import ABC, abstractmethod
 import warnings
 
 import numpy as np
-
 from astropy.io.fits import PrimaryHDU, CompImageHDU
 from astropy.wcs import WCS, FITSFixedWarning
 import astropy.units as u
+
+import upload.models as models
 
 __all__ = ["HeaderStandardizer", ]
 
@@ -18,16 +19,9 @@ class HeaderStandardizer(ABC):
     """Supports standardization of various headers.
 
     Standardization consists of:
-    * converting WCS information contained in each image-like header such as
-      PrimaryHDU, CompImageHDu etc. (i.e. each header for which it is infered
-      by its Astropy type will contain image under its `data` attribute; as
-      opposed to BinTableHDU etc.) into a standard set of keys as defined by
-      the database models.
-    * converting a set of header keywords into metadata keys as defined by the
-      database models. The mandatory data consists of observatory location,
-      instrument description and time of observation while the remaining
-      metadata may vary.
-
+        * standardizing WCS data by projecting WCS onto a unit sphere
+        * standardizing PrimaryHDU data to find time and location of observer,
+          and select optional values such as filter, science program etc.
 
     Parameters
     ----------
@@ -41,6 +35,14 @@ class HeaderStandardizer(ABC):
     filename : `str`
         Name of the file from which the HDU was read from, sometimes can encode
         additional metadata.
+
+    Notes
+    -----
+    Standardizers are intended to operate on primary headers, but not all
+    primary headers contain all of the required metadata. Standardizers must be
+    instantiated with the header containing at least the time and location of
+    the observer and can be dynamically given a different HDU from which to
+    standardize WCS.
     """
 
     standardizers = dict()
@@ -89,11 +91,8 @@ class HeaderStandardizer(ABC):
 
         Notes
         -----
-        The center point is the center of the image as determined its
-        dimensions directly or via header keywords NAXIS1 and NAXIS2, and the
-        corner is taken to be the (0,0)-th pixel.
-        World coords. at the points are to unit sphere, in Cartesian system,
-        and the distance between them is calculated.
+        The center point is assumed to be at the (dimX/2, dimY/2) pixel
+        location. Corner is taken to be the (0,0)-th pixel.
         """
         standardizedWcs = {}
         centerX, centerY = int(dimX/2), int(dimY/2)
@@ -188,11 +187,6 @@ class HeaderStandardizer(ABC):
         -------
         standardizerCls : `cls`
             Standardizer class that can process the given upload.`
-
-        Raises
-        ------
-        ValueError
-            None of the registered processors can process the  upload.
         """
         standardizers = []
         for standardizer in cls.standardizers.values():
@@ -251,16 +245,13 @@ class HeaderStandardizer(ABC):
 
         Returns
         -------
-        standardizedKeys : `dict`
-          A dictionary with standardized header keys and values.
+        standardizedHeaderMetadata : `upload.model.Metadata`
+            Metadata object containing standardized values.
         """
         raise NotImplemented()
 
     def standardizeWcs(self, hdu=None):
-        """Standardize WCS data a given header. 
-        Standardized keys are the Cartesian components of world coordinates of
-        central and corner points on the image as projected onto a unit sphere
-        and the distance between them.
+        """Standardize WCS data a given header.
 
         Parameters
         ----------
@@ -271,8 +262,8 @@ class HeaderStandardizer(ABC):
 
         Returns
         -------
-        standardizedWCS : `dict`
-            A dictionary with standardized WCS keys and values.
+        standardizedWCS : `upload.models.Wcs`
+            Standardized WCS keys and values.
 
         Raises
         ------
@@ -284,6 +275,16 @@ class HeaderStandardizer(ABC):
             data.
         TypeError
             Provided additional HDU is not image-like HDU.
+
+        Notes
+        -----
+        Standardized values are the are the Cartesian components of the central
+        and corner pixels on the image, projected onto a unit sphere, and the
+        distance between them.
+        The center pixel coordinates is determined from header `NAXIS` keys,
+        when possible, and is otherwise determined from the dimensions of the
+        image in the given HDU.
+        The (0, 0) pixel is taken as the corner pixel.
         """
         dimX = self.header.get("NAXIS1", False)
         dimY = self.header.get("NAXIS2", False)
@@ -305,25 +306,5 @@ class HeaderStandardizer(ABC):
         else:
             header = self.header
 
-        return self._computeStandardizedWcs(header, dimX, dimY)
-
-    def standardize(self, hdu=None):
-        """Convenience function that standardizes the WCS and metadata and
-        returns a dictionary with standardized keys.
-
-        Parameters
-        ----------
-        hdu : `obhect` or `None`, optional
-            An Astropy image-like HDU unit. Useful when dealing with
-            mutli-extension fits files where metadata is in the PrimaryHDU but
-            the WCS and image data are stored in the extensions.
-
-        Returns
-        -------
-        standardizedKeys : `dict`
-            A dictionary with standardized WCS and metadata keys and values.
-        """
-        # TODO: get some error handling here
-        standardizedKeys = {"metadata" : self.standardizeMetadata()}
-        standardizedKeys.update({"wcs" :self.standardizeWcs(hdu=hdu)})
-        return standardizedKeys
+        wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
+        return wcs

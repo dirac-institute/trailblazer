@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from astropy.time import Time
 
 from upload.process_uploads.header_standardizer import HeaderStandardizer
+from upload.models import Metadata, Wcs
 
 
 __all__ = ["MoaStandardizer", ]
@@ -28,20 +29,11 @@ class MoaStandardizer(HeaderStandardizer):
         return False
 
     def standardizeMetadata(self):
-        standardizedKeys = {}
-
-        standardizedKeys["obs_lon"] = self.header["LOGITUD"]
-        standardizedKeys["obs_lat"] = self.header["LATITUD"]
-        standardizedKeys["obs_height"] = self.header["HEIGHT"]
-
-        standardizedKeys["telescope"] = self.header["OBSTEL"].strip()
-        standardizedKeys["instrument"] = self.header["CAMERA"].strip()
-
         run = self.header["RUN"].strip()
         field = self.header["FIELD"].strip()
         filter = self.header["COLOUR"].strip()
         chip = self.header["CHIP"]
-        standardizedKeys["science_program"] = f"{run}-{field}-{filter}-{chip}"
+        sciProg = f"{run}-{field}-{filter}-{chip}"
 
         # TODO: Fix datetimes
         # There is a timesys key but I have no idea how to generically instantiate
@@ -55,31 +47,38 @@ class MoaStandardizer(HeaderStandardizer):
         jdstart = Time(self.header["JDSTART"], format="jd", scale="utc")
         jdstart = jdstart.utc.datetime
         jdstart = jdstart.replace(tzinfo=tzinfo)
-        standardizedKeys["datetime_begin"] = jdstart.isoformat()
 
         jdend = Time(self.header["JDSTART"], format="jd", scale="utc")
         jdend = jdend.utc.datetime
         jdend = jdend.replace(tzinfo=tzinfo)
-        standardizedKeys["datetime_end"] = jdend.isoformat()
 
-        standardizedKeys["exposure_duration"] = self.header["EXPTIME"]
+        # TODO: filter out what is the filter standardization here?
+        meta = Metadata(
+            obs_lon=self.header["LOGITUD"],
+            obs_lat=self.header["LATITUD"],
+            obs_height=self.header["HEIGHT"],
+            datetime_begin=jdstart.isoformat(),
+            datetime_end=jdend.isoformat(),
+            telescope=self.header["OBSTEL"].strip(),
+            instrument=self.header["CAMERA"].strip(),
+            science_program=sciProg,
+            exposure_duration=self.header["EXPTIME"],
+            filter=self.header["COLOUR"].strip()
+        )
 
-        # TODO: filter out what is the filter standardization here
-        standardizedKeys["physical_filter"] = self.header["COLOUR"].strip()
-
-        return standardizedKeys
+        return meta
 
     def standardizeWcs(self, **kwargs):
         # no matter how hard I try, I do not understand how it would ever be
-        # possible to extract WCS data out of this header. That entire header
+        # possible to extract WCS data out of this header. This entire header
         # is nonsense...
-        standardizedWcs = {}
-        standardizedWcs["wcs_radius"] = -999.999
-        standardizedWcs["wcs_center_x"] = -999.999
-        standardizedWcs["wcs_center_y"] = -999.999
-        standardizedWcs["wcs_center_z"] = -999.999
-        standardizedWcs["wcs_corner_x"] = -999.999
-        standardizedWcs["wcs_corner_y"] = -999.999
-        standardizedWcs["wcs_corner_z"] = -999.999
-
-        return standardizedWcs
+        wcs = Wcs(
+            wcs_radius= -999.999,
+            wcs_center_x=-999.999,
+            wcs_center_y=-999.999,
+            wcs_center_z=-999.999,
+            wcs_corner_x=-999.999,
+            wcs_corner_y=-999.999,
+            wcs_corner_z=-999.999
+        )
+        return wcs

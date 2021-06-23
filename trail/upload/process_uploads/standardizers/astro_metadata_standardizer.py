@@ -5,6 +5,7 @@ metadata.
 
 
 from upload.process_uploads.header_standardizer import HeaderStandardizer
+from upload.models import Metadata
 
 from astro_metadata_translator import MetadataTranslator, ObservationInfo
 
@@ -32,26 +33,18 @@ class AstroMetadataTranslator(HeaderStandardizer):
             return True
 
     def standardizeMetadata(self):
-        standardizedKeys = {}
-
         location = self.obsInfo.location
-        standardizedKeys["obs_lon"] = location.lon.value
-        standardizedKeys["obs_lat"] = location.lat.value
-        standardizedKeys["obs_height"] = location.height.value
-
-        # default name behaviour is not followed, we append the translator's
-        # name to the standardizer name instead for more verbosity
-        standardizedKeys["standardizer_name"] = f"{self.name}.{self.obsInfo._translator.name}"
-        standardizedKeys["telescope"] = self.obsInfo.telescope
-        standardizedKeys["instrument"] = self.obsInfo.instrument
-        standardizedKeys["science_program"] = self.obsInfo.science_program
-
-        # TODO: see Las Cumbres and then come back and fix!
-        standardizedKeys["datetime_begin"] = self.obsInfo.datetime_begin.tt.datetime.isoformat()
-        standardizedKeys["datetime_end"] = self.obsInfo.datetime_end.tt.datetime.isoformat()
-        standardizedKeys["exposure_duration"] = self.obsInfo.exposure_time.value
-
-        standardizedKeys["physical_filter"] = self.obsInfo.physical_filter
-
-
-        return standardizedKeys
+        meta = Metadata(
+            obs_lon=location.lon.value,
+            obs_lat=location.lat.value,
+            obs_height=location.height.value,
+            datetime_begin=self.obsInfo.datetime_begin.tt.datetime.isoformat(),
+            datetime_end=self.obsInfo.datetime_end.tt.datetime.isoformat(),
+            standardizer_name=f"{self.name}.{self.obsInfo._translator.name}",
+            telescope=self.obsInfo.telescope,
+            instrument=self.obsInfo.instrument,
+            science_program=self.obsInfo.science_program,
+            exposure_duration=self.obsInfo.exposure_time.value,
+            filter=self.obsInfo.physical_filter
+        )
+        return meta

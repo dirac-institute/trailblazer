@@ -4,12 +4,10 @@ single extension containing both the header and the image data.
 """
 
 
-from django.db import transaction
 import matplotlib.pyplot as plt
 
 from upload.process_uploads.fits_processor import FitsProcessor
-from upload.models import Metadata, Wcs
-
+from upload.models import Thumbnails
 
 __all__ = ["SingleExtensionFits", ]
 
@@ -31,21 +29,8 @@ class SingleExtensionFits(FitsProcessor):
     def standardizeWcs(self):
         return self.standardizer.standardizeWcs()
 
-    def standardizeHeaderMetadata(self):
-        return self.standardizer.standardizeMetadata()
-
-    @transaction.atomic
-    def storeHeaders(self):
-        header = self.standardizeHeader()
-
-        self.uploadInfo.save()
-        meta = Metadata(upload_info=self.uploadInfo, **header["metadata"])
-        meta.save()
-
-        wcs = Wcs(metadata=meta, **header["wcs"])
-        wcs.save()
-
-    def storeThumbnails(self):
+    def createThumbnails(self):
         large, small = self._createThumbnails(self.uploadedFile.basename, self.imageData)
-        plt.imsave(small["savepath"], small["thumb"], pil_kwargs={"quality": 10})
-        plt.imsave(large["savepath"], large["thumb"], pil_kwargs={"quality": 30})
+        self._storeThumbnail(large)
+        self._storeThumbnail(small)
+        return Thumbnails(large=large["savepath"], small=small["savepath"])

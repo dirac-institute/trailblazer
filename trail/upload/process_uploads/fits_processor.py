@@ -9,12 +9,13 @@ from abc import ABC, abstractmethod
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
-
 import astropy.visualization as aviz
 from astropy.io import fits
+from django.db import transaction
 
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.header_standardizer import HeaderStandardizer
+from upload.models import StandardizedHeader, Thumbnails
 
 
 __all__ = ["FitsProcessor",]
@@ -28,8 +29,36 @@ class FitsProcessor(UploadProcessor):
 
     Parameters
     ----------
-    upload : `upload_wrapper.TemporaryUploadedFileWrapper`
-            Uploaded file.
+    uploadInfo : `uploads.model.UploadInfo`
+        Object containing the time and date of upload and originating IP.
+    uploadedFile : `upload_wrapper.temporaryUploadedFileWrapper`
+        Uploaded file.
+
+    Attributes
+    ----------
+    hdulist : `astropy.io.fits.HDUList`
+        All HDUs found in the FITS file
+    primary : `astropy.io.fits.PrimaryHDU`
+        The primary header, a single HDU from hdulist identifying itself as
+        the primary header.
+    standardizer : `upload.HeaderStandardizer`
+        The header standardizer that identified itself as capable of
+        standardizing the primary header.
+    isMultiExt : `bool`
+        True when the FITS file has a multi extension header.
+
+    Notes
+    -----
+    It is not recommended to use the standardizer's methods directly. Instead
+    use their counterparts from processors.
+
+    The standardizer operates, most often, on the primary HDU which usually
+    containts all of the required metadata. For some multi-extension headers,
+    however, usually the WCS data is contextualized via the primary HDU and
+    primary HDU itself does not contain all the data required. It is the
+    perogative of the processors to pick which additional HDUs are needed and
+    to run the standardizers in the appropriate context. Shortcutting this
+    process can, therefore, result in unexpected results or errors.
     """
 
     extensions = [".fit", ".fits", ".fits.fz"]
@@ -58,6 +87,11 @@ class FitsProcessor(UploadProcessor):
     def normalizeImage(cls, image):
         """Normalizes the image data to the [0,1] domain, using histogram
         equalization.
+
+        Parameters
+        ----------
+        image : `np.array`
+            Image.
 
         Returns
         -------
@@ -116,6 +150,36 @@ class FitsProcessor(UploadProcessor):
                 {"savepath": smallPath, "thumb": np.array(img)})
 
     @classmethod
+    def _storeThumbnail(cls, thumbnail, savepath=None, pil_kwargs={"quality":30}):
+        """Stores a single thumbnail (as returned by `_createThumbnails`).
+
+        Parameters
+        ----------
+        thumbnail : `dict` or `np.array`
+            Either a dictionary containing `savepath` and `thumb` image or just
+            the thumbnail image.
+        savepath : `str`, optional
+            If given thumbnail is just the image it is required to supply the
+            save location of the thumbnail.
+        pil_kwargs : `dict`, optional
+            Arguments that will be passed to PIL when saving the thumbnail.
+            Default: `{quality: 30}`
+        """
+        # this looks stupid now, but it centralizes the storing functionality
+        # for easier later transition to S3, so it's a placeholder for now:
+        if isinstance(thumbnail, dict):
+            savePath = thumbnail["savepath"]
+            thumb = thumbnail["thumb"]
+        elif savepath is not None:
+            thumb = thumbnail
+            savePath = savepath
+        else:
+            raise ValueError("Expected a dict or an image and savepath, got "
+                             f"thumbnail={thumbnail} and savepath={savepath} "
+                             "instead.")
+        plt.imsave(savePath, thumb, cmap="Greys", pil_kwargs=pil_kwargs)
+
+    @classmethod
     @abstractmethod
     def canProcess(cls, uploadedFile, returnHdulist=False):
         # docstring inherited from baseclass; TODO: check it's True
@@ -138,76 +202,120 @@ class FitsProcessor(UploadProcessor):
     @abstractmethod
     def standardizeWcs(self):
         """Standardize WCS data for each image-like header unit of the FITS.
-        Standardized WCS are the Cartesian components of world coordinates of
-        central and corner points on the image as projected onto a unit sphere.
+
+        Standardized WCS consists of the Cartesian components of central and
+        corner pixels on the image, as projected onto a unit sphere, and their
+        distance.
 
         Returns
         -------
-        standardizedWCS : `dict`
-            A dictionary with standardized WCS keys and values.
+        standardizedWCS : `upload.models.Wcs`
+            Standardized WCS keys and values.
 
         Notes
         -----
         Astropy is used to calculate on-sky coordinates, in degrees, of the
-        center and of corner points. The center point is the center of the
-        image as determined by image dimensions, determined directly or
-        via header keywords, and the corner is taken to be the (0,0) pixel.
+        center and of corner points.
+        The center point is the center of the image as determined by header
+        `NAXIS` keys, when able, and directly from image dimensions otherwise.
+        The corner is taken to be the (0,0) pixel.
+
         Coordinates are then projected to a unit sphere, and the Cartesian
         components of the resulting projected points, as well as the distance
         between the center and corner coordiantes, are calculated.
         """
-        # All Header operations are done by Standardizers. HeaderStandardizer
-        # handles WCS standardization for all our data, so far.
         raise NotImplemented()
 
     @abstractmethod
+    def createThumbnails(self):
+        """Create a small and a large thumbnail for each image-like extension
+        in the FITS file.
+
+        Returns
+        -------
+        thumbnails : `list[upload.model.Thumbnail]`
+            A list of Thumbnail objects for each of the selected image-like
+            HDUs.
+
+        Note
+        ----
+        Due to the size of some FITS files the image data itself is promptly
+        saved to their save locations in order to avoid out-of-memory errors.
+        To create the images see `_createThumbnails` method.
+        """
+        raise NotImplemented()
+
     def standardizeHeaderMetadata(self):
         """Standardize selected header keywords from the primary header unit.
-        Standardized header data are the observatory location, instrument
-        description and time of observation.
 
         Returns
         -------
-        standardizedHeaderMetadata : `dict`
-            Dictionary containing the standardized FITS header keys.
+        standardizedHeaderMetadata : `upload.model.Metadata`
+            Metadata object containing standardized values.
         """
-        # All Header operations are performed by Standardizers.
-        raise NotImplemented()
+        meta = self.standardizer.standardizeMetadata()
+
+        # some standardizers construct their own names which we do not want to
+        # override
+        meta.processor_name = self.name
+        if not meta.standardizer_name:
+            meta.standardizer_name = self.standardizer.name
+
+        return meta
 
     def standardizeHeader(self):
-        """Convenience function that standardizes the WCS and header metadata
-        information and returns a dictionary of standardized metadata and wcs
-        keys.
-
-        Inserts the `processor_name` or `standardizer_name` into the metadata,
-        if either key had not already been inserted by the processor or
-        standardizer.
+        """Convenience function that standardizes the WCS and header metadata.
 
         Returns
         -------
-        standardizedHeader : `dict`
-            Dictionary containing standardized header metadata, per FITS file,
-            and standardized WCS data, per image-like header in the FITS file.
+        standardizedHeader : `upload.models.StandardizedHeader`
+            A dataclass containing the standardized header metadata and one or
+            more standardized WCS. 
         """
         meta = self.standardizeHeaderMetadata()
-        if "processor_name" not in meta:
-            meta["processor_name"] = self.name
-        if "standardizer_name" not in meta:
-            meta["standardizer_name"] = self.standardizer.name
+        wcs = self.standardizeWcs()
 
-        return {"metadata": meta,
-                "wcs": self.standardizeWcs()}
+        stdHeader = StandardizedHeader(metadata=meta)
+        wcs = self.standardizeWcs()
+        try:
+            stdHeader.appendWcs(wcs)
+        except ValueError:
+            stdHeader.extendWcs(wcs)
+        return stdHeader
 
-    @abstractmethod
-    def storeHeaders(self):
-        """Convenience function that standardizes the WCS data and header
-        metadata and inserts it into the database.
+    @transaction.atomic
+    def process(self):
+        """Process uploaded file by:
+            * Standardizing header metadata,
+            * standardizing all WCS from image-like headers,
+            * creating thumbnails
+            * inserting the new data into the database
         """
-        raise NotImplemented()
+        # TODO: get some error handling here
 
-    @abstractmethod
-    def storeThumbnails(self):
-        """Convenience function that standardizes the WCS and header metadata
-        and inserts it into the database.
-        """
-        raise NotImplemented()
+        # Insert upload info into DB
+        self.uploadInfo.save()
+
+        # get the new metadata and set up the relationship between metadata and
+        # UploadInfo, Relationship between Meta and WCS are set in stdHead.save
+        standardizedHeader = self.standardizeHeader()
+        standardizedHeader.metadata.upload_info = self.uploadInfo
+        standardizedHeader.save()
+
+        # Create thumbnails (their DB models and the files) and then set up
+        # relationship between particular wcs data and thumbs; then insert them
+        # TODO: I'm iffed how this is set here, maybe refactor?
+        thumbnails = self.createThumbnails()
+        if isinstance(thumbnails, Thumbnails):
+            for wcs in standardizedHeader.wcs:
+                thumbnails.wcs = wcs
+            thumbnails.save()
+        else:
+            # probably good: if len(wcs) != len(thumbnails): raise Error
+            for wcs, thumb in zip(standardizedHeader.wcs, thumbnails):
+                thumb.wcs = wcs
+            # TODO: figure out why this doesn't work in StandardizedHeader.save
+            Thumbnails.objects.bulk_create(thumbnails)
+
+        # lastly, don't forget to upload the original science data.
+        self.uploadedFile.save()

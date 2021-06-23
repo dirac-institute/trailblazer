@@ -16,6 +16,22 @@ __all__ = ["UploadProcessor", "get_ip"]
 
 
 def get_ip(request):
+    """Given an HTTP request returns the originating IP address.
+
+    Parameters
+    ----------
+    request : `django.requst.HttpRequest`
+        HTTP Request made to the server.
+
+    Returns
+    -------
+    ip : `str`
+        IP Address.
+
+    Notes
+    -----
+    IP addresses in HTTP requests can be spoofed.
+    """
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         ip = x_forwarded_for.split(',')[-1].strip()
@@ -81,6 +97,11 @@ class UploadProcessor(ABC):
         """
         raise NotImplemented()
 
+    @abstractmethod
+    def process(self):
+        """Process the given upload."""
+        raise NotImplemented()
+
     @classmethod
     def getProcessor(cls, uploadedFile):
         """Get the processor class that can handle given file. If multiple
@@ -96,11 +117,6 @@ class UploadProcessor(ABC):
         -------
         processor : `cls`
             Processor class that can process the given upload.
-
-        Raises
-        ------
-        ValueError
-            None of the registered processors can process the  file.
         """
         processors = []
         for processor in cls.processors.values():
@@ -148,7 +164,7 @@ class UploadProcessor(ABC):
 
     @classmethod
     def fromRequest(cls, request):
-        """Return Processor(s) that can process the request. 
+        """Return Processor(s) that can process the request.
 
         Parameters
         ----------
@@ -175,12 +191,3 @@ class UploadProcessor(ABC):
             processors.append(processorCls(uploadInfo, uploadedFile))
 
         return processors
-
-    def process(self):
-        """Process the given upload."""
-        # TODO: get some error handling here
-        self.uploadInfo.save()
-        self.storeHeaders()
-        #self.detect_trails()
-        self.storeThumbnails()
-        self.uploadedFile.save()

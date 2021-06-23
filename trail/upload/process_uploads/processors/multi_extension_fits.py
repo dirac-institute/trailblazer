@@ -4,7 +4,6 @@ multiple extensions.
 """
 
 
-from django.db import transaction
 import matplotlib.pyplot as plt
 
 from astropy.io.fits import ImageHDU
@@ -12,7 +11,7 @@ from astropy.io.fits.hdu.image import PrimaryHDU
 from astropy.io.fits.hdu.compressed import CompImageHDU
 
 from upload.process_uploads.fits_processor import FitsProcessor
-from upload.models import Metadata, Wcs
+from upload.models import Thumbnails
 
 
 __all__ = ["MultiExtensionFits", ]
@@ -64,23 +63,13 @@ class MultiExtensionFits(FitsProcessor):
             standardizedWcs.append(self.standardizer.standardizeWcs(hdu=ext))
         return standardizedWcs
 
-    def standardizeHeaderMetadata(self):
-        return self.standardizer.standardizeMetadata()
-
-    def storeThumbnails(self):
+    def createThumbnails(self):
+        thumbs = []
         for i, ext in enumerate(self.exts):
             large, small = self._createThumbnails(self.uploadedFile.basename + f"_ext{i}",
                                                   ext.data)
-        plt.imsave(small["savepath"], small["thumb"])
-        plt.imsave(large["savepath"], large["thumb"])
+            self._storeThumbnail(large)
+            self._storeThumbnail(small)
+            thumbs.append(Thumbnails(large=large["savepath"], small=small["savepath"]))
 
-    @transaction.atomic
-    def storeHeaders(self):
-        header = self.standardizeHeader()
-
-        self.uploadInfo.save()
-        meta = Metadata(upload_info=self.uploadInfo, **header["metadata"])
-        meta.save()
-
-        wcs = [Wcs(metadata=meta, **ext) for ext in header["wcs"]]
-        Wcs.objects.bulk_create(wcs)
+        return thumbs

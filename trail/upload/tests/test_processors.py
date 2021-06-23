@@ -135,10 +135,11 @@ class UploadProcessorTestCase(TestCase):
                 produced = fitsProcessor.standardizeHeader()
 
             expected = StandardizedHeader.fromDict(data)
-            produced = StandardizedHeader.fromDict(produced)
+            #produced = StandardizedHeader.fromDict(produced)
 
             with self.subTest(fitsname=fits.filename + " STANDARDIZE"):
-                self.assertTrue(produced.isClose(expected))
+                self.assertEqual(produced, expected)
+                #self.assertTrue(produced.isClose(expected))
 
     def testStoreHeaders(self):
         """Tests whether store header executes on an SDSS frame; this verifies
@@ -148,7 +149,7 @@ class UploadProcessorTestCase(TestCase):
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
         fitsProcessor = UploadProcessor.fromFileWrapper(fits)
-        fitsProcessor.storeHeaders()
+        fitsProcessor.standardizeHeader()
 
     def testStoreThumbnails(self):
         """Tests whether two thumbnails appear at the expected location."""
@@ -156,7 +157,7 @@ class UploadProcessorTestCase(TestCase):
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
         fitsProcessor = UploadProcessor.fromFileWrapper(fits)
-        fitsProcessor.storeThumbnails()
+        fitsProcessor.createThumbnails()
 
         large = os.path.join(self.tmpTestDir, fits.basename+'_large.jpg')
         small = os.path.join(self.tmpTestDir, fits.basename+'_small.jpg')

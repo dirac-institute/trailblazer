@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from .multi_extension_fits import MultiExtensionFits
+from upload.models import Thumbnails
 
 
 __all__ = ["DecamFits", ]
@@ -336,7 +337,7 @@ class DecamFits(MultiExtensionFits):
 
         return focalPlane
 
-    def storeThumbnails(self, scaling=(4, 10)):
+    def createThumbnails(self, scaling=(4, 10)):
 
         xdim = self.exts[0].header["NAXIS2"]
         ydim = self.exts[0].header["NAXIS1"]
@@ -349,12 +350,12 @@ class DecamFits(MultiExtensionFits):
         largePath = os.path.join(self.media_root, self.uploadedFile.basename+'_plane_large.jpg')
 
         smallThumb = self._createFocalPlaneImage(smallPlane)
-        plt.imsave(smallPath, smallThumb.planeImage.T, pil_kwargs={"quality":30})
-        # due to the size of these images immediately release memory
+        self._storeThumbnail(smallThumb.planeImage.T, savepath=smallPath)
+        # due to potential size of these images immediately release memory
         del smallThumb
 
         largeThumb = self._createFocalPlaneImage(largePlane)
-        plt.imsave(largePath, largeThumb.planeImage.T, pil_kwargs={"quality":30})
+        self._storeThumbnail(largeThumb.planeImage.T, savepath=largePath)
         del largeThumb
 
-
+        return Thumbnails(large=largePath, small=smallPath)
