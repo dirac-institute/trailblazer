@@ -12,6 +12,34 @@ import numpy as np
 
 __all__ = ["UploadInfo", "Metadata", "Wcs", "StandardizedHeader"]
 
+def set_keys_from_columns(cls):
+    """Read the model schema and add fields, that are not a relationship or an
+    auto-generated field, to class attribute `keys`. 
+    Added fields that are also not nullable to the `required_keys` class
+    attribute. 
+
+    Parameters
+    -----------
+    cls : `class`
+        Class to inspect and modify.
+    """
+    # This is quite hacky, but I honestly could not find a different way and
+    # have Django not complain about un-initialized models, or completely
+    # breaking down the models __init__ method...
+    if cls.keys or cls.required_keys:
+        return  # this should really perhaps be an error?
+
+    columns = [column for column in cls._meta.get_fields()]
+    names, required = [], []
+    for col in columns:
+        if not col.auto_created and not col.is_relation:
+            names.append(col.name)
+            if not col.null:
+                required.append(col.name)
+
+    cls.keys = names
+    cls.required_keys = required
+
 
 class UploadInfo(models.Model):
     """Records originator and time of upload of an sngle metadata entry. """
@@ -27,15 +55,10 @@ class StandardizedKeysMixin:
     keys = []
     """All standardized keys expected as output of processing."""
 
-    requiredKeys = []
+    required_keys = []
     """Standardized keys that must exist if the result is to be recorded in the
     database.
     """
-
-    def __init__(self, *args, **kwargs):
-        # this is such an ugly hack, but Django ORM is so inflexible
-        if not self.keys or self.requiredKeys:
-            self.__set_keys()
 
     @classmethod
     def fromDictSubset(cls, data):
@@ -46,7 +69,7 @@ class StandardizedKeysMixin:
         ----------
         data : `dict`
             Dictionary from which to instantiate. Should contain at least the
-            keys found in `requiredKeys`.
+            keys found in `required_keys`.
 
         Returns
         -------
@@ -55,23 +78,6 @@ class StandardizedKeysMixin:
         """
         dictSubset = {key: data.get(key, None) for key in cls.keys}
         return cls(**dictSubset)
-
-    def __set_keys(self):
-        """Read the model schema and add the defined fields to `keys` when the
-        field is not a relationship or an auto generated field.
-        Fields that are neither, and are also required to be not-null are added
-        to the `requiredKeys`.
-        """
-        columns = [column for column in self._meta.get_fields()]
-        names, required = [], []
-        for col in columns:
-            if not col.auto_created and not col.is_relation:
-                names.append(col.name)
-                if not col.null:
-                    required.append(col.name)
-
-        self.keys = names
-        self.requiredKeys = required
 
     def values(self):
         """Returns a list of `keys` values."""
@@ -113,6 +119,10 @@ class Metadata(models.Model, StandardizedKeysMixin):
     exposure_duration = models.FloatField("exposure time (s)", null=True)
     filter_name = models.CharField("filter name", max_length=30, null=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        set_keys_from_columns(self.__class__)
+
     def isClose(self, other, **kwargs):
         """Tests approximate equality between objects.
 
@@ -135,11 +145,20 @@ class Metadata(models.Model, StandardizedKeysMixin):
         """
         exactlyMatched = list(set(self.keys) - set(self._closeEqualityKeys))
         areEqual = all([getattr(self, key) == getattr(other, key) for key in exactlyMatched])
-        areClose = np.allclose(
-            [getattr(self, key) for key in self._closeEqualityKeys],
-            [getattr(other, key) for key in other._closeEqualityKeys],
-            **kwargs
-        )
+
+        # when a value is None (not set) the equality still might hold
+        # despite the fact the object is not valid but np will complain
+        # about implicit casting, so we need to do it explicitly, luckily
+        # all the vals are floats....
+        slfVals = [getattr(self, key) for key in self._closeEqualityKeys]
+        othVals = [getattr(other, key) for key in other._closeEqualityKeys]
+        try:
+            areClose = np.allclose(slfVals, othVals, **kwargs)
+        except TypeError:
+            slfVals = np.array(slfVals, dtype=float)
+            othVals = np.array(othVals, dtype=float)
+            areClose = np.allclose(slfVals, othVals, **kwargs)
+
         return areEqual and areClose
 
 
@@ -167,6 +186,9 @@ class Wcs(models.Model, StandardizedKeysMixin):
     wcs_corner_y = models.FloatField("unit sphere coordinate of corner pixel")
     wcs_corner_z = models.FloatField("unit sphere coordinate of corner pixel")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        set_keys_from_columns(self.__class__)
 
     def isClose(self, other, **kwargs):
         """Tests approximate equality between objects.
@@ -188,7 +210,13 @@ class Wcs(models.Model, StandardizedKeysMixin):
         Only values in `_closeEqualityKeys` will be tested approximately, the
         rest will be matched exactly. For Wcs, these are keys.
         """
-        return np.allclose(self.values(), other.values(), **kwargs)
+        try:
+            return np.allclose(self.values(), other.values(), **kwargs)
+        except TypeError:
+            # same problem as in Metadata isClose
+            slfVal = np.array(self.values(), dtype=float)
+            othVal = np.array(other.values(), dtype=float)
+            return np.allclose(self.values(), other.values(), **kwargs)   
 
 
 class Thumbnails(models.Model):
@@ -235,7 +263,7 @@ class StandardizedHeader:
             meta = Metadata(**data["metadata"])
 
             # sometimes multiExt Fits have only 1 valid image extension
-            # otherwsie we expect a list.
+            # otherwise we expect a list.
             if isinstance(data["wcs"], dict):
                 wcs.append(Wcs(metadata=meta, **data["wcs"]))
             else:
@@ -298,7 +326,7 @@ class StandardizedHeader:
             raise ValueError("Could not create metadata from the given data!")
 
     def appendWcs(self, standardizedWcs):
-        """Append another WCS component.
+        """Append a WCS component.
 
         Parameters
         ----------
@@ -307,7 +335,6 @@ class StandardizedHeader:
         """
         wcs = self._dataToComponent(standardizedWcs, Wcs)
         if wcs is not None:
-            wcs.metadata = self.metadata
             self.wcs.append(wcs)
         else:
             raise ValueError("Could not create metadata from the given data!")
@@ -345,7 +372,7 @@ class StandardizedHeader:
 
         areClose = self.metadata.isClose(other.metadata, **kwargs)
         for thisWcs, otherWcs in zip(self.wcs, other.wcs):
-            areClose = areClose and thisWcs.isClose(otherWcs)
+            areClose = areClose and thisWcs.isClose(otherWcs, **kwargs)
 
         return areClose
 
@@ -368,6 +395,5 @@ class StandardizedHeader:
             wcs.metadata = self.metadata
             wcs.save()
 
-        # TODO: this doesn't work?
+        # TODO: this doesn't work, why?
         #Wcs.objects.bulk_create(self.wcs)
-
