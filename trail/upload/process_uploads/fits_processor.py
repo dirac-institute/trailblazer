@@ -223,6 +223,8 @@ class FitsProcessor(UploadProcessor):
         Coordinates are then projected to a unit sphere, and the Cartesian
         components of the resulting projected points, as well as the distance
         between the center and corner coordiantes, are calculated.
+
+        Implementation is instrument-specific.
         """
         raise NotImplementedError()
 
@@ -237,11 +239,13 @@ class FitsProcessor(UploadProcessor):
             A list of Thumbnail objects for each of the selected image-like
             HDUs.
 
-        Note
-        ----
+        Notes
+        -----
         Due to the size of some FITS files the image data itself is promptly
         saved to their save locations in order to avoid out-of-memory errors.
         To create the images see `_createThumbnails` method.
+
+        Implementation is instrument-specific.
         """
         raise NotImplementedError()
 

@@ -56,7 +56,6 @@ class HeaderStandardizer(ABC):
     standardizers with low priority when processing header metadata.
     """
 
-    @abstractmethod
     def __init__(self, header, **kwargs):
         self.header = header
         self._kwargs = kwargs
@@ -100,7 +99,7 @@ class HeaderStandardizer(ABC):
         # TODO: When eventually logging is added to processing, redirect these
         # warnings to the logs instead of silencing
         # NOTE: test if a header doesn't actually have a valid WCS
-        # what is the error raised
+        # what is the error raised?
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FITSFixedWarning)
             wcs = WCS(header)
@@ -163,6 +162,10 @@ class HeaderStandardizer(ABC):
         canProcess : `bool`
             `True` when the processor knows how to handle uploaded file and
             `False` otherwise
+
+        Notes
+        -----
+        Implementation is standardizer-specific.
         """
         raise NotImplementedError()
 
@@ -192,7 +195,11 @@ class HeaderStandardizer(ABC):
         for standardizer in cls.standardizers.values():
             if standardizer.canStandardize(header):
                 standardizers.append(standardizer)
-        standardizers.sort(key=lambda standardizer: standardizer.priority, reverse=True)
+
+        def get_priority(standardizer):
+            """Return standardizers priority."""
+            return standardizer.priority
+        standardizers.sort(key=get_priority, reverse=True)
 
         if standardizers:
             if len(standardizers) > 1:
@@ -247,6 +254,10 @@ class HeaderStandardizer(ABC):
         -------
         standardizedHeaderMetadata : `upload.model.Metadata`
             Metadata object containing standardized values.
+
+        Notes
+        -----
+        Implementation is instrument-specific.
         """
         raise NotImplementedError()
 

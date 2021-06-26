@@ -94,12 +94,21 @@ class UploadProcessor(ABC):
         canProcess : `bool`
             `True` when the processor knows how to handle uploaded file and
             `False` otherwise
+
+        Notes
+        -----
+        Implementation is instrument-specific.
         """
         raise NotImplementedError()
 
     @abstractmethod
     def process(self):
-        """Process the given upload."""
+        """Process the given upload.
+
+        Notes
+        -----
+        Implementation is processor-specific.
+        """
         raise NotImplementedError()
 
     @classmethod
@@ -122,7 +131,11 @@ class UploadProcessor(ABC):
         for processor in cls.processors.values():
             if processor.canProcess(uploadedFile):
                 processors.append(processor)
-        processors.sort(key=lambda processor: processor.priority, reverse=True)
+
+        def get_priority(processor):
+            """Return processors priority."""
+            return processor.priority
+        processors.sort(key=get_priority, reverse=True)
 
         if processors:
             if len(processors) > 1:
