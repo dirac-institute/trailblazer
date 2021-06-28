@@ -1,0 +1,571 @@
+reduced_HSCA21787010.fits:
+  runProcessing:
+    True
+  metadata:
+    obs_lon: -155.476667
+    obs_lat: 19.825555999999995
+    obs_height: 4139.000000000479
+    standardizer_name: 'astro_metadata_translator.HSC'
+    processor_name: 'SingleExtensionFits'
+    telescope: 'Subaru'
+    instrument: 'HSC'
+    science_program: 'o20312'
+    datetime_begin: '2020-05-28T14:33:27.105000'
+    datetime_end: '2020-05-28T14:34:08.993000'
+    exposure_duration: 40.0
+    filter_name: 'HSC-R2'
+  wcs:
+    wcs_radius: 0.00023308908809495583
+    wcs_center_x: 0.9964149952862653
+    wcs_center_y: 0.06798914290893944
+    wcs_center_z: 0.050345144901766184
+    wcs_corner_x: 0.9964120360320852
+    wcs_corner_y: 0.06815406382084636
+    wcs_corner_z: 0.05018045471195688
+reduced_frame-i-008108-5-0025.fits:
+  runProcessing:
+    True
+  metadata:
+    obs_lon: -105.82000000000005
+    obs_lat: 32.78000000000001
+    obs_height: 2797.9999999996007
+    standardizer_name: 'astro_metadata_translator.SDSS'
+    processor_name: 'SingleExtensionFits'
+    telescope: 'SDSS 2.5m'
+    instrument: 'Imager on SDSS 2.5m'
+    science_program: '73 S'
+    datetime_begin: '2009-10-17T01:53:42.774000'
+    datetime_end: '2009-10-17T01:54:36.681456'
+    exposure_duration: 53.907456
+    filter_name: 'i'
+  wcs:
+    wcs_radius: 0.0005429958662154268
+    wcs_center_x: 0.7839508241789587
+    wcs_center_y: -0.5365651578672179
+    wcs_center_z: 0.3122802213270305
+    wcs_corner_x: 0.7839130388040201
+    wcs_corner_y: -0.5368776125691581
+    wcs_corner_z: 0.31183774100497846
+reduced_calexp-0941420_23.fits:
+  runProcessing:
+    True
+  metadata:
+    obs_lon: 70.81489
+    obs_lat: -30.166059999999995
+    obs_height: 2215.000000000556
+    standardizer_name: 'astro_metadata_translator.DECam'
+    processor_name: 'RubinCalexpFits'
+    telescope: 'CTIO 4.0-m telescope'
+    instrument: 'DECam'
+    science_program: '2019A-0305'
+    datetime_begin: '2020-03-06T00:04:47.594235'
+    datetime_end: '2020-03-06T00:06:47.594235'
+    exposure_duration: 120.0
+    filter_name: 'g'
+  wcs:
+    wcs_radius: 0.0002902328179442395
+    wcs_center_x: 0.08873459293460961
+    wcs_center_y: 0.9299890417661761
+    wcs_center_z: -0.35671634979568645
+    wcs_corner_x: 0.08888124546442465
+    wcs_corner_y: 0.9300663767547644
+    wcs_corner_z: -0.3564781326181976
+reduced_c4d_200306_000415_ori.fits.fz:
+  runProcessing:
+    True
+  metadata:
+    obs_lon: -70.81489
+    obs_lat: -30.166059999999998
+    obs_height: 2215.0000000005593
+    standardizer_name: 'astro_metadata_translator.DECam'
+    processor_name: 'DECamCommunityFits'
+    telescope: 'CTIO 4.0-m telescope'
+    instrument: 'DECam'
+    science_program: '2019A-0305'
+    datetime_begin: '2020-03-06T00:05:24.594235'
+    datetime_end: '2020-03-06T00:07:24.594235'
+    exposure_duration: 120.0
+    filter_name: 'g DECam SDSS c0001 4720.0 1520.0'
+  wcs:
+    - wcs_radius: 8.998409511363093e-05
+      wcs_center_x: 0.11036658318223383
+      wcs_center_y: 0.9262644912161683
+      wcs_center_z: -0.3603516471847077
+      wcs_corner_x: 0.11043185493249058
+      wcs_corner_y: 0.9262800359182033
+      wcs_corner_z: -0.3602916880467012
+    - wcs_radius: 9.013055323788544e-05
+      wcs_center_x: 0.10499685217517908
+      wcs_center_y: 0.9268753095105632
+      wcs_center_z: -0.3603856568358419
+      wcs_corner_x: 0.10506227347282016
+      wcs_corner_y: 0.926891194804476
+      wcs_corner_z: -0.360325729981434
+    - wcs_radius: 9.032923986431901e-05
+      wcs_center_x: 0.09960699336178912
+      wcs_center_y: 0.927458324339184
+      wcs_center_z: -0.3604157370140456
+      wcs_corner_x: 0.09967264437079537
+      wcs_corner_y: 0.9274745412058508
+      wcs_corner_z: -0.36035585104050893
+    - wcs_radius: 9.003887224760723e-05
+      wcs_center_x: 0.11027114156988531
+      wcs_center_y: 0.9252313535503761
+      wcs_center_z: -0.3630250924443286
+      wcs_corner_x: 0.1103364316961353
+      wcs_corner_y: 0.9252470974235266
+      wcs_corner_z: -0.3629651230488998
+    - wcs_radius: 9.019237577852228e-05
+      wcs_center_x: 0.10490008091200104
+      wcs_center_y: 0.9258399451569953
+      wcs_center_z: -0.3630652406611622
+      wcs_corner_x: 0.10496555998588257
+      wcs_corner_y: 0.9258560144355498
+      wcs_corner_z: -0.3630053329503152
+    - wcs_radius: 9.03637150052348e-05
+      wcs_center_x: 0.09951065297576121
+      wcs_center_y: 0.9264228250739088
+      wcs_center_z: -0.36309555095926904
+      wcs_corner_x: 0.09957637530583717
+      wcs_corner_y: 0.9264392047952444
+      wcs_corner_z: -0.36303573556787266
+    - wcs_radius: 8.99535041564723e-05
+      wcs_center_x: 0.10777527370015766
+      wcs_center_y: 0.9276004502653876
+      wcs_center_z: -0.35768966304089117
+      wcs_corner_x: 0.10784053237915958
+      wcs_corner_y: 0.9276159742298056
+      wcs_corner_z: -0.3576297302097074
+    - wcs_radius: 9.015616656804893e-05
+      wcs_center_x: 0.10240078609573727
+      wcs_center_y: 0.9281969040010292
+      wcs_center_z: -0.35772138097949824
+      wcs_corner_x: 0.10246625954178198
+      wcs_corner_y: 0.9282127670543442
+      wcs_corner_z: -0.3576614666592334
+    - wcs_radius: 8.988766602240836e-05
+      wcs_center_x: 0.10786975227022941
+      wcs_center_y: 0.9286166526176034
+      wcs_center_z: -0.3550144067871564
+      wcs_corner_x: 0.10793495861642491
+      wcs_corner_y: 0.9286319888670324
+      wcs_corner_z: -0.35495446744805226
+    - wcs_radius: 9.004599002749126e-05
+      wcs_center_x: 0.10249475824867192
+      wcs_center_y: 0.9292165817732072
+      wcs_center_z: -0.3550371370564815
+      wcs_corner_x: 0.10256016401192308
+      wcs_corner_y: 0.929232240654406
+      wcs_corner_z: -0.35497726080164566
+    - wcs_radius: 8.98653173117627e-05
+      wcs_center_x: 0.10527248407662264
+      wcs_center_y: 0.9299301356271743
+      wcs_center_z: -0.35234591944389293
+      wcs_corner_x: 0.10533775642664751
+      wcs_corner_y: 0.929945418123605
+      wcs_corner_z: -0.3522860717966491
+    - wcs_radius: 8.987089025799882e-05
+      wcs_center_x: 0.10267346198439253
+      wcs_center_y: 0.9312281421641494
+      wcs_center_z: -0.3496745736333231
+      wcs_corner_x: 0.10273876195953417
+      wcs_corner_y: 0.9312434045566023
+      wcs_corner_z: -0.3496147426251511
+    - wcs_radius: 9.013280735024612e-05
+      wcs_center_x: 0.10748666773497917
+      wcs_center_y: 0.9244978065507152
+      wcs_center_z: -0.36571904782516673
+      wcs_corner_x: 0.10755212370232271
+      wcs_corner_y: 0.9245138661556446
+      wcs_corner_z: -0.3656592019532166
+    - wcs_radius: 9.030264445829745e-05
+      wcs_center_x: 0.10210892154968385
+      wcs_center_y: 0.9250918973450022
+      wcs_center_z: -0.3657577744991684
+      wcs_corner_x: 0.10217459162142832
+      wcs_corner_y: 0.9251082798708075
+      wcs_corner_z: -0.3656979947189624
+    - wcs_radius: 9.014817275262727e-05
+      wcs_center_x: 0.1073842168872339
+      wcs_center_y: 0.9234510127467674
+      wcs_center_z: -0.36838411613489125
+      wcs_corner_x: 0.10744973812990584
+      wcs_corner_y: 0.9234672270146571
+      wcs_corner_z: -0.36832436032072924
+    - wcs_radius: 9.028180802723683e-05
+      wcs_center_x: 0.10201011249195058
+      wcs_center_y: 0.9240432871558965
+      wcs_center_z: -0.3684263025511411
+      wcs_corner_x: 0.10207581516590769
+      wcs_corner_y: 0.9240598208680362
+      wcs_corner_z: -0.36836663178896706
+    - wcs_radius: 9.019109030101682e-05
+      wcs_center_x: 0.1045903697260247
+      wcs_center_y: 0.9226955684913277
+      wcs_center_z: -0.3710710746569169
+      wcs_corner_x: 0.1046559702020882
+      wcs_corner_y: 0.9227121139833183
+      wcs_corner_z: -0.37101143191213837
+    - wcs_radius: 9.016333345221516e-05
+      wcs_center_x: 0.10179388863203644
+      wcs_center_y: 0.9219278571836292
+      wcs_center_z: -0.3737472814429159
+      wcs_corner_x: 0.1018595652769148
+      wcs_corner_y: 0.9219446957679667
+      wcs_corner_z: -0.37368784688147016
+    - wcs_radius: 9.033401975542651e-05
+      wcs_center_x: 0.09700427083509397
+      wcs_center_y: 0.9287696916830532
+      wcs_center_z: -0.35773877515684244
+      wcs_corner_x: 0.09706996937605566
+      wcs_corner_y: 0.9287858779408151
+      wcs_corner_z: -0.3576789258301934
+    - wcs_radius: 9.038601828012587e-05
+      wcs_center_x: 0.09159831298521512
+      wcs_center_y: 0.9293138724588619
+      wcs_center_z: -0.35775057723751724
+      wcs_corner_x: 0.09166406019784207
+      wcs_corner_y: 0.9293304009935791
+      wcs_corner_z: -0.3576907964389911
+    - wcs_radius: 9.030262921683592e-05
+      wcs_center_x: 0.08619267546514055
+      wcs_center_y: 0.9298284200074383
+      wcs_center_z: -0.357756805725107
+      wcs_corner_x: 0.08625835876842847
+      wcs_corner_y: 0.9298452717143267
+      wcs_corner_z: -0.3576971711002016
+    - wcs_radius: 9.013719119494783e-05
+      wcs_center_x: 0.0808048239373889
+      wcs_center_y: 0.9303131334530242
+      wcs_center_z: -0.35775418118208324
+      wcs_corner_x: 0.08087036331173215
+      wcs_corner_y: 0.9303302992232794
+      wcs_corner_z: -0.3576947283438099
+    - wcs_radius: 9.028317712599986e-05
+      wcs_center_x: 0.0862955454056772
+      wcs_center_y: 0.9308464978050981
+      wcs_center_z: -0.35507446594639874
+      wcs_corner_x: 0.0863612102313778
+      wcs_corner_y: 0.930863169513871
+      wcs_corner_z: -0.3550147898467921
+    - wcs_radius: 9.014969265804094e-05
+      wcs_center_x: 0.08090299782593689
+      wcs_center_y: 0.9313304079904219
+      wcs_center_z: -0.3550751696404169
+      wcs_corner_x: 0.08096858653589091
+      wcs_corner_y: 0.9313473804399516
+      wcs_corner_z: -0.355015696754411
+    - wcs_radius: 9.024203532004274e-05
+      wcs_center_x: 0.09709883645731143
+      wcs_center_y: 0.929789448258473
+      wcs_center_z: -0.35505407738236267
+      wcs_corner_x: 0.09716447836502401
+      wcs_corner_y: 0.9298054344650373
+      wcs_corner_z: -0.35499425091589304
+    - wcs_radius: 9.032967749573837e-05
+      wcs_center_x: 0.09169555028707092
+      wcs_center_y: 0.9303316703328283
+      wcs_center_z: -0.3550702877364998
+      wcs_corner_x: 0.09176129979021044
+      wcs_corner_y: 0.9303479899089665
+      wcs_corner_z: -0.3550105372142589
+    - wcs_radius: 9.003625627373066e-05
+      wcs_center_x: 0.09988922692452537
+      wcs_center_y: 0.930516827467802
+      wcs_center_z: -0.35236426626954886
+      wcs_corner_x: 0.09995465738753187
+      wcs_corner_y: 0.9305324598265228
+      wcs_corner_z: -0.3523044247178029
+    - wcs_radius: 9.0197777697903e-05
+      wcs_center_x: 0.09449259139451226
+      wcs_center_y: 0.9310742116043087
+      wcs_center_z: -0.3523804232033398
+      wcs_corner_x: 0.09455824157581735
+      wcs_corner_y: 0.9310901617928096
+      wcs_corner_z: -0.3523206629800886
+    - wcs_radius: 9.025201813884831e-05
+      wcs_center_x: 0.08909438780818227
+      wcs_center_y: 0.9316026843252192
+      wcs_center_z: -0.3523898815504374
+      wcs_corner_x: 0.08916006722073296
+      wcs_corner_y: 0.9316189865685984
+      wcs_corner_z: -0.3523301665740417
+    - wcs_radius: 9.019412839695214e-05
+      wcs_center_x: 0.08369992921793226
+      wcs_center_y: 0.9321003519186009
+      wcs_center_z: -0.35239644692041594
+      wcs_corner_x: 0.08376553433471735
+      wcs_corner_y: 0.9321169949105526
+      wcs_corner_z: -0.3523368318194113
+    - wcs_radius: 9.001896943055505e-05
+      wcs_center_x: 0.09728412081429914
+      wcs_center_y: 0.9318008602808612
+      wcs_center_z: -0.3496898005622066
+      wcs_corner_x: 0.09734964513238051
+      wcs_corner_y: 0.9318164302379166
+      wcs_corner_z: -0.34963007154886633
+    - wcs_radius: 9.014282421880145e-05
+      wcs_center_x: 0.09188834943384791
+      wcs_center_y: 0.9323434762497039
+      wcs_center_z: -0.3497029790163944
+      wcs_corner_x: 0.09195395199752547
+      wcs_corner_y: 0.932359411216207
+      wcs_corner_z: -0.3496432453639059
+    - wcs_radius: 9.016485403805111e-05
+      wcs_center_x: 0.08649530351560743
+      wcs_center_y: 0.93285591210696
+      wcs_center_z: -0.3497118953035981
+      wcs_corner_x: 0.08656093386633446
+      wcs_corner_y: 0.9328721826587042
+      wcs_corner_z: -0.3496522494561895
+    - wcs_radius: 8.991960727908743e-05
+      wcs_center_x: 0.1000709601752482
+      wcs_center_y: 0.9325099054301139
+      wcs_center_z: -0.347002995958715
+      wcs_corner_x: 0.10013633682058043
+      wcs_corner_y: 0.9325251474558076
+      wcs_corner_z: -0.3469431702897168
+    - wcs_radius: 9.001124889885041e-05
+      wcs_center_x: 0.09468384206746529
+      wcs_center_y: 0.9330647050628361
+      wcs_center_z: -0.34702337992899823
+      wcs_corner_x: 0.0947492440508606
+      wcs_corner_y: 0.9330803194488102
+      wcs_corner_z: -0.34696354017259046
+    - wcs_radius: 9.009737307303465e-05
+      wcs_center_x: 0.08928714982908788
+      wcs_center_y: 0.933595204706131
+      wcs_center_z: -0.347027086298916
+      wcs_corner_x: 0.08935271639726834
+      wcs_corner_y: 0.9336111240732414
+      wcs_corner_z: -0.3469673775430882
+    - wcs_radius: 9.041525576389993e-05
+      wcs_center_x: 0.09410650619331126
+      wcs_center_y: 0.9269803076431908
+      wcs_center_z: -0.36311358379138553
+      wcs_corner_x: 0.09417230969713895
+      wcs_corner_y: 0.9269970137406014
+      wcs_corner_z: -0.36305387011064016
+    - wcs_radius: 9.031970051914008e-05
+      wcs_center_x: 0.0887029811288296
+      wcs_center_y: 0.9275099311397556
+      wcs_center_z: -0.3631213416696742
+      wcs_corner_x: 0.08876876847114851
+      wcs_corner_y: 0.9275269308801054
+      wcs_corner_z: -0.3630618380334784
+    - wcs_radius: 9.012261578281894e-05
+      wcs_center_x: 0.08330443383609352
+      wcs_center_y: 0.92801305526107
+      wcs_center_z: -0.3631145006306716
+      wcs_corner_x: 0.08337000416413864
+      wcs_corner_y: 0.9280303868190674
+      wcs_corner_z: -0.36305515220985873
+    - wcs_radius: 8.998010551185777e-05
+      wcs_center_x: 0.07791857781310303
+      wcs_center_y: 0.9284863216063558
+      wcs_center_z: -0.36310032473337484
+      wcs_corner_x: 0.07798403260247745
+      wcs_corner_y: 0.9285039629933775
+      wcs_corner_z: -0.36304115657132946
+    - wcs_radius: 9.041717841926662e-05
+      wcs_center_x: 0.09419944407841326
+      wcs_center_y: 0.9280173562526811
+      wcs_center_z: -0.3604306469060342
+      wcs_corner_x: 0.09426524875721573
+      wcs_corner_y: 0.9280338842096996
+      wcs_corner_z: -0.36037088205819034
+    - wcs_radius: 9.036254422387023e-05
+      wcs_center_x: 0.08879688773973875
+      wcs_center_y: 0.9285458706865104
+      wcs_center_z: -0.3604409504464864
+      wcs_corner_x: 0.08886265207127167
+      wcs_corner_y: 0.9285627262287197
+      wcs_corner_z: -0.3603813154501045
+    - wcs_radius: 9.01891460490727e-05
+      wcs_center_x: 0.08339557608212134
+      wcs_center_y: 0.9290475468727512
+      wcs_center_z: -0.36043839076831746
+      wcs_corner_x: 0.08346118243252061
+      wcs_corner_y: 0.929064720092233
+      wcs_corner_z: -0.3603789351597933
+    - wcs_radius: 9.003467452864346e-05
+      wcs_center_x: 0.0780141608717755
+      wcs_center_y: 0.9295207668725634
+      wcs_center_z: -0.36042327152407144
+      wcs_corner_x: 0.07807967583892525
+      wcs_corner_y: 0.9295382329481079
+      wcs_corner_z: -0.36036403498212377
+    - wcs_radius: 9.038532471230291e-05
+      wcs_center_x: 0.09670962110716595
+      wcs_center_y: 0.9256624319828552
+      wcs_center_z: -0.36578178084876556
+      wcs_corner_x: 0.09677543203869117
+      wcs_corner_y: 0.9256791281170886
+      wcs_corner_z: -0.3657221179011616
+    - wcs_radius: 9.032513038411986e-05
+      wcs_center_x: 0.0913030720075594
+      wcs_center_y: 0.9262055781434654
+      wcs_center_z: -0.3657963587269717
+      wcs_corner_x: 0.09136885564611366
+      wcs_corner_y: 0.9262225925760532
+      wcs_corner_z: -0.36573684695367276
+    - wcs_radius: 9.014861758438694e-05
+      wcs_center_x: 0.08590129669347461
+      wcs_center_y: 0.9267227108164672
+      wcs_center_z: -0.36579500336029513
+      wcs_corner_x: 0.08596693607493598
+      wcs_corner_y: 0.9267400343973641
+      wcs_corner_z: -0.36573568946311535
+    - wcs_radius: 8.99471528282123e-05
+      wcs_center_x: 0.08051373597028955
+      wcs_center_y: 0.9272115479640347
+      wcs_center_z: -0.36578174317787515
+      wcs_corner_x: 0.08057919638227118
+      wcs_corner_y: 0.9272291799101953
+      wcs_corner_z: -0.36572262854990806
+    - wcs_radius: 9.003548004339341e-05
+      wcs_center_x: 0.08580556920557424
+      wcs_center_y: 0.9256735302143224
+      wcs_center_z: -0.36846427201814463
+      wcs_corner_x: 0.08587115656840225
+      wcs_corner_y: 0.9256909941285701
+      wcs_corner_z: -0.3684051137794702
+    - wcs_radius: 8.987780434035622e-05
+      wcs_center_x: 0.08041752362511478
+      wcs_center_y: 0.926164213297068
+      wcs_center_z: -0.3684465658705851
+      wcs_corner_x: 0.080482981413827
+      wcs_corner_y: 0.9261819848039978
+      wcs_corner_z: -0.36838759578366476
+    - wcs_radius: 9.032573398782598e-05
+      wcs_center_x: 0.09661002734594691
+      wcs_center_y: 0.9246119769149238
+      wcs_center_z: -0.36845514620058145
+      wcs_corner_x: 0.096675797569909
+      wcs_corner_y: 0.9246288391528188
+      wcs_corner_z: -0.36839557539570533
+    - wcs_radius: 9.023398325567969e-05
+      wcs_center_x: 0.09121032284851655
+      wcs_center_y: 0.925154994749643
+      wcs_center_z: -0.36846833336890344
+      wcs_corner_x: 0.09127609933135243
+      wcs_corner_y: 0.9251721406486381
+      wcs_corner_z: -0.3684089899262364
+    - wcs_radius: 9.024542968353669e-05
+      wcs_center_x: 0.09920593633999214
+      wcs_center_y: 0.9232760451661414
+      wcs_center_z: -0.37110581593027436
+      wcs_corner_x: 0.0992716878588835
+      wcs_corner_y: 0.923292882144488
+      wcs_corner_z: -0.3710463391154437
+    - wcs_radius: 9.019274399023294e-05
+      wcs_center_x: 0.09380653559563508
+      wcs_center_y: 0.9238321974889107
+      wcs_center_z: -0.37112586107997797
+      wcs_corner_x: 0.09387229070886827
+      wcs_corner_y: 0.92384934061798
+      wcs_corner_z: -0.37106655585864046
+    - wcs_radius: 9.002804024001188e-05
+      wcs_center_x: 0.0884088847004081
+      wcs_center_y: 0.9243612552555173
+      wcs_center_z: -0.3711335863115524
+      wcs_corner_x: 0.08847451478814404
+      wcs_corner_y: 0.924378704188432
+      wcs_corner_z: -0.3710744823831435
+    - wcs_radius: 8.986119276210432e-05
+      wcs_center_x: 0.08301661492798723
+      wcs_center_y: 0.9248665304792907
+      wcs_center_z: -0.37112011862077426
+      wcs_corner_x: 0.08308211313632484
+      wcs_corner_y: 0.9248842838241517
+      wcs_corner_z: -0.37106121329490777
+    - wcs_radius: 9.013418715019968e-05
+      wcs_center_x: 0.09640816028582633
+      wcs_center_y: 0.9224950834263472
+      wcs_center_z: -0.3737757184255274
+      wcs_corner_x: 0.09647390779394656
+      wcs_corner_y: 0.9225122067581071
+      wcs_corner_z: -0.3737164881260292
+    - wcs_radius: 9.000945387474173e-05
+      wcs_center_x: 0.09100982925134499
+      wcs_center_y: 0.9230379061420458
+      wcs_center_z: -0.37378902445704393
+      wcs_corner_x: 0.0910755500884953
+      wcs_corner_y: 0.9230553093586736
+      wcs_corner_z: -0.3737300363107593
+    - wcs_radius: 8.985982010475461e-05
+      wcs_center_x: 0.08561747657250054
+      wcs_center_y: 0.9235559074900098
+      wcs_center_z: -0.3737835382218721
+      wcs_corner_x: 0.08568305078561542
+      wcs_corner_y: 0.9235736327388078
+      wcs_corner_z: -0.37372471114138467
+    - wcs_radius: 9.009716515650528e-05
+      wcs_center_x: 0.09899620563805717
+      wcs_center_y: 0.9211465144307623
+      wcs_center_z: -0.3764157943303187
+      wcs_corner_x: 0.09906188060803466
+      wcs_corner_y: 0.921163662596514
+      wcs_corner_z: -0.37635654706963056
+    - wcs_radius: 9.000530743046932e-05
+      wcs_center_x: 0.0936061127682478
+      wcs_center_y: 0.921702242059726
+      wcs_center_z: -0.3764344200979664
+      wcs_corner_x: 0.093671802187613
+      wcs_corner_y: 0.9217196669579283
+      wcs_corner_z: -0.3763754096881072
+    - wcs_radius: 8.991146658437944e-05
+      wcs_center_x: 0.08821283213283547
+      wcs_center_y: 0.9222313105386658
+      wcs_center_z: -0.37644110576455275
+      wcs_corner_x: 0.08827843716729813
+      wcs_corner_y: 0.9222490586405132
+      wcs_corner_z: -0.3763822410369366
+reduced_A3671-C2018_F4-R-3.fit:
+  runProcessing:
+    True
+  metadata:
+    obs_lon: -170.467
+    obs_lat: -43.983
+    obs_height: 1029.0
+    standardizer_name: 'moa_standardizer'
+    processor_name: 'SingleExtensionFits'
+    telescope: 'MOA-II telescope'
+    instrument: 'MOA-cam3'
+    science_program: 'A3671-C2018_F4-R-3'
+    datetime_begin: '2020-12-09T12:33:40.032012+00:00'
+    datetime_end: '2020-12-09T12:33:40.032012+00:00'
+    exposure_duration: 300
+    filter_name: 'R'
+  wcs:
+    wcs_radius: -999.999
+    wcs_center_x: -999.999
+    wcs_center_y: -999.999
+    wcs_center_z: -999.999
+    wcs_corner_x: -999.999
+    wcs_corner_y: -999.999
+    wcs_corner_z: -999.999
+reduced_bi327715.fits:
+  runProcessing:
+    True
+  metadata:
+    obs_lon: -70.804627
+    obs_lat: -30.1676541
+    obs_height: 2201.0
+    standardizer_name: 'las_cumbres_standardizer'
+    processor_name: 'SingleExtensionFits'
+    telescope: '0m4-18'
+    instrument: 'ff09'
+    science_program: 'ASAS'
+    datetime_begin: '2020-11-20T01:04:29.222000+00:00'
+    datetime_end: '2020-11-20T01:05:59.242000+00:00'
+    exposure_duration: 90.0
+    filter_name: ''
+  wcs:
+    wcs_radius: 0.010664244540320823
+    wcs_center_x: 0.6247845980535837
+    wcs_center_y: -0.24879049840726408
+    wcs_center_z: -0.7400996513560096
+    wcs_corner_x: 0.6228509496180825
+    wcs_corner_y: -0.2394182147117784
+    wcs_corner_z: -0.744805755230233
