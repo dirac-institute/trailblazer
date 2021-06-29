@@ -4,7 +4,8 @@ support working with the data.
 """
 
 
-from dataclasses import dataclass, make_dataclass, field, InitVar, asdict
+from dataclasses import dataclass, field
+from typing import Sequence
 
 from django.db import models
 import numpy as np
@@ -234,7 +235,7 @@ class StandardizedHeader:
     standardized WCS.
     """
     metadata: Metadata = None
-    wcs: list[Wcs] = field(default_factory=list)
+    wcs: Sequence[Wcs] = field(default_factory=list)
 
     @classmethod
     def fromDict(cls, data):
