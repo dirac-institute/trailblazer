@@ -86,9 +86,9 @@ class ConfigTestCase(TestCase):
         conf = Config.fromYaml(self.goodConf)
         self.assertEqual(conf.asDict(), confDict)
 
-        capitalizedSettings = {k.upper():v for k,v in confDict["settings"].items()}
-        capitalizedDb = {k.upper():v for k,v in confDict["db"].items()}
-        capitalizedDict = {k.upper():v for k,v in confDict.items()}
+        capitalizedSettings = {k.upper(): v for k, v in confDict["settings"].items()}
+        capitalizedDb = {k.upper(): v for k, v in confDict["db"].items()}
+        capitalizedDict = {k.upper(): v for k, v in confDict.items()}
         capitalizedDict["SETTINGS"] = capitalizedSettings
         capitalizedDict["DB"] = capitalizedDb
         self.assertEqual(conf.asDict(capitalizeKeys=True), capitalizedDict)

@@ -156,9 +156,9 @@ class Config():
             Config object as a Python dictionary.
         """
         if capitalizeKeys:
-            res = {key.upper():getattr(self, key) for key in self._keys}
+            res = {key.upper(): getattr(self, key) for key in self._keys}
         elif self._keys:
-            res = {key:getattr(self, key) for key in self._keys}
+            res = {key: getattr(self, key) for key in self._keys}
         else:
             res = {}
 
@@ -225,5 +225,5 @@ class SiteConfig(Config):
     configKey = 'settings'
     secretsKeys = ["secret_key", ]
     defaults = {
-        "secret_key" : "alalala"
+        "secret_key": "alalala"
     }
