@@ -29,10 +29,10 @@ jobs:
         pip install flake8
     - name: Run tests
       run: flake8
-
   tests:
     name: ${{ matrix.target.env }} (${{ matrix.target.os }})
     runs-on: ${{ matrix.target.os }}
+    needs: linter
     strategy:
       fail-fast: false
       matrix:
