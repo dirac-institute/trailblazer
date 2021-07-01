@@ -19,6 +19,7 @@ class ConfigTestCase(TestCase):
     def setUp(self):
         self.badConf = os.path.join(self.testConfigDir, "badPermissionConf.yaml")
         self.goodConf = os.path.join(self.testConfigDir, "conf.yaml")
+        os.chmod(self.goodConf, 0o600)
         self.noExists = os.path.join(self.testConfigDir, "noexist.yaml")
 
     def tearDown(self):
@@ -98,7 +99,9 @@ class AwsSecretsTestCase(TestCase):
 
     def setUp(self):
         self.goodConf = os.path.join(self.testConfigDir, "conf.yaml")
+        os.chmod(self.goodConf, 0o600)
         self.awsSecretsConf = os.path.join(self.testConfigDir, "awsSecretsConf.yaml")
+        os.chmod(self.awsSecretsConf, 0o600)
 
     @mock_secretsmanager
     def testSimpleAwsSecrets(self):
