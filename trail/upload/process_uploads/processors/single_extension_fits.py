@@ -4,8 +4,6 @@ single extension containing both the header and the image data.
 """
 
 
-import matplotlib.pyplot as plt
-
 from upload.process_uploads.fits_processor import FitsProcessor
 from upload.models import Thumbnails
 

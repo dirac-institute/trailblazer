@@ -1,6 +1,6 @@
 """
 Defines the database schema used by trailblazer as well as some classes that
-support working with the data. 
+support working with the data.
 """
 
 
@@ -13,11 +13,12 @@ import numpy as np
 
 __all__ = ["UploadInfo", "Metadata", "Wcs", "StandardizedHeader"]
 
+
 def set_keys_from_columns(cls):
     """Read the model schema and add fields, that are not a relationship or an
-    auto-generated field, to class attribute `keys`. 
+    auto-generated field, to class attribute `keys`.
     Added fields that are also not nullable to the `required_keys` class
-    attribute. 
+    attribute.
 
     Parameters
     -----------
@@ -131,7 +132,7 @@ class Metadata(models.Model, StandardizedKeysMixin):
         ----------
         other : `Metadata`
             Another `Metadata` instance to test approximate equality with.
-        \**kwargs : `dict`
+        **kwargs : `dict`
             Keyword arguments passed onto `numpy.allclose`
 
         Returns
@@ -150,7 +151,7 @@ class Metadata(models.Model, StandardizedKeysMixin):
         # when a value is None (not set) the equality still might hold
         # despite the fact the object is not valid but np will complain
         # about implicit casting, so we need to do it explicitly, luckily
-        # all the vals are floats....
+        # all the vals are floats, but performance-wise it's better to fail?
         slfVals = [getattr(self, key) for key in self._closeEqualityKeys]
         othVals = [getattr(other, key) for key in other._closeEqualityKeys]
         try:
@@ -198,7 +199,7 @@ class Wcs(models.Model, StandardizedKeysMixin):
         ----------
         other : `Metadata`
             Another `Metadata` instance to test approximate equality with.
-        \**kwargs : `dict`
+        **kwargs : `dict`
             Keyword arguments passed onto `numpy.allclose`
 
         Returns
@@ -215,9 +216,9 @@ class Wcs(models.Model, StandardizedKeysMixin):
             return np.allclose(self.values(), other.values(), **kwargs)
         except TypeError:
             # same problem as in Metadata isClose
-            slfVal = np.array(self.values(), dtype=float)
-            othVal = np.array(other.values(), dtype=float)
-            return np.allclose(self.values(), other.values(), **kwargs)   
+            slfVals = np.array(self.values(), dtype=float)
+            othVals = np.array(other.values(), dtype=float)
+            return np.allclose(slfVals, othVals, **kwargs)
 
 
 class Thumbnails(models.Model):
@@ -306,7 +307,7 @@ class StandardizedHeader:
             try:
                 compValue = component(**data)
             except KeyError:
-                compValuye = component.fromDictSubset(data)
+                compValue = component.fromDictSubset(data)
         elif isinstance(data, component):
             compValue = data
 
@@ -360,7 +361,7 @@ class StandardizedHeader:
         ----------
         other : `StandardizeHeader`
             Another `Metadata` instance to test approximate equality with.
-        \**kwargs : `dict`
+        **kwargs : `dict`
             Keyword arguments passed onto `numpy.allclose`
 
         Returns
@@ -397,4 +398,4 @@ class StandardizedHeader:
             wcs.save()
 
         # TODO: this doesn't work, why?
-        #Wcs.objects.bulk_create(self.wcs)
+        # Wcs.objects.bulk_create(self.wcs)

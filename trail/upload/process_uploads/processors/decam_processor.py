@@ -12,7 +12,6 @@ present in Community Pipelines products.
 import os
 
 from PIL import Image, ImageOps
-import matplotlib.pyplot as plt
 import numpy as np
 
 from .multi_extension_fits import MultiExtensionFits
@@ -34,13 +33,13 @@ row_layout = {
     5:  {"indices": ( (0, 4),  (1, 4),  (2, 4),  (3, 4), (4, 4), (5, 4)),
          "names":   ( "S8",    "S9",    "S10",   "S11",  "S12",  "S13"), "rtype": "odd"},
     6:  {"indices": ( (0, 5),  (1, 5),  (2, 5),  (3, 5), (4, 5), (5, 5), (6, 5)),
-         "names":   ( "S1",    "S2",    "S3",    "S4",   "S5",   "S6",   "S7"), "rtype":"even"},
+         "names":   ( "S1",    "S2",    "S3",    "S4",   "S5",   "S6",   "S7"), "rtype": "even"},
     7:  {"indices": ( (0, 6),  (1, 6),  (2, 6),  (3, 6), (4, 6), (5, 6), (6, 6)),
-         "names":   ( "N1",    "N2",    "N3",    "N4",   "N5",   "N6",   "N7"), "rtype":"even"},
+         "names":   ( "N1",    "N2",    "N3",    "N4",   "N5",   "N6",   "N7"), "rtype": "even"},
     8:  {"indices": ( (0, 7),  (1, 7),  (2, 7),  (3, 7), (4, 7), (5, 7)),
-         "names":   ( "N8",   "N9",     "N10",   "N11",  "N12",  "N13"),"rtype": "odd"},
+         "names":   ( "N8",   "N9",     "N10",   "N11",  "N12",  "N13"), "rtype": "odd"},
     9:  {"indices": ( (0, 8),  (1, 8),  (2, 8),  (3, 8), (4, 8), (5, 8)),
-         "names":   ( "N14",   "N15",   "N16",   "N17",  "N18",  "N19"),"rtype": "odd"},
+         "names":   ( "N14",   "N15",   "N16",   "N17",  "N18",  "N19"), "rtype": "odd"},
     10: {"indices": ( (1, 9),  (2, 9),  (3, 9),  (4, 9), (5, 9)),
          "names":   ( "N20",   "N21",   "N22",   "N23",  "N24"), "rtype": "even"},
     11: {"indices": ((1, 10), (2, 10), (3, 10), (4, 10)),
@@ -69,15 +68,15 @@ class Detector:
     ydim : `int`, optional
         Detector's physical height, in pixels. Defaults to 2048
     """
-    index_detector_map = {name:index for row in row_layout.values()
+    index_detector_map = {name: index for row in row_layout.values()
                           for name, index in zip(row["names"], row["indices"])}
     """Map between detector index and detector label."""
 
-    detector_index_map = {name:index for row in row_layout.values()
+    detector_index_map = {name: index for row in row_layout.values()
                           for name, index in zip(row["names"], row["indices"])}
     """Map between detector labels and their positional indices."""
 
-    detector_type_map = {name:row["rtype"] for row in row_layout.values()
+    detector_type_map = {name: row["rtype"] for row in row_layout.values()
                          for name in row["names"]}
     """Map between detector labels and their row type."""
 
@@ -312,8 +311,8 @@ class DecamFits(MultiExtensionFits):
         # astropy equalizer averages 4.3 seconds, the PIL approach can bring
         # that down to cca 0.13. Without normalization the time is 0.04s
         avg, std = image.mean(), image.std()
-        image[image>(avg + 0.5*std)] = avg + 0.5*std
-        image[image<(avg - 0.5*std)] = avg - 0.5*std
+        image[image > (avg + 0.5*std)] = avg + 0.5*std
+        image[image < (avg - 0.5*std)] = avg - 0.5*std
         image = image/image.max()
         image = (image*255).astype(np.uint8)
 

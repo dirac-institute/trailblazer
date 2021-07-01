@@ -5,8 +5,9 @@ from django.views.generic.edit import FormView
 from .forms import FileFieldForm
 
 # These uploads are required here so that the subclasses register themselves
-from .process_uploads.processors import *
-from .process_uploads.standardizers import *
+# and that can't be done in __init__ because django AppRegistryNotReady error
+from .process_uploads.processors import *  # noqa: F403, F401
+from .process_uploads.standardizers import *  # noqa: F403, F401
 from .process_uploads.upload_processor import UploadProcessor
 
 

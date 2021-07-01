@@ -64,7 +64,7 @@ class ConfigTestCase(TestCase):
         # works as intended
         os.environ[ConfigModule.CONF_FILE_ENVVAR] = self.badConf
         with self.assertRaises(PermissionError):
-            conf4 = Config.fromYaml()
+            Config.fromYaml()
 
     def testConfigKey(self):
         """Test only the correct config key is read."""
@@ -133,6 +133,3 @@ class AwsSecretsTestCase(TestCase):
         # verify that the replaced key was not inserted
         with self.assertRaises(AttributeError):
             conf.secret_name
-
-
-

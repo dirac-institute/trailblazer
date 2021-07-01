@@ -27,7 +27,7 @@ class HeaderStandardizer(ABC):
     ----------
     header : `object`
          The header, Astropy HDU and its derivatives.
-    \**kwargs : `dict`
+    **kwargs : `dict`
        Additional keyword arguments
 
     Keyword arguments
@@ -148,7 +148,7 @@ class HeaderStandardizer(ABC):
         ----------
         header : `object`
              The header, Astropy HDU and its derivatives.
-        \**kwargs : `dict`
+        **kwargs : `dict`
             Additional keyword arguments
 
         Keyword arguments
@@ -177,7 +177,7 @@ class HeaderStandardizer(ABC):
         ----------
         header : `object`
              The header, Astropy HDU and its derivatives.
-        \**kwargs : `dict`
+        **kwargs : `dict`
             Additional keyword arguments
 
         Keyword arguments
@@ -221,7 +221,7 @@ class HeaderStandardizer(ABC):
         ----------
         header : `object`
              The header, Astropy HDU and its derivatives.
-        \**kwargs : `dict`
+        **kwargs : `dict`
             Additional keyword arguments
 
         Keyword arguments

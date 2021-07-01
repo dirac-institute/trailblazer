@@ -1,7 +1,7 @@
 from copy import copy
 
 from django.test import TestCase
-from upload.models import UploadInfo, Metadata, Wcs, Thumbnails, StandardizedHeader
+from upload.models import Metadata, Wcs, StandardizedHeader
 
 
 class TestData:
@@ -114,8 +114,8 @@ class MetadataTestCase(TestCase):
     def testRequiredKeys(self):
         """Test Metadata recognizes all required keys."""
         requiredKeys = ['processor_name', 'standardizer_name',
-                         'obs_lon', 'obs_lat', 'obs_height',
-                         'datetime_begin', 'datetime_end']
+                        'obs_lon', 'obs_lat', 'obs_height',
+                        'datetime_begin', 'datetime_end']
         self.assertCountEqual(self.metadata1.required_keys, requiredKeys)
 
     def testIsClose(self):
@@ -140,7 +140,7 @@ class StandardizedHeaderTestCase(TestCase):
         """Tests StandardizedHeader instantiation from dictionary."""
         # Django equality is something really specific, so comparing Metadata
         # and Wcs objects directly compares their PKs by identity. This will of
-        # course fail for any non-saved model... 
+        # course fail for any non-saved model...
         std = StandardizedHeader.fromDict(TestData.nested)
         self.assertEqual(std.metadata.values(), self.meta1.values())
         self.assertEqual(std.wcs[0].values(), self.wcs1.values())
