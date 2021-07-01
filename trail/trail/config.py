@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import stat
 
 import yaml
@@ -24,7 +25,7 @@ class Config():
 
     Parameters
     ----------
-    confDict : `dict`
+    confDict : `dict`, optional
         Dictionary whose keys will be mapped to attributes of the class.
     useAwsSecrets : `bool`, optional
         Resolve secrets using AWS Secrets manager. False by default.
@@ -51,7 +52,12 @@ class Config():
     secretsKeys = []
     """Specifies which keys are to be resolved as secrets."""
 
-    def __init__(self, confDict, useAwsSecrets=False, awsRegion="us-west-2"):
+    defaults = {}
+    """Default instantiation values."""
+
+    def __init__(self, confDict=None, useAwsSecrets=False, awsRegion="us-west-2"):
+        if confDict is None:
+            confDict = {self.configKey: self.defaults}
         self._keys = []
         self._subConfs = []
         self._recurseDownDicts(confDict, useAwsSecrets, awsRegion=awsRegion)
@@ -92,7 +98,7 @@ class Config():
                             if secretkey not in self._keys:
                                 self._keys.append(secretkey)
                             setattr(self, secretkey, secretval)
-                        # skip inserting the replaced key 
+                        # skip inserting the replaced key
                         continue
                     else:
                         # scenario 2, resolve simple secret as key
@@ -108,7 +114,6 @@ class Config():
         # JSON is like YAML, right?
         return yaml.safe_load(secretString)
 
-
     def __repr__(self):
         reprStr = f"{self.__class__.__name__}("
 
@@ -120,7 +125,6 @@ class Config():
         reprStr = reprStr[:-2]
 
         return reprStr+")"
-
 
     def __eq__(self, other):
         equal = True
@@ -135,6 +139,35 @@ class Config():
                 return False
 
         return equal
+
+    def asDict(self, capitalizeKeys=False):
+        """Returns the Conf as a dictionary.
+
+        Parameters
+        ----------
+        capitalizeKeys : bool
+            Capitalize all keys (does not captalize values). Sometimes it's
+            usefull to capitalize just the keys when returning as dict in
+            order for them to be used in Django configuration file.
+
+        Returns
+        -------
+        config : `dict`
+            Config object as a Python dictionary.
+        """
+        if capitalizeKeys:
+            res = {key.upper():getattr(self, key) for key in self._keys}
+        elif self._keys:
+            res = {key:getattr(self, key) for key in self._keys}
+        else:
+            res = {}
+
+        for subKey in self._subConfs:
+            subDict = getattr(self, subKey).asDict(capitalizeKeys=capitalizeKeys)
+            subKey = subKey.upper() if capitalizeKeys else subKey
+            res[subKey] = subDict
+
+        return res
 
     @classmethod
     def fromYaml(cls, filePath=None, useAwsSecrets=False, awsRegion="us-west-2"):
@@ -179,8 +212,18 @@ class Config():
 class DbAuth(Config):
     configKey = 'db'
     secretsKeys = ["secret_name", ]
+    defaults = {
+        "engine": "django.db.backends.sqlite3",
+        "name": str(Path(__file__).resolve().parent.parent.parent.joinpath("db.sqlite3"))
+    }
+
+    def asDict(self):
+        return super().asDict(capitalizeKeys=True)
 
 
 class SiteConfig(Config):
     configKey = 'settings'
     secretsKeys = ["secret_key", ]
+    defaults = {
+        "secret_key" : "alalala"
+    }

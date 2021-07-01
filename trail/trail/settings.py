@@ -15,8 +15,16 @@ import os
 
 from .config import DbAuth, SiteConfig
 
-siteConfig = SiteConfig.fromYaml()
-dbConfig = DbAuth.fromYaml()
+
+TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
+if TRAILBLAZER_ENV == "local":
+    # instantiate with "nonsense" default values
+    siteConfig = SiteConfig()
+    dbConfig = DbAuth()
+else:
+    # instantiate from a secrets file
+    siteConfig = SiteConfig.fromYaml()
+    dbConfig = DbAuth.fromYaml()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,13 +93,7 @@ WSGI_APPLICATION = 'trail.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': REPO_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {"default" : dbConfig.asDict()}
 
 
 # Password validation

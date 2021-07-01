@@ -19,12 +19,14 @@ class ConfigTestCase(TestCase):
     def setUp(self):
         self.badConf = os.path.join(self.testConfigDir, "badPermissionConf.yaml")
         self.goodConf = os.path.join(self.testConfigDir, "conf.yaml")
+        os.chmod(self.goodConf, 0o600)
         self.noExists = os.path.join(self.testConfigDir, "noexist.yaml")
 
     def tearDown(self):
         pass
 
     def testInstantiation(self):
+        """Test various Config instantiation methods."""
         # Test 600 permissions
         with self.assertRaises(PermissionError):
             Config.fromYaml(self.badConf)
@@ -65,15 +67,31 @@ class ConfigTestCase(TestCase):
             conf4 = Config.fromYaml()
 
     def testConfigKey(self):
+        """Test only the correct config key is read."""
         Config.configKey = "noexists"
         with self.assertRaises(ValueError):
             Config.fromYaml(self.goodConf)
 
-        # this is a bit silly I think because it doesn't test correctness?
+        # this is a bit silly, I think, because it doesn't test correctness?
         Config.configKey = "db"
         conf1 = Config.fromYaml(self.goodConf)
         conf2 = DbAuth.fromYaml(self.goodConf)
         self.assertEqual(conf1, conf2)
+
+    def testAsDict(self):
+        """Test Config.asDict() method."""
+        with open(self.goodConf, 'r') as stream:
+            confDict = yaml.safe_load(stream)
+
+        conf = Config.fromYaml(self.goodConf)
+        self.assertEqual(conf.asDict(), confDict)
+
+        capitalizedSettings = {k.upper():v for k,v in confDict["settings"].items()}
+        capitalizedDb = {k.upper():v for k,v in confDict["db"].items()}
+        capitalizedDict = {k.upper():v for k,v in confDict.items()}
+        capitalizedDict["SETTINGS"] = capitalizedSettings
+        capitalizedDict["DB"] = capitalizedDb
+        self.assertEqual(conf.asDict(capitalizeKeys=True), capitalizedDict)
 
 
 class AwsSecretsTestCase(TestCase):
@@ -81,10 +99,13 @@ class AwsSecretsTestCase(TestCase):
 
     def setUp(self):
         self.goodConf = os.path.join(self.testConfigDir, "conf.yaml")
+        os.chmod(self.goodConf, 0o600)
         self.awsSecretsConf = os.path.join(self.testConfigDir, "awsSecretsConf.yaml")
+        os.chmod(self.awsSecretsConf, 0o600)
 
     @mock_secretsmanager
     def testSimpleAwsSecrets(self):
+        """Test AWS Secrets Manager correctly instantiates Config."""
         smClient = boto3.client("secretsmanager", region_name="us-west-2")
         smClient.create_secret(Name="nonsense", SecretString="test-secret-key")
 
@@ -94,22 +115,20 @@ class AwsSecretsTestCase(TestCase):
 
     @mock_secretsmanager
     def testMultiKeyedSecret(self):
+        """Test multiple keys are correctly fetched from Secrets manager."""
         multiKeyedSecret = {
-            "engine": "postgresql",
-            "name": "dbname",
-            "user": "dbuser",
-            "password": "dbpassword",
-            "host": "dbhost.alala.com",
-            "port": 5432,
+            "ENGINE": "postgresql",
+            "NAME": "dbname",
+            "USER": "dbuser",
+            "PASSWORD": "dbpassword",
+            "HOST": "dbhost.alala.com",
+            "PORT": 5432,
         }
         smClient = boto3.client("secretsmanager", region_name="us-west-2")
         smClient.create_secret(Name="db-secret", SecretString=str(multiKeyedSecret))
 
         conf = DbAuth.fromYaml(self.awsSecretsConf, useAwsSecrets=True)
-
-        # verify the secret_key was expanded
-        for key, val in multiKeyedSecret.items():
-            self.assertEqual(getattr(conf, key), val)
+        self.assertEqual(conf.asDict(), multiKeyedSecret)
 
         # verify that the replaced key was not inserted
         with self.assertRaises(AttributeError):
