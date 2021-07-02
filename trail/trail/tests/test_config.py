@@ -14,7 +14,7 @@ from trail.config import Config, DbAuth, SiteConfig
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
 
 
-@unittest.skipIf("win" in sys.platform, reason="Unable to consistently set file permissions on Windows.")
+@unittest.skipIf(sys.platform == "win32", reason="Unable to consistently set file permissions on Windows.")
 class ConfigTestCase(TestCase):
     testConfigDir = os.path.join(TESTDIR, "config")
 
@@ -96,7 +96,7 @@ class ConfigTestCase(TestCase):
         self.assertEqual(conf.asDict(capitalizeKeys=True), capitalizedDict)
 
 
-@unittest.skipIf("win" in sys.platform, reason="Unable to consistently set file permissions on Windows.")
+@unittest.skipIf(sys.platform == "win32", reason="Unable to consistently set file permissions on Windows.")
 class AwsSecretsTestCase(TestCase):
     testConfigDir = os.path.join(TESTDIR, "config")
 
