@@ -1,10 +1,11 @@
+import unittest
+import yaml
+import sys
 import os
 
-from django.test import TestCase
 from moto import mock_secretsmanager
+from django.test import TestCase
 import boto3
-import yaml
-
 
 import trail.config as ConfigModule
 from trail.config import Config, DbAuth, SiteConfig
@@ -13,6 +14,7 @@ from trail.config import Config, DbAuth, SiteConfig
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
 
 
+@unittest.skipIf("win" in sys.platform, reason="Unable to consistently set file permissions on Windows.")
 class ConfigTestCase(TestCase):
     testConfigDir = os.path.join(TESTDIR, "config")
 
@@ -94,6 +96,7 @@ class ConfigTestCase(TestCase):
         self.assertEqual(conf.asDict(capitalizeKeys=True), capitalizedDict)
 
 
+@unittest.skipIf("win" in sys.platform, reason="Unable to consistently set file permissions on Windows.")
 class AwsSecretsTestCase(TestCase):
     testConfigDir = os.path.join(TESTDIR, "config")
 
