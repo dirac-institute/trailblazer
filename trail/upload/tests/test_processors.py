@@ -6,7 +6,7 @@ import yaml
 
 from django.test import TestCase
 
-from upload.models import Wcs, Metadata, StandardizedHeader
+from upload.models import StandardizedHeader
 from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.fits_processor import FitsProcessor
@@ -135,11 +135,9 @@ class UploadProcessorTestCase(TestCase):
                 produced = fitsProcessor.standardizeHeader()
 
             expected = StandardizedHeader.fromDict(data)
-            #produced = StandardizedHeader.fromDict(produced)
 
             with self.subTest(fitsname=fits.filename + " STANDARDIZE"):
                 self.assertEqual(produced, expected)
-                #self.assertTrue(produced.isClose(expected))
 
     def testStoreHeaders(self):
         """Tests whether store header executes on an SDSS frame; this verifies

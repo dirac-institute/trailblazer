@@ -2,7 +2,7 @@
 Class that facilitates header metadata translation for MOA-II instrument
 """
 
-from datetime import datetime, timezone
+from datetime import timezone
 
 from astropy.time import Time
 
@@ -73,7 +73,7 @@ class MoaStandardizer(HeaderStandardizer):
         # possible to extract WCS data out of this header. This entire header
         # is nonsense...
         wcs = Wcs(
-            wcs_radius= -999.999,
+            wcs_radius=-999.999,
             wcs_center_x=-999.999,
             wcs_center_y=-999.999,
             wcs_center_z=-999.999,

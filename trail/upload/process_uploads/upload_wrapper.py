@@ -76,7 +76,6 @@ class TemporaryUploadedFileWrapper:
         """
         return self.filename.split(self.extension)[0]
 
-
     def save(self):
         """Saves uploaded file to desired destination.
 
@@ -85,7 +84,7 @@ class TemporaryUploadedFileWrapper:
         tgtPath : `str`
             Path where the file was saved.
         """
-        #TODO: fix os.path when transitioning to S3
+        # TODO: fix os.path when transitioning to S3
         # make the destination configurable
         tgtPath = os.path.join(self.save_root, self.filename)
         with open(tgtPath, "wb") as f:

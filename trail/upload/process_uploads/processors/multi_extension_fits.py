@@ -4,8 +4,6 @@ multiple extensions.
 """
 
 
-import matplotlib.pyplot as plt
-
 from astropy.io.fits import ImageHDU
 from astropy.io.fits.hdu.image import PrimaryHDU
 from astropy.io.fits.hdu.compressed import CompImageHDU

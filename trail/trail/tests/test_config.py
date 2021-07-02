@@ -1,10 +1,11 @@
+import unittest
+import yaml
+import sys
 import os
 
-from django.test import TestCase
 from moto import mock_secretsmanager
+from django.test import TestCase
 import boto3
-import yaml
-
 
 import trail.config as ConfigModule
 from trail.config import Config, DbAuth, SiteConfig
@@ -13,6 +14,7 @@ from trail.config import Config, DbAuth, SiteConfig
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
 
 
+@unittest.skipIf(sys.platform == "win32", reason="Unable to consistently set file permissions on Windows.")
 class ConfigTestCase(TestCase):
     testConfigDir = os.path.join(TESTDIR, "config")
 
@@ -64,7 +66,7 @@ class ConfigTestCase(TestCase):
         # works as intended
         os.environ[ConfigModule.CONF_FILE_ENVVAR] = self.badConf
         with self.assertRaises(PermissionError):
-            conf4 = Config.fromYaml()
+            Config.fromYaml()
 
     def testConfigKey(self):
         """Test only the correct config key is read."""
@@ -86,14 +88,15 @@ class ConfigTestCase(TestCase):
         conf = Config.fromYaml(self.goodConf)
         self.assertEqual(conf.asDict(), confDict)
 
-        capitalizedSettings = {k.upper():v for k,v in confDict["settings"].items()}
-        capitalizedDb = {k.upper():v for k,v in confDict["db"].items()}
-        capitalizedDict = {k.upper():v for k,v in confDict.items()}
+        capitalizedSettings = {k.upper(): v for k, v in confDict["settings"].items()}
+        capitalizedDb = {k.upper(): v for k, v in confDict["db"].items()}
+        capitalizedDict = {k.upper(): v for k, v in confDict.items()}
         capitalizedDict["SETTINGS"] = capitalizedSettings
         capitalizedDict["DB"] = capitalizedDb
         self.assertEqual(conf.asDict(capitalizeKeys=True), capitalizedDict)
 
 
+@unittest.skipIf(sys.platform == "win32", reason="Unable to consistently set file permissions on Windows.")
 class AwsSecretsTestCase(TestCase):
     testConfigDir = os.path.join(TESTDIR, "config")
 
@@ -133,6 +136,3 @@ class AwsSecretsTestCase(TestCase):
         # verify that the replaced key was not inserted
         with self.assertRaises(AttributeError):
             conf.secret_name
-
-
-

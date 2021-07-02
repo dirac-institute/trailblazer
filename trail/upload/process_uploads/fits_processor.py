@@ -4,7 +4,7 @@ Classes that facilitate processing of an FITS file.
 
 
 import os.path
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 import numpy as np
 from PIL import Image
@@ -18,7 +18,7 @@ from upload.process_uploads.header_standardizer import HeaderStandardizer
 from upload.models import StandardizedHeader, Thumbnails
 
 
-__all__ = ["FitsProcessor",]
+__all__ = ["FitsProcessor", ]
 
 
 class FitsProcessor(UploadProcessor):
@@ -150,7 +150,7 @@ class FitsProcessor(UploadProcessor):
                 {"savepath": smallPath, "thumb": np.array(img)})
 
     @classmethod
-    def _storeThumbnail(cls, thumbnail, savepath=None, pil_kwargs={"quality":30}):
+    def _storeThumbnail(cls, thumbnail, savepath=None, pil_kwargs={"quality": 30}):
         """Stores a single thumbnail (as returned by `_createThumbnails`).
 
         Parameters
@@ -274,7 +274,7 @@ class FitsProcessor(UploadProcessor):
         -------
         standardizedHeader : `upload.models.StandardizedHeader`
             A dataclass containing the standardized header metadata and one or
-            more standardized WCS. 
+            more standardized WCS.
         """
         meta = self.standardizeHeaderMetadata()
         wcs = self.standardizeWcs()

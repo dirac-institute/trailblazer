@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'trail.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DATABASES = {"default" : dbConfig.asDict()}
+DATABASES = {"default": dbConfig.asDict()}
 
 
 # Password validation
