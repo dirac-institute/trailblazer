@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-
+from django.apps import apps
+Metadata = apps.get_model('upload', 'Metadata')
 
 # not used
 def index(request):
@@ -8,10 +9,15 @@ def index(request):
 from django.apps import apps
 from django.shortcuts import render
 # This loads how the metadata database is structured
-Metadata = apps.get_model('upload', Metadata)
+#Metadata = apps.get_model('upload', Metadata)
 def print_results(request):
     """This function runs takes a request and renders some html on the query.html page.
     """
     # This is the django way of doing `select * from upload_metadata;`
-    query_result = Metadata.all()
-    return render(request, "query.html", {data: query_result})
+    query_result = Metadata.objects.all()
+    emptylist = []
+    for item in query_result:
+        itemDict = item.toDict()
+        emptylist.append(itemDict)
+
+    return render(request, "query.html", {"data": emptylist})
