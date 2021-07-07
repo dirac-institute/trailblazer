@@ -17,7 +17,44 @@
 		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus. Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum.</p>
 </section>
 
-{% for dat in data %}
-    <label>{{ dat.instrument }}</label>
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+  border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<h2>Table With Border</h2>
+
+<p>Use the CSS border property to add a border to the table.</p>
+
+<table style="width:100%">
+	<tr>
+	  <th>Instrument</th>
+	  <th>Longitude</th>
+	  <th>location</th>
+	</tr>
+	<tr>
+	  <td>Instrument</td>
+	  <td>Satellite 2</td>
+	  <td>Satellite 2</td>
+	</tr>
+	<tr>
+	  <td>Eve</td>
+	  <td>Jackson</td>
+	  <td>94</td>
+	</tr>
+  </table>
+
+  {% for dat in data %}
+
+  <label>{{ dat.instrument }}</label>
+
 {% endfor %}
+
+
 {% endblock %}
