@@ -1,11 +1,18 @@
 {% extends "base.html" %}
-{% block head.extend %}<style>
-	table, th, td {
-	  border: 1px solid black;
-	}
-	</style>
-	{% endblock %}
+{% load static %}
+
+
 {% block query-nav-state%}active{% endblock %}
+
+
+{% block head.extend %}
+<style>
+ table, th, td {
+     border: 1px solid black;
+ }
+</style>
+{% endblock %}
+
 
 {% block content %}
 <!-- Post -->
@@ -17,50 +24,31 @@
 						Here as well.<br />
 						So as here.</p>
 		</header>
-		<div class="image main"><img src="images/pic01.jpg" alt="" /></div>
-		<p>The placeholder is removed. Waiting for a new placeholder.</p>
-		<p>Similarly here.</p>
 </section>
 
-
-<h2>Table With Border</h2>
-
-<p>Note (under modification by Jasmine)Use the CSS border property to add a border to the table.</p>
-
-
-
 <form action="results" method="post">
-	{% csrf_token %}
-
-<label for="Inst">Instrument:</label><br>
-<input type="text" id="Inst" name="Inst"><br>
-
-<input type="submit" class="btn-primaryg" value="submit" >
-
+    {% csrf_token %}
+    {{ queryform }}
+    <input type="submit" class="btn-primaryg" value="submit" >
 </form>
 
-<iframe src="observation.html" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0" >
-</iframe>
-
+{% if render_table %}
+<h2>Results</h2>
 <table style="width:100%">
-	<tr>
-	  <th>Instrument</th>
-	  <th>Telescopename</th>
-	  <th>datetime_begin</th>
-	  <th>exposureduration</th>
-	</tr>
-
-	{% for dat in data %}
-	<tr>
-		<td>{{ dat.instrument }}</td>
-		<td>{{ dat.telescope }}</td>
-		<td>{{ dat.datetime_begin }}
-		<td>{{ dat.exposure_duration }}</td>	
-		</td>
-	</tr>
+    <tr>
+        <th>Instrument</th>
+        <th>Telescopename</th>
+        <th>datetime_begin</th>
+        <th>exposureduration</th>
+    </tr>
+    {% for dat in data %}
+    <tr>
+        <td>{{ dat.instrument }}</td>
+        <td>{{ dat.telescope }}</td>
+        <td>{{ dat.datetime_begin }}</td>
+        <td>{{ dat.exposure_duration }}</td>
+    </tr>
 	{% endfor %}
-		
-  </table>
-
-
+</table>
+{% endif %}
 {% endblock %}
