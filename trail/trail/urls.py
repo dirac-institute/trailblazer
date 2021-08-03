@@ -23,7 +23,7 @@ urlpatterns = [
     path(r'admin/', admin.site.urls),
     path(r'gallery/', include('gallery.urls')),
     path(r'query/', include('query.urls')),
-    #path(r'query/results', include('query.urls')),
+    # path(r'query/results', include('query.urls')),
     path(r'upload/', include('upload.urls')),
     re_path(r'^about/', TemplateView.as_view(template_name='about.html')),
     # in the new template the index is the gallery, we don't need so many apps

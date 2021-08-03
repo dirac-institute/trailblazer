@@ -18,11 +18,10 @@
 <!-- Post -->
 <section class="post">
 		<header class="major">
-				<h1>This is where <br />
-						the query lives</h1>
-				<p>The placeholder is removed here.<br />
-						Here as well.<br />
-						So as here.</p>
+				<h1>Query Tool</h1>
+				<p>Query the metadata with FITS headers.<br />
+						You can click the drag tag to filter data.<br />
+						Now only the instrument filter works.</p>
 		</header>
 </section>
 
@@ -37,9 +36,9 @@
 <table style="width:100%">
     <tr>
         <th>Instrument</th>
-        <th>Telescopename</th>
-        <th>datetime_begin</th>
-        <th>exposureduration</th>
+        <th>Telescope</th>
+        <th>Observation Start</th>
+        <th>Duration [s]</th>
     </tr>
     {% for dat in data %}
     <tr>
