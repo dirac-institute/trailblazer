@@ -1,10 +1,11 @@
+from query.views import print_results, index
 from django.urls import path
-from django.views.generic import TemplateView
 
 
 """Route query URLs to query views here."""
 
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='query.html')),
+   path('', index, name='query'),
+   path('results', print_results, name='results'),
 ]

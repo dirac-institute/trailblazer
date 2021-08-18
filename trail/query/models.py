@@ -1,3 +1,7 @@
-# from django.db import models
+from django.db import models
 
-# Create your models here.
+
+class Observation(models.Model):
+    """Placeholder class for django tables 2
+    """
+    time_start = models.CharField(max_length=100, verbose_name="Observation start time")
