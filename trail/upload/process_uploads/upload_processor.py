@@ -4,7 +4,6 @@ Class that facilitates the processing of an uplod.
 
 
 from abc import ABC, abstractmethod
-import warnings
 import logging
 
 from django.conf import settings
@@ -146,11 +145,8 @@ class UploadProcessor(ABC):
                 # I think this should never be an issue really, but just in case
                 names = [proc.name for proc in processors]
                 logger.info("Multiple processors declared ability to process "
-                             f"the given upload: {names}. Using {names[-1]} "
-                             "to process FITS.")
-                #warnings.warn("Multiple processors declared ability to process "
-                #              f"the given upload: {names}. \n Using {names[-1]} "
-                #              "to process FITS.")
+                            f"the given upload: {names}. Using {names[-1]} "
+                            "to process FITS.")
             return processors[0]
         else:
             raise ValueError("None of the known processors can handle this upload.\n "

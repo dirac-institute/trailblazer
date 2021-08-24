@@ -4,6 +4,7 @@ Classes that facilitate processing of an FITS file.
 
 
 import os.path
+import logging
 from abc import abstractmethod
 
 import numpy as np
@@ -19,6 +20,9 @@ from upload.models import StandardizedHeader, Thumbnails
 
 
 __all__ = ["FitsProcessor", ]
+
+
+logger = logging.getLogger(__name__)
 
 
 class FitsProcessor(UploadProcessor):
@@ -276,10 +280,11 @@ class FitsProcessor(UploadProcessor):
             A dataclass containing the standardized header metadata and one or
             more standardized WCS.
         """
+        logger.info(f"ID {self.uploadInfo.id}: Standardizing header.")
         meta = self.standardizeHeaderMetadata()
-        wcs = self.standardizeWcs()
-
         stdHeader = StandardizedHeader(metadata=meta)
+
+        logger.info(f"ID {self.uploadInfo.id}: Standardizing WCS.")
         wcs = self.standardizeWcs()
         try:
             stdHeader.appendWcs(wcs)
@@ -296,7 +301,6 @@ class FitsProcessor(UploadProcessor):
             * inserting the new data into the database
         """
         # TODO: get some error handling here
-
         # Insert upload info into DB
         self.uploadInfo.save()
 
@@ -309,6 +313,7 @@ class FitsProcessor(UploadProcessor):
         # Create thumbnails (their DB models and the files) and then set up
         # relationship between particular wcs data and thumbs; then insert them
         # TODO: I'm iffed how this is set here, maybe refactor?
+        logger.info(f"ID {self.uploadInfo.id}: Creating thumbnails.")
         thumbnails = self.createThumbnails()
         if isinstance(thumbnails, Thumbnails):
             for wcs in standardizedHeader.wcs:
@@ -322,4 +327,5 @@ class FitsProcessor(UploadProcessor):
             Thumbnails.objects.bulk_create(thumbnails)
 
         # lastly, don't forget to upload the original science data.
+        logger.info(f"ID {self.uploadInfo.id}: Uploading raw file.")
         self.uploadedFile.save()

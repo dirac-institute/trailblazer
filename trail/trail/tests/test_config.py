@@ -8,7 +8,7 @@ from django.test import TestCase
 import boto3
 
 import trail.config as ConfigModule
-from trail.config import Config, DbAuth, SiteConfig
+from trail.config import get_secrets_filepath, Config, SecretsConfig
 
 
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
@@ -31,7 +31,7 @@ class ConfigTestCase(TestCase):
         """Test various Config instantiation methods."""
         # Test 600 permissions
         with self.assertRaises(PermissionError):
-            Config.fromYaml(self.badConf)
+            SecretsConfig.fromYaml(self.badConf)
 
         # Test missing file
         with self.assertRaises(FileNotFoundError):
@@ -56,7 +56,7 @@ class ConfigTestCase(TestCase):
 
         ConfigModule.CONF_FILE_PATH = self.goodConf
         try:
-            conf3 = Config.fromYaml()
+            conf3 = Config.fromYaml(get_secrets_filepath())
         except Exception as e:
             self.fail(f"ConfigTestCase.testConfig conf3 failed with:\n{e}")
 
@@ -66,19 +66,7 @@ class ConfigTestCase(TestCase):
         # works as intended
         os.environ[ConfigModule.CONF_FILE_ENVVAR] = self.badConf
         with self.assertRaises(PermissionError):
-            Config.fromYaml()
-
-    def testConfigKey(self):
-        """Test only the correct config key is read."""
-        Config.configKey = "noexists"
-        with self.assertRaises(ValueError):
-            Config.fromYaml(self.goodConf)
-
-        # this is a bit silly, I think, because it doesn't test correctness?
-        Config.configKey = "db"
-        conf1 = Config.fromYaml(self.goodConf)
-        conf2 = DbAuth.fromYaml(self.goodConf)
-        self.assertEqual(conf1, conf2)
+            SecretsConfig.fromYaml(get_secrets_filepath())
 
     def testAsDict(self):
         """Test Config.asDict() method."""
@@ -88,10 +76,10 @@ class ConfigTestCase(TestCase):
         conf = Config.fromYaml(self.goodConf)
         self.assertEqual(conf.asDict(), confDict)
 
-        capitalizedSettings = {k.upper(): v for k, v in confDict["settings"].items()}
+        capitalizedSettings = {k.upper(): v for k, v in confDict["django"].items()}
         capitalizedDb = {k.upper(): v for k, v in confDict["db"].items()}
         capitalizedDict = {k.upper(): v for k, v in confDict.items()}
-        capitalizedDict["SETTINGS"] = capitalizedSettings
+        capitalizedDict["DJANGO"] = capitalizedSettings
         capitalizedDict["DB"] = capitalizedDb
         self.assertEqual(conf.asDict(capitalizeKeys=True), capitalizedDict)
 
@@ -112,9 +100,8 @@ class AwsSecretsTestCase(TestCase):
         smClient = boto3.client("secretsmanager", region_name="us-west-2")
         smClient.create_secret(Name="nonsense", SecretString="test-secret-key")
 
-        conf = SiteConfig.fromYaml(self.goodConf, useAwsSecrets=True)
-
-        self.assertEqual(conf.secret_key, "test-secret-key")
+        conf = SecretsConfig.fromYaml(self.goodConf, useAwsSecrets=True)
+        self.assertEqual(conf.django.secret_key, "test-secret-key")
 
     @mock_secretsmanager
     def testMultiKeyedSecret(self):
@@ -130,8 +117,8 @@ class AwsSecretsTestCase(TestCase):
         smClient = boto3.client("secretsmanager", region_name="us-west-2")
         smClient.create_secret(Name="db-secret", SecretString=str(multiKeyedSecret))
 
-        conf = DbAuth.fromYaml(self.awsSecretsConf, useAwsSecrets=True)
-        self.assertEqual(conf.asDict(), multiKeyedSecret)
+        conf = SecretsConfig.fromYaml(self.awsSecretsConf, useAwsSecrets=True)
+        self.assertEqual(conf.db.asDict(), multiKeyedSecret)
 
         # verify that the replaced key was not inserted
         with self.assertRaises(AttributeError):

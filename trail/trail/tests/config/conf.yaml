@@ -1,4 +1,4 @@
-settings:
+django:
   secret_key: nonsense
   static_root: ~/trail/static
   media_root: ~/trail/media
