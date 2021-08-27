@@ -27,17 +27,14 @@
 <section class="posts">
     {% for image in data %}
     <article>
-		    <header>
-			      <span class="date">April, 2017</span>
-			      <h2><a href="#">Sed magna<br />
-			          ipsum faucibus</a></h2>
-		    </header>
 		    <a href="{% get_media_prefix %}{{ image.name }}">
             <img src="{% get_media_prefix %}{{ image.name }}" width="300"  alt=”{{image.name}}” id=”showSimilarInPopup”>
             <div class=”caption”>
+                <span class="date">{{ image.date }}</span>
+                <span>{{image.caption}}</span>
             </div>
         </a>
-		    <p>{{image.caption}}</p>
+
 		    <ul class="actions special">
 			      <li><a href="{% get_media_prefix %}{{ image.name }}" class="button">Full Frame</a></li>
 		    </ul>
