@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block gallery-nav-state%}active{% endblock %}
+
+{% block content %}
+<!-- Featured Post -->
+<article class="post featured">
+    <header class="major">
+		    <span class="date">{{ image_data.datetime_begin}}</span>
+    </header>
+    <a href="#" class="image main"><img src="{% static 'images/starlink.jpg' %}" alt="" /></a>
+    <ul class="actions special">
+        <!-- Insert in here the information you want to show-->
+        <!-- Can display any data that is in the metadata for the image-->
+        <li>Instrument: {{ image_data.instrument }}</li>
+        <li>Telescope: {{ image_data.telescope }}</li>
+        <li>Science Program: {{ image_data.science_program }}</li>
+    </ul>
+</article>
+{% endblock %}
