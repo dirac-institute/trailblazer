@@ -42,7 +42,7 @@ def get_images(count, page):
     return images
 
 
-def render_gallery(request, count=20):
+def render_gallery(request, count=12):
     number_of_pages = int(np.ceil(len(Thumbnails.objects.values())/count))
     try:
         page = int(request.get_full_path_info().split("?")[1])

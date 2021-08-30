@@ -10,12 +10,13 @@
 		    <span class="date">{{ image_data.datetime_begin}}</span>
     </header>
     <a href="#" class="image main"><img src="{% get_media_prefix %}{{ image.large }}" alt="" /></a>
-    <ul class="">
+    <h2>Image Information</h2>
+    <ul>
         <!-- Insert in here the information you want to show-->
         <!-- Can display any data that is in the metadata for the image-->
-        <li>Instrument: {{ image_data.instrument }}</li>
-        <li>Telescope: {{ image_data.telescope }}</li>
-        <li>Science Program: {{ image_data.science_program }}</li>
+        <li class="image_information">Instrument: {{ image_data.instrument }}</li>
+        <li class="image_information">Telescope: {{ image_data.telescope }}</li>
+        <li class="image_information">Science Program: {{ image_data.science_program }}</li>
     </ul>
 </article>
 {% endblock %}
