@@ -24,9 +24,9 @@
          All these values These should probably be in a database, and there should be a view that retrieves them
          and creates the tags.
     -->
-    <section class="posts">
+    <section id="image_gallery">
         {% for image in data %}
-            <article>
+            <div class="gallery_item">
                 <a href="/image?{{ image.id }}">
                     <img src="{% get_media_prefix %}{{ image.name }}" width="300" alt=”{{ image.name }}”
                          id=”showSimilarInPopup”>
@@ -36,10 +36,10 @@
                     </div>
                 </a>
 
-                <ul class="actions special">
+                <!--<ul class="actions special">
                     <li><a href="{% get_media_prefix %}{{ image.name }}" class="button">Full Frame</a></li>
-                </ul>
-            </article>
+                </ul>-->
+            </div>
         {% endfor %}
     </section>
 
@@ -48,7 +48,7 @@
         <div class="pagination">
             <!--<a href="#" class="previous">Prev</a>-->
             {% for i in num_of_page %}
-                <a href="/?{{ i }}" class="page {% if page == i %} active {% endif %}">{{ i+1 }}</a>
+                <a href="/?{{ i }}" class="page {% if page == i %} active {% endif %}">{{ i }}</a>
             {% endfor %}
         </div>
     </footer>

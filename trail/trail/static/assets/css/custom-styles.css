@@ -1,0 +1,23 @@
+/*
+Custom styles for the website
+ */
+
+/*
+Article View
+*/
+#image_gallery {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    width: 100%;
+    padding: 0;
+}
+
+.gallery_item {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    text-align: center;
+    flex: 25%;
+    border: rgba(30, 37, 45, 0.32) 1px solid;
+}
