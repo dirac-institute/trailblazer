@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.apps import apps
+from django.http import JsonResponse
 import numpy as np
 import os
 
@@ -43,13 +44,21 @@ def get_images(count, page):
 
 
 def render_gallery(request, count=12):
-    number_of_pages = int(np.ceil(len(Thumbnails.objects.values())/count))
-    try:
-        page = int(request.get_full_path_info().split("?")[1])
-    except:
-        page = 0
-    images = get_images(count, page)
-    return render(request, "gallery.html", {'data': images, "page": page, "num_of_page": range(number_of_pages)})
+    number_of_pages = int(np.ceil(len(Thumbnails.objects.values()) / count))
+    if request.method == 'GET':
+        try:
+            page = int(request.get_full_path_info().split("?")[1])
+        except:
+            page = 0
+        images = get_images(count, page)
+        return render(request, "gallery.html", {'data': images, "page": page, "num_of_page": range(number_of_pages)})
+    elif request.method == 'POST':
+        try:
+            page = int(request.body)
+        except:
+            page = 0
+        images = get_images(count, page)
+        return JsonResponse({'data': images})
 
 
 def render_image(request):

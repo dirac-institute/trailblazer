@@ -9,4 +9,5 @@ from gallery import views
 urlpatterns = [
     path('', views.render_gallery, name='gallery'),
     path('image', views.render_image, name='image'),
+    path('get_images', views.render_gallery, name='get_images'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

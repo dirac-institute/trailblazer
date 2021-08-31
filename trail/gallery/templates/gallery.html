@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load static %}
 
 {% block gallery-nav-state %}active{% endblock %}
@@ -48,8 +49,12 @@
         <div class="pagination">
             <!--<a href="#" class="previous">Prev</a>-->
             {% for i in num_of_page %}
-                <a href="/?{{ i }}" class="page {% if page == i %} active {% endif %}">{{ i }}</a>
+                <a id="pagenum_{{ i }}" onclick="get_images({{ i }})" class="page pagenum {% if page == i %} active {% endif %}">{{ i }}</a>
             {% endfor %}
         </div>
     </footer>
+{% endblock %}
+
+{% block content.scripts.extended %}
+<script src="{% static 'assets/js/pagination_gallery.js' %}"></script>
 {% endblock %}
