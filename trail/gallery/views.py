@@ -48,7 +48,7 @@ def render_gallery(request, count=12):
     elif request.method == 'POST':
         try:
             page = int(request.body)
-        except:
+        except TypeError:
             page = 0
         images = get_images(count, page)
         return JsonResponse({'data': images})
@@ -56,8 +56,8 @@ def render_gallery(request, count=12):
 
 def render_image(request):
     # this is the code that sends to the image page
-    id = int(request.get_full_path_info().split("?")[1])
-    image_data = Thumbnails.objects.filter(wcs_id=id)[0]
-    wcs_data = Wcs.objects.values()[id - 1]
+    wcs_id = int(request.get_full_path_info().split("?")[1])
+    image_data = Thumbnails.objects.filter(wcs_id=wcs_id)[0]
+    wcs_data = Wcs.objects.values()[wcs_id - 1]
     metadata = Metadata.objects.values()[wcs_data["metadata_id"] - 1]
     return render(request, "images.html", {'image_data': metadata, 'image': image_data})
