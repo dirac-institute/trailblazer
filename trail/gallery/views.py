@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.conf import settings
+# from django.conf import settings
 from django.apps import apps
 from django.http import JsonResponse
 import numpy as np
