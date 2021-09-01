@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.apps import apps
 from django.http import JsonResponse
 import numpy as np
-import os
+# import os
 
 Metadata = apps.get_model('upload', 'Metadata')
 Thumbnails = apps.get_model('upload', 'Thumbnails')
