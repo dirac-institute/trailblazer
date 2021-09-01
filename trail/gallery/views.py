@@ -26,32 +26,25 @@ def get_images(count, page):
     # sorting data by date
 
     # processing data for sending to user
+    # this code seems inefficient, there is probably a less computational heavy approach.
     for image in image_data:
         wcs_data = Wcs.objects.values()[image["wcs_id"] - 1]
         metadata = Metadata.objects.values()[wcs_data["metadata_id"] - 1]
-        images.append({"name": image["small"],  # at the moment this is just pulling the static files
+        images.append({"name": image["small"],
                        "id": image["wcs_id"],
                        "caption": metadata["telescope"],
                        "date": metadata["datetime_begin"]})
-
+    # sorting the images by date with newest images first.
     images.sort(reverse=True, key=date_sort)
-    # for i, imageName in enumerate(imageNames):
-    #     images.append({"name": imageName,
-    #                    "path": os.path.join(path, imageName),
-    #                    "caption": imageName,
-    #                    "date": "undefined"})
     return images
 
 
 def render_gallery(request, count=12):
+    # this function renders the gallery page and also sends the next page information.
     number_of_pages = int(np.ceil(len(Thumbnails.objects.values()) / count))
     if request.method == 'GET':
-        try:
-            page = int(request.get_full_path_info().split("?")[1])
-        except:
-            page = 0
-        images = get_images(count, page)
-        return render(request, "gallery.html", {'data': images, "page": page, "num_of_page": range(number_of_pages)})
+        images = get_images(count, 0)
+        return render(request, "gallery.html", {'data': images, "page": 0, "num_of_page": range(number_of_pages)})
     elif request.method == 'POST':
         try:
             page = int(request.body)
@@ -62,6 +55,7 @@ def render_gallery(request, count=12):
 
 
 def render_image(request):
+    # this is the code that sends to the image page
     id = int(request.get_full_path_info().split("?")[1])
     image_data = Thumbnails.objects.filter(wcs_id=id)[0]
     wcs_data = Wcs.objects.values()[id - 1]

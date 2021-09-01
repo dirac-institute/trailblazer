@@ -1,4 +1,5 @@
 function getCookie(name) {
+    //this function obtains the cookie of the website.
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
@@ -16,7 +17,8 @@ function getCookie(name) {
 
 
 async function get_images(page) {
-    let csrftoken = getCookie('csrftoken');
+    //This function sends and receives data asyncronosly to the server.
+    let csrftoken = getCookie('csrftoken');//obtains the token required to send and receive
     let response = await fetch("get_images", {
         method: 'POST',
         credentials: 'same-origin',
@@ -24,8 +26,9 @@ async function get_images(page) {
             'X-CSRFToken': csrftoken
         },
         body: page.toString()
-    })
-    let data = await response.json()
+    });//this is the request to the server
+    let data = await response.json()//get the json
+    //Now the code bellow edits the main website changing the images
     document.getElementById("image_gallery").innerHTML = "";
     await data.data.forEach(value => {
         document.getElementById("image_gallery").innerHTML += "<div class=\"gallery_item\">\n" +

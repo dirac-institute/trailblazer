@@ -10,9 +10,7 @@
         <header class="major">
             <span class="date">April 25, 2021</span>
             <h2><a href="#">WELCOME TO THE GALLERY</a></h2>
-            <p>Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br/>
-                facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br/>
-                amet nullam sed etiam veroeros.</p>
+            <p>Have a scroll through the images and see some images that are affected by satellite trails.</p>
         </header>
         <a href="#" class="image main"><img src="{% static 'images/starlink.jpg' %}" alt=""/></a>
         <ul class="actions special">
@@ -22,8 +20,7 @@
 
     <!--
          Posts
-         All these values These should probably be in a database, and there should be a view that retrieves them
-         and creates the tags.
+         Loads them from the database and currently it is hard coded to display 12 images per page.
     -->
     <section id="image_gallery">
         {% for image in data %}
@@ -36,10 +33,6 @@
                         <span>{{ image.caption }}</span>
                     </div>
                 </a>
-
-                <!--<ul class="actions special">
-                    <li><a href="{% get_media_prefix %}{{ image.name }}" class="button">Full Frame</a></li>
-                </ul>-->
             </div>
         {% endfor %}
     </section>
