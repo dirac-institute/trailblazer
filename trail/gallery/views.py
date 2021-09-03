@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.apps import apps
 from django.http import JsonResponse
 import numpy as np
+
 # import os
 
 Metadata = apps.get_model('upload', 'Metadata')
@@ -13,10 +14,28 @@ Wcs = apps.get_model('upload', 'Wcs')
 
 
 def date_sort(e):
+    """Sort function that sorts by value date
+    """
     return e["date"]
 
 
 def get_images(count, page):
+    """
+    Obtains images for the gallery from the database
+
+    Parameters
+    ----------
+    count : integer
+        The number images per page.
+    page : integer
+        The current page number
+
+    Returns
+    -------
+    images : `list`
+        A list of image objects that have image location, id, caption and date
+    """
+
     images = []
     # Would there maybe a way to sort the data without converting to a list?
     # converting to a list seems computationally heavy
@@ -40,7 +59,10 @@ def get_images(count, page):
 
 
 def render_gallery(request, count=12):
-    # this function renders the gallery page and also sends the next page information.
+    """Processes the user request and renders the gallery page
+    or if it is a post request returns information on the next set of images.
+    The input value count is for how many images per request.
+    """
     number_of_pages = int(np.ceil(len(Thumbnails.objects.values()) / count))
     if request.method == 'GET':
         images = get_images(count, 0)
@@ -55,7 +77,8 @@ def render_gallery(request, count=12):
 
 
 def render_image(request):
-    # this is the code that sends to the image page
+    """Processes the users request and renders the image page
+    """
     wcs_id = int(request.get_full_path_info().split("?")[1])
     image_data = Thumbnails.objects.filter(wcs_id=wcs_id)[0]
     wcs_data = Wcs.objects.values()[wcs_id - 1]
