@@ -49,7 +49,7 @@ def get_images(count, page):
     for image in image_data:
         wcs_data = Wcs.objects.values()[image["wcs_id"] - 1]
         metadata = Metadata.objects.values()[wcs_data["metadata_id"] - 1]
-        images.append({"name": image["small"],
+        images.append({"name": image["small"].split("\media\\")[1],
                        "id": image["wcs_id"],
                        "caption": metadata["telescope"],
                        "date": metadata["datetime_begin"]})
