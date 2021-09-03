@@ -19,7 +19,7 @@ function getCookie(name) {
 async function get_images(page) {
     //This function sends and receives data asyncronosly to the server.
     let csrftoken = getCookie('csrftoken');//obtains the token required to send and receive
-    let response = await fetch("get_images", {
+    let response = await fetch("", {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
@@ -32,7 +32,7 @@ async function get_images(page) {
     document.getElementById("image_gallery").innerHTML = "";
     await data.data.forEach(value => {
         document.getElementById("image_gallery").innerHTML += "<div class=\"gallery_item\">\n" +
-            "                <a href=\"/image?" + value.id + "\">\n" +
+            "                <a href=\"/gallery/image?" + value.id + "\">\n" +
             "                    <img src=\"/media/" + value.name + "\" width=\"300\" alt=”C:\\Users\\thisi\\PycharmProjects\\trailblazer\\trail\\media\\frame-g-002728-2-0424.png”\n" +
             "                         id=”showSimilarInPopup”>\n" +
             "                    <div class=”caption”>\n" +
