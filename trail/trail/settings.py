@@ -29,31 +29,36 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
-if TRAILBLAZER_ENV == "local":
-    # avoids problematic Windows file permissions when loading default YAMLs
-    secrets = config.SecretsConfig()
 
-    SMALL_THUMB_ROOT = MEDIA_ROOT
-    LARGE_THUMB_ROOT = MEDIA_ROOT
-    DATA_ROOT = os.path.join(STATIC_ROOT, "upload/fits")
+TRAILBLAZER_ENV = Path(os.environ.get("TRAILBLAZER_ENVIRONMENT",
+                                      default="local"))
+TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG",
+                                             default=BASE_DIR / "configs/"))
+siteConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "site.yaml")
+
+# avoids problematic Windows file permissions when loading default YAMLs by
+# instantiating from existing hardcoded defaults...
+if TRAILBLAZER_ENV == "local":
+    secrets = config.SecretsConfig()
+    SMALL_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.small_root)
+    LARGE_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.large_root)
+    DATA_ROOT = os.path.abspath(siteConfig.data_root)
+
 else:
     secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
-    siteConfig = config.Config()
-
-    SMALL_THUMB_ROOT = siteConfig.thumbnails.small
-    LARGE_THUMB_ROOT = siteConfig.thumbnails.large
-    DATA_ROOT = siteConfig.raw_data_path
+    SMALL_THUMB_ROOT = siteConfig.thumbnails.small_root
+    LARGE_THUMB_ROOT = siteConfig.thumbnails.large_root
+    DATA_ROOT = siteConfig.data_root
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secrets.django.secret_key
+SECRET_KEY = secrets.secret_key
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = secrets.django.debug
+DEBUG = siteConfig.debug
 
 
 ALLOWED_HOSTS = []
@@ -74,7 +79,7 @@ INSTALLED_APPS = [
 ]
 
 
-loggingConf = config.Config.fromYaml(BASE_DIR / "logging.cfg")
+loggingConf = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
 LOGGING = loggingConf.asDict()
 
 

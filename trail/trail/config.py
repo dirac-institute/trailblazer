@@ -234,10 +234,7 @@ class SecretsConfig(Config):
             "engine": "django.db.backends.sqlite3",
             "name": str(Path(__file__).resolve().parent.parent.parent.joinpath("db.sqlite3"))
             },
-        'django': {
-            "secret_key": "alalala",
-            "debug": True
-        }
+        "secret_key": "alalala",
     }
     """Default instantiation values."""
 
