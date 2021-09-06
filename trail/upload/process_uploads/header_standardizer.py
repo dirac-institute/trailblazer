@@ -4,15 +4,19 @@ Class that facilitates FITS header standardization to keys required by models.
 
 from abc import ABC, abstractmethod
 import warnings
+import logging
 
 import numpy as np
 from astropy.io.fits import PrimaryHDU, CompImageHDU
-from astropy.wcs import WCS, FITSFixedWarning
+from astropy.wcs import WCS
 import astropy.units as u
 
 import upload.models as models
 
 __all__ = ["HeaderStandardizer", ]
+
+
+logger = logging.getLogger(__name__)
 
 
 class HeaderStandardizer(ABC):
@@ -96,13 +100,13 @@ class HeaderStandardizer(ABC):
         standardizedWcs = {}
         centerX, centerY = int(dimX/2), int(dimY/2)
 
-        # TODO: When eventually logging is added to processing, redirect these
-        # warnings to the logs instead of silencing
-        # NOTE: test if a header doesn't actually have a valid WCS
+        # TODO: test if a header doesn't actually have a valid WCS
         # what is the error raised?
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=FITSFixedWarning)
+        with warnings.catch_warnings(record=True) as warns:
             wcs = WCS(header)
+            if warns:
+                for w in warns:
+                    logger.warning(w.message)
 
         centerSkyCoord = wcs.pixel_to_world(centerX, centerY)
         centerRa = centerSkyCoord.ra.to(u.rad)
@@ -205,9 +209,9 @@ class HeaderStandardizer(ABC):
             if len(standardizers) > 1:
                 # I think this should never be an issue really, but just in case
                 names = [proc.name for proc in standardizers]
-                warnings.warn("Multiple standardizers declared ability to process "
-                              f"the given upload: {names}. \n Using {names[-1]} "
-                              "to process FITS.")
+                logger.info("Multiple standardizers declared ability to process "
+                            f"the given upload: {names}. Using {names[-1]} "
+                            "to process FITS.")
             return standardizers[0]
         else:
             raise ValueError("None of the known standardizers can handle this upload.\n "

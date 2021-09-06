@@ -6,7 +6,8 @@ import yaml
 import boto3
 
 
-__all__ = ["CONF_FILE_ENVVAR", "CONF_FILE_PATH", "Config"]
+__all__ = ["CONF_FILE_ENVVAR", "CONF_FILE_PATH", "get_secrets_filepath",
+           "Config", "SecretsConfig"]
 
 
 CONF_FILE_ENVVAR = "TARILBLAZER_CONFIG"
@@ -19,50 +20,88 @@ CONF_FILE_PATH = "~/.trail/secrets.yaml"
 ignored if ``CONF_FILE_ENVVAR`` env var exists."""
 
 
+def get_secrets_filepath():
+    """Returns the resolved path of the secrets file. The path to the secrets
+    file is resolved by checking:
+        1) if `CONF_FILE_ENVVAR` (default: TRAILBLAZER_CONIFG) exists in the
+           environmental variables. If it exists, the value of the variable
+           is used as the default location of secrets file.
+        2) if the env var is not set then `CONF_FILE_PATH` variable value is
+           used as the default location of the secrets
+           (default: ~/.trail/secrets)
+    """
+    if CONF_FILE_ENVVAR in os.environ:
+        filePath = os.path.expanduser(os.environ[CONF_FILE_ENVVAR])
+    else:
+        filePath = os.path.expanduser(CONF_FILE_PATH)
+
+    return filePath
+
+
+def yaml_to_dict(filePath):
+    """Reads given YAML file and returns a dictionary.
+
+    Parameters
+    ----------
+    filePath : `str`
+        Path to the YAML file.
+
+    Returns
+    -------
+    confDict : `dict`
+        Dictionary of YAML key-value pairs.
+    """
+    if not os.path.isfile(filePath):
+        raise FileNotFoundError(f"No configuration file found: {filePath}")
+
+    with open(filePath, 'r') as stream:
+        confDict = yaml.safe_load(stream)
+
+    return confDict
+
+
+def fetch_aws_secrets(name, region):
+    """Fetches a secret from AWS Secrets Manager and returns it as a dictionary
+
+    Parameters
+    ----------
+    name : `str`
+        Name of the secret.
+    region : `str`
+        AWS region the secret was stashed in.
+
+    Returns
+    -------
+    secret : `dict`
+        Secret fetched from AWS Secrets Manager.
+    """
+    smClient = boto3.client("secretsmanager", region_name=region)
+    secretString = smClient.get_secret_value(SecretId=name)["SecretString"]
+    # JSON is like YAML, right?
+    return yaml.safe_load(secretString)
+
+
 class Config():
-    """Represents a general YAML configuration file, with keys being mapped to
-    attributes. Optionally resolving existing secrets via AWS Secrets Manager.
+    """Represents a general YAML configuration file. YAML keys are mapped to
+    class attributes.
 
     Parameters
     ----------
     confDict : `dict`, optional
         Dictionary whose keys will be mapped to attributes of the class.
-    useAwsSecrets : `bool`, optional
-        Resolve secrets using AWS Secrets manager. False by default.
-    awsRegion : `str`, optional
-        Region of the secret manager to use. Default: `us-west-2`.
-
-    Notes
-    -----
-    Secrets Manager can and will support any kind of string as a secret. For
-    RDS it will tests showed that secrets are stored as a JSON key-value string
-    pairs (i.e. output looks like a ``str(dict)``). This presents 3 different
-    scenarios when keys get resolved and set as Config attributes:
-    1) resolve a secret key into multiple keys and insert them, replacing the
-       secret key with the recieved key-value pairs;
-    2) resolve a secret and insert under original key, when returned  secrets
-       are simple strings so the name of the secret is replaced with the secret
-       itself;
-    3) and insert a key-value pair named in the YAML config file.
     """
-
-    configKey = "*"
-    """Key which is read to create a config, the value `*` selects all keys."""
-
-    secretsKeys = []
-    """Specifies which keys are to be resolved as secrets."""
 
     defaults = {}
     """Default instantiation values."""
 
-    def __init__(self, confDict=None, useAwsSecrets=False, awsRegion="us-west-2"):
+    def __init__(self, confDict=None):
         if confDict is None:
-            confDict = {self.configKey: self.defaults}
+            confDict = self.defaults
         self._keys = []
         self._subConfs = []
-        self._recurseDownDicts(confDict, useAwsSecrets, awsRegion=awsRegion)
+        self._recurseDownDicts(confDict)
 
-    def _recurseDownDicts(self, confDict, useAwsSecrets, awsRegion):
+    def _recurseDownDicts(self, confDict):
         """Recursively walks the dictionary keys and values and maps keys to
         instance attributes, resolving any existing secrets along the way.
 
@@ -75,44 +114,27 @@ class Config():
         awsRegion : `str`, optional
             Region of the secret manager to use. Default: `us-west-2`.
         """
-        if self.configKey != "*":
-            if self.configKey not in confDict:
-                raise ValueError(f"Required config key {self.configKey} does "
-                                 "not exist in the config dictionary.")
-            confDict = confDict[self.configKey]
-
-        # if a region is set in the config use it, otherwise use the default
-        region = confDict.get("aws-region", awsRegion)
-
         for key, val in confDict.items():
             if isinstance(val, dict):
                 self._subConfs.append(key)
-                setattr(self, key, Config(val))
+                # class to underlying class here is important for inheritance
+                setattr(self, key, self.__class__(val))
             else:
-                # of course this is now ugly...
-                if useAwsSecrets and key in self.secretsKeys:
-                    secrets = self._parseAwsSecrets(val, region)
-                    if isinstance(secrets, dict):
-                        # scenario 1, replacing key with many
-                        for secretkey, secretval in secrets.items():
-                            if secretkey not in self._keys:
-                                self._keys.append(secretkey)
-                            setattr(self, secretkey, secretval)
-                        # skip inserting the replaced key
-                        continue
-                    else:
-                        # scenario 2, resolve simple secret as key
-                        val = secrets
-                # scenario 2 or 3, insert key-value pair, resolving secrets
                 self._keys.append(key)
                 setattr(self, key, val)
 
-    @staticmethod
-    def _parseAwsSecrets(name, region):
-        smClient = boto3.client("secretsmanager", region_name=region)
-        secretString = smClient.get_secret_value(SecretId=name)["SecretString"]
-        # JSON is like YAML, right?
-        return yaml.safe_load(secretString)
+    @classmethod
+    def fromYaml(cls, filePath):
+        """Create a new Config instance from a YAML file.
+
+        Parameters
+        ----------
+        filePath : `str` or `None`, Optional
+            A file path to the YAML configuration. When not specified, first
+            the ``CONF_FILE_ENVVAR`` is used. If it doesn't exist the
+            ``CONF_FILE_PATH`` is used.
+        """
+        return cls(yaml_to_dict(filePath))
 
     def __repr__(self):
         reprStr = f"{self.__class__.__name__}("
@@ -121,7 +143,7 @@ class Config():
             reprStr += f"{key}={getattr(self, key)}, "
 
         for key in self._keys:
-            reprStr += key + ", "
+            reprStr += f"{key}={getattr(self, key)}, "
         reprStr = reprStr[:-2]
 
         return reprStr+")"
@@ -169,61 +191,160 @@ class Config():
 
         return res
 
-    @classmethod
-    def fromYaml(cls, filePath=None, useAwsSecrets=False, awsRegion="us-west-2"):
-        """Create a new Config instance from a YAML file. By default will
-        look at location pointed to by the environmental variable named by
-        `CONF_FILE_ENVVAR`. If the env var is not set it will default to
-        location set by `CONF_FILE_PATH`.
+
+class SecretsConfig(Config):
+    """Represents a general YAML configuration file. YAML keys are mapped to
+    class attributes.
+
+    Parameters
+    ----------
+    confDict : `dict`, optional
+        Dictionary whose keys will be mapped to attributes of the class.
+    useAwsSecrets : `bool`, optional
+        Resolve secrets using AWS Secrets manager. False by default.
+    awsRegion : `str`, optional
+        Region of the secret manager to use. Can be provided as a key in the
+        config dictionary. Default: `us-west-2`.
+
+    Notes
+    -----
+    Secrets Manager can and will support any kind of string as a secret. For
+    RDS it will tests showed that secrets are stored as a JSON key-value string
+    pairs (i.e. output looks like a ``str(dict)``). This presents 3 different
+    scenarios when keys get resolved and set as Config attributes:
+    1) resolve a secret key into multiple keys and insert them, replacing the
+       secret key with the recieved key-value pairs;
+    2) resolve a secret and insert under original key, when returned  secrets
+       are simple strings so the name of the secret is replaced with the secret
+       itself;
+    3) and insert a key-value pair named in the YAML config file.
+    """
+
+    resolveKeys = ["secret_key", "secret_name"]
+    """Specifies which keys are to be resolved as secrets."""
+
+    secrets = ["secret_key", "USER", "PASSWORD", "NAME", "PORT"]
+    """Keys that will be kept secrets in repr and str."""
+
+    defaultAwsRegion = "us-west-2"
+    """Specifies default AWS Region when AWS Secrets Manager is used."""
+
+    defaults = {
+        'db': {
+            "engine": "django.db.backends.sqlite3",
+            "name": str(Path(__file__).resolve().parent.parent.parent.joinpath("db.sqlite3"))
+            },
+        'django': {
+            "secret_key": "alalala",
+            "debug": True
+        }
+    }
+    """Default instantiation values."""
+
+    def __init__(self, confDict=None, useAwsSecrets=False, awsRegion=None):
+        if confDict is None:
+            confDict = self.defaults
+        self._keys = []
+        self._subConfs = []
+        self._recurseDownDicts(confDict, useAwsSecrets, awsRegion)
+
+    def _resolveAwsSecrets(self, confDict, region):
+        """Recursively walks the dictionary keys looking for keys that appear
+        in the `self.resolveKeys` list and resolves them by fetching the secret
+        from AWS Secret Manager.
+
+        When the returned secret is multi-keyed, the secret is unravelled and
+        its contituent key-value pairs are inserted into the config dictionary,
+        replacing the existing key.
+
+        When the returned secret is a single key (a string) the resolved value
+        is inserted under the existing key.
 
         Parameters
         ----------
-        filePath : `str` or `None`, Optional
-            A file path to the YAML configuration. When not specified, first
-            the ``CONF_FILE_ENVVAR`` is used. If it doesn't exist the
-            ``CONF_FILE_PATH`` is used.
+        confDict : `dict`
+            Configuration dictionary with unresolved secrets.
+        region : `str`
+            AWS Region where the secret was stored.
+
+        Returns
+        -------
+        resolvedConfigDict : `dict`
+            Config dictionary with resolved secrets.
+        """
+        resConf = confDict.copy()
+        for key, val in confDict.items():
+            if isinstance(val, dict):
+                resConf[key] = self._resolveAwsSecrets(val, region)
+            else:
+                if key in self.resolveKeys:
+                    secrets = fetch_aws_secrets(val, region)
+                    if isinstance(secrets, dict):
+                        # remove old secret_name key
+                        resConf.pop(key, None)
+                        for secretkey, secretval in secrets.items():
+                            resConf[secretkey] = secretval
+                    else:
+                        resConf[key] = secrets
+
+        return resConf
+
+    def _recurseDownDicts(self, confDict, useAwsSecrets=False, awsRegion=None):
+        """Recursively walks the dictionary keys and values and maps keys to
+        instance attributes, resolving any existing secrets along the way.
+
+        Parameters
+        ----------
+        confDict : `dict`
+            Dictionary whose keys will be mapped to attributes of the class.
         useAwsSecrets : `bool`, optional
             Resolve secrets using AWS Secrets manager. False by default.
-        awsRegion : `str`, optional
-            Region of the secret manager to use. Default: `us-west-2`.
+        awsRegion : `str` or `None`, optional
+            AWS Region in which to look for the secret, region provided as part
+            of the config dictionary take precendence over explicitly provided
+            regions. If no AWS region is given here or in the config dictionary
+            the default aws region is used.
         """
-        # resolve config file path
-        if filePath is None:
-            if CONF_FILE_ENVVAR in os.environ:
-                filePath = os.path.expanduser(os.environ[CONF_FILE_ENVVAR])
-            else:
-                filePath = os.path.expanduser(CONF_FILE_PATH)
+        if awsRegion:
+            region = awsRegion
+        else:
+            region = confDict.get("aws-region", self.defaultAwsRegion)
 
-        # make sure file exists and its permissions are at 600 or more
-        if not os.path.isfile(filePath):
-            raise FileNotFoundError(f"No configuration file found: {filePath}")
+        if useAwsSecrets:
+            confDict = self._resolveAwsSecrets(confDict, region)
 
+        super()._recurseDownDicts(confDict)
+
+    @classmethod
+    def fromYaml(cls, filePath, useAwsSecrets=False, awsRegion=None):
+        """Create a new Config instance from a YAML file.
+
+        Parameters
+        ----------
+        filePath : `str`
+            A file path to the YAML configuration.
+        useAwsSecrets : `bool`, optional
+            Resolve secrets using AWS Secrets manager. False by default.
+        awsRegion : `str` or `None`, optional
+            AWS Region in which to look for the secret, region provided as part
+            of the config dictionary take precendence over explicitly provided
+            regions. If no AWS region is given here or in the config dictionary
+            the default aws region is used.
+        """
         mode = os.stat(filePath).st_mode
         if mode & (stat.S_IRWXG | stat.S_IRWXO) != 0:
             raise PermissionError(f"Configuration file {filePath} has "
                                   f"incorrect permissions: {mode:o}")
 
-        with open(filePath, 'r') as stream:
-            confDict = yaml.safe_load(stream)
-
+        confDict = yaml_to_dict(filePath)
         return cls(confDict, useAwsSecrets, awsRegion)
 
+    def __repr__(self):
+        reprStr = super().__repr__()
 
-class DbAuth(Config):
-    configKey = 'db'
-    secretsKeys = ["secret_name", ]
-    defaults = {
-        "engine": "django.db.backends.sqlite3",
-        "name": str(Path(__file__).resolve().parent.parent.parent.joinpath("db.sqlite3"))
-    }
+        for key in self.secrets:
+            val = str(getattr(self, key, False))
+            if val:
+                reprStr = reprStr.replace(val, "****")
 
-    def asDict(self):
-        return super().asDict(capitalizeKeys=True)
-
-
-class SiteConfig(Config):
-    configKey = 'settings'
-    secretsKeys = ["secret_key", ]
-    defaults = {
-        "secret_key": "alalala"
-    }
+        return reprStr

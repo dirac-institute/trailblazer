@@ -13,18 +13,15 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 
-from .config import DbAuth, SiteConfig
+from . import config
 
 
 TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
 if TRAILBLAZER_ENV == "local":
-    # instantiate with "nonsense" default values
-    siteConfig = SiteConfig()
-    dbConfig = DbAuth()
+    # avoids problematic Windows file permissions when loading default YAMLs
+    siteConf = config.SecretsConfig()
 else:
-    # instantiate from a secrets file
-    siteConfig = SiteConfig.fromYaml()
-    dbConfig = DbAuth.fromYaml()
+    siteConf = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,18 +32,18 @@ REPO_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = siteConfig.secret_key
+SECRET_KEY = siteConf.django.secret_key
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = siteConf.django.debug
+
 
 ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -60,6 +57,11 @@ INSTALLED_APPS = [
     'trail',
 ]
 
+
+loggingConf = config.Config.fromYaml(BASE_DIR / "logging.cfg")
+LOGGING = loggingConf.asDict()
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -70,7 +72,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'trail.urls'
+
 
 TEMPLATES = [
     {
@@ -88,12 +92,13 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'trail.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DATABASES = {"default": dbConfig.asDict()}
+DATABASES = {"default": siteConf.db.asDict(capitalizeKeys=True)}
 
 
 # Password validation
