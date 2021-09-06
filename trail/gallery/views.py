@@ -40,7 +40,7 @@ def get_images(count, page):
     # Would there maybe a way to sort the data without converting to a list?
     # converting to a list seems computationally heavy
     # getting the data from database
-    image_data = list(Thumbnails.objects.values())[page * count:(page + 1) * count]
+    image_data = list(Thumbnails.objects.values())
 
     # sorting data by date
 
@@ -55,6 +55,7 @@ def get_images(count, page):
                        "date": metadata["datetime_begin"]})
     # sorting the images by date with newest images first.
     images.sort(reverse=True, key=date_sort)
+    images = images[page * count:(page + 1) * count]
     return images
 
 
@@ -68,9 +69,15 @@ def render_gallery(request, count=12):
         images = get_images(count, 0)
         return render(request, "gallery.html", {'data': images, "page": 0, "num_of_page": range(number_of_pages)})
     elif request.method == 'POST':
+        # checks to see if the request is an integer or not, this removes errors from if user inputs a string value
         try:
             page = int(request.body)
-        except TypeError:
+        except TypeError and ValueError:
+            page = 0
+        # this checks to see that the page referenced is a valid page
+        if page >= number_of_pages:
+            page = number_of_pages - 1
+        elif page < 0:
             page = 0
         images = get_images(count, page)
         return JsonResponse({'data': images})
