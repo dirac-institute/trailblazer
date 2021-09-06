@@ -2,13 +2,11 @@
 Class that facilitates the processing of an uplod.
 """
 
-
-from abc import ABC, abstractmethod
+import os
 import logging
+from abc import ABC, abstractmethod
 
-from django.conf import settings
-
-from upload.models import UploadInfo
+from upload.models import UploadInfo, Thumbnails
 from .upload_wrapper import TemporaryUploadedFileWrapper
 
 
@@ -64,9 +62,6 @@ class UploadProcessor(ABC):
     """Priority. Processors with high priority are prefered over processors
     with low priority when processing an upload.
     """
-
-    media_root = settings.MEDIA_ROOT
-    """Root of the location where thumbnails will be stored."""
 
     @abstractmethod
     def __init__(self, uploadInfo, uploadedFile, *args, **kwargs):

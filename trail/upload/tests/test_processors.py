@@ -6,7 +6,7 @@ import yaml
 
 from django.test import TestCase
 
-from upload.models import StandardizedHeader
+from upload.models import StandardizedHeader, Thumbnails
 from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.fits_processor import FitsProcessor
@@ -89,7 +89,8 @@ class UploadProcessorTestCase(TestCase):
     def setUp(self):
         self.tmpTestDir = tempfile.mkdtemp(dir=TESTDIR)
         TemporaryUploadedFileWrapper.save_root = self.tmpTestDir
-        UploadProcessor.media_root = self.tmpTestDir
+        Thumbnails.SMALL_THUMB_ROOT = self.tmpTestDir
+        Thumbnails.LARGE_THUMB_ROOT = self.tmpTestDir
 
         fnames = os.listdir(self.testDataDir)
         self.fits = []

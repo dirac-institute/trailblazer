@@ -337,24 +337,22 @@ class DecamFits(MultiExtensionFits):
         return focalPlane
 
     def createThumbnails(self, scaling=(4, 10)):
-
         xdim = self.exts[0].header["NAXIS2"]
         ydim = self.exts[0].header["NAXIS1"]
         largePlane = DecamFocalPlane(scaling[0], (xdim, ydim))
         smallPlane = DecamFocalPlane(scaling[1], (xdim, ydim))
 
-        # TODO: a note to fix os.path dependency when transitioning to S3
-        # and fix saving method from plt to boto3
-        smallPath = os.path.join(self.media_root, self.uploadedFile.basename+'_plane_small.jpg')
-        largePath = os.path.join(self.media_root, self.uploadedFile.basename+'_plane_large.jpg')
+        relSmallPath = self.uploadedFile.basename+'_plane_small.jpg'
+        relLargePath = self.uploadedFile.basename+'_plane_large.jpg'
+        thumb = Thumbnails(large=relLargePath, small=relSmallPath)
 
-        smallThumb = self._createFocalPlaneImage(smallPlane)
-        self._storeThumbnail(smallThumb.planeImage.T, savepath=smallPath)
         # due to potential size of these images immediately release memory
+        smallThumb = self._createFocalPlaneImage(smallPlane)
+        self._storeThumbnail(smallThumb.planeImage.T, savepath=thumb.smallAbsPath)
         del smallThumb
 
         largeThumb = self._createFocalPlaneImage(largePlane)
-        self._storeThumbnail(largeThumb.planeImage.T, savepath=largePath)
+        self._storeThumbnail(largeThumb.planeImage.T, savepath=thumb.largeAbsPath)
         del largeThumb
 
-        return Thumbnails(large=largePath, small=smallPath)
+        return thumb

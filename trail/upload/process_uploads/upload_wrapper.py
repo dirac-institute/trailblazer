@@ -21,7 +21,7 @@ class TemporaryUploadedFileWrapper:
     upload : `django.core.files.uploadedfile.TemporaryUploadedFile`
         Uploaded file object.
     """
-    save_root = os.path.join(settings.STATIC_ROOT, "upload/fits/")
+    save_root = settings.DATA_ROOT
     """Root of the location where upload will be permanently saved."""
 
     special_extensions = {".gz", ".bz2", ".xz", ".fz"}
@@ -76,17 +76,20 @@ class TemporaryUploadedFileWrapper:
         """
         return self.filename.split(self.extension)[0]
 
-    def save(self):
+    def save(self, root=None):
         """Saves uploaded file to desired destination.
 
         Returns
         -------
-        tgtPath : `str`
-            Path where the file was saved.
+        root : `str`
+            Root of the path where the file will be saved.
         """
         # TODO: fix os.path when transitioning to S3
-        # make the destination configurable
-        tgtPath = os.path.join(self.save_root, self.filename)
+        if root is None:
+            tgtPath = os.path.join(self.save_root, self.filename)
+        else:
+            tgtPath = os.path.join(self.save_root, self.filename)
+
         with open(tgtPath, "wb") as f:
             f.write(self.tmpfile.read())
 

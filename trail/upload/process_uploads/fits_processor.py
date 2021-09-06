@@ -136,8 +136,8 @@ class FitsProcessor(UploadProcessor):
 
         # TODO: a note to fix os.path dependency when transitioning to S3
         # and fix saving method from plt to boto3
-        smallPath = os.path.join(cls.media_root, filename+'_small.jpg')
-        largePath = os.path.join(cls.media_root, filename+'_large.jpg')
+        smallRelPath = filename+'_small.jpg'
+        largeRelPath = filename+'_large.jpg'
 
         # TODO: consider removing PIL dependency once trail detection is
         # implemented, if it is implemented via OpenCV
@@ -150,8 +150,8 @@ class FitsProcessor(UploadProcessor):
         img = img.resize((basewidth, hsize), Image.ANTIALIAS)
 
         # img is PIL.Image object - simplify
-        return ({"savepath": largePath, "thumb": normedImage},
-                {"savepath": smallPath, "thumb": np.array(img)})
+        return ({"savepath": largeRelPath, "img": normedImage},
+                {"savepath": smallRelPath, "img": np.array(img)})
 
     @classmethod
     def _storeThumbnail(cls, thumbnail, savepath=None, pil_kwargs={"quality": 30}):
@@ -173,7 +173,7 @@ class FitsProcessor(UploadProcessor):
         # for easier later transition to S3, so it's a placeholder for now:
         if isinstance(thumbnail, dict):
             savePath = thumbnail["savepath"]
-            thumb = thumbnail["thumb"]
+            thumb = thumbnail["img"]
         elif savepath is not None:
             thumb = thumbnail
             savePath = savepath
