@@ -39,7 +39,7 @@ if TRAILBLAZER_ENV == "local":
     DATA_ROOT = os.path.join(STATIC_ROOT, "upload/fits")
 else:
     secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
-    siteConf = config.Config()
+    siteConfig = config.Config()
 
     SMALL_THUMB_ROOT = siteConfig.thumbnails.small
     LARGE_THUMB_ROOT = siteConfig.thumbnails.large

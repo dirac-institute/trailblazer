@@ -9,7 +9,6 @@ Note that the focusing and guiding chips are not processed, but are usually
 present in Community Pipelines products.
 """
 
-import os
 
 from PIL import Image, ImageOps
 import numpy as np

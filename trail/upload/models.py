@@ -287,13 +287,10 @@ class Thumbnails(models.Model):
         return self._specified_return(returnval, which)
 
     def get_img(self, which):
-        #TODO: add download to tmpdir for S3 if S3 URI
+        # TODO: add download to tmpdir for S3 if S3 URI
         # consider adding tonumpyarr kwarg or something
         path = self.abspath(which)
         return Image.open(path)
-
-
-
 
 
 @dataclass

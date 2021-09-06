@@ -2,11 +2,11 @@
 Class that facilitates the processing of an uplod.
 """
 
-import os
+
 import logging
 from abc import ABC, abstractmethod
 
-from upload.models import UploadInfo, Thumbnails
+from upload.models import UploadInfo
 from .upload_wrapper import TemporaryUploadedFileWrapper
 
 

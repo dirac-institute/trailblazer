@@ -3,7 +3,6 @@ Classes that facilitate processing of an FITS file.
 """
 
 
-import os.path
 import logging
 from abc import abstractmethod
 
