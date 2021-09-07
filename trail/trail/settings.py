@@ -49,9 +49,9 @@ else:
     secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
 
 
-SMALL_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.small_root)
-LARGE_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.large_root)
-DATA_ROOT = os.path.abspath(siteConfig.data_root) 
+SMALL_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.small_root)
+LARGE_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.large_root)
+DATA_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.data_root)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
