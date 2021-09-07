@@ -162,6 +162,9 @@ class Config():
 
         return equal
 
+    def __contains__(self, key):
+        return key in self._keys or key in self._subConfs
+
     def asDict(self, capitalizeKeys=False):
         """Returns the Conf as a dictionary.
 

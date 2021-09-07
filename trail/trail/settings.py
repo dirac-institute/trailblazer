@@ -23,31 +23,35 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 REPO_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = '/media/'
 
 
-TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
-TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG",
+TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENV", default="local")
+TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG_DIR",
                                              default=BASE_DIR / "config/"))
+
+
 siteConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "site.yaml")
+loggingConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
+
 
 # avoids problematic Windows file permissions when loading default YAMLs by
 # instantiating from existing hardcoded defaults...
 if TRAILBLAZER_ENV == "local":
     secrets = config.SecretsConfig()
-    SMALL_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.small_root)
-    LARGE_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.large_root)
-    DATA_ROOT = os.path.abspath(siteConfig.data_root)
+    if "db" in siteConfig:
+        secrets.db = siteConfig.db
 else:
     secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
-    SMALL_THUMB_ROOT = siteConfig.thumbnails.small_root
-    LARGE_THUMB_ROOT = siteConfig.thumbnails.large_root
-    DATA_ROOT = siteConfig.data_root
 
+
+SMALL_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.small_root)
+LARGE_THUMB_ROOT = os.path.abspath(siteConfig.thumbnails.large_root)
+DATA_ROOT = os.path.abspath(siteConfig.data_root) 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -77,9 +81,7 @@ INSTALLED_APPS = [
 ]
 
 
-loggingConf = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
-LOGGING = loggingConf.asDict()
-
+LOGGING = loggingConfig.asDict()
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
