@@ -2,6 +2,7 @@ from django.shortcuts import render
 # from django.conf import settings
 from django.apps import apps
 from django.http import JsonResponse
+from urllib.parse import urlparse
 import numpy as np
 
 # import os
@@ -11,12 +12,6 @@ Thumbnails = apps.get_model('upload', 'Thumbnails')
 Wcs = apps.get_model('upload', 'Wcs')
 
 """This code runs when a user visits the 'gallery' URL."""
-
-
-def date_sort(e):
-    """Sort function that sorts by value date
-    """
-    return e["date"]
 
 
 def get_images(count, page):
@@ -33,29 +28,17 @@ def get_images(count, page):
     Returns
     -------
     images : `list`
-        A list of image objects that have image location, id, caption and date
+        A list of image objects that have image location and wcs_id
     """
-
     images = []
-    # Would there maybe a way to sort the data without converting to a list?
-    # converting to a list seems computationally heavy
     # getting the data from database
-    image_data = list(Thumbnails.objects.values())
+    image_data = Thumbnails.objects.all()[page * count:(page + 1) * count]
 
-    # sorting data by date
-
+    print(image_data[0])
     # processing data for sending to user
-    # this code seems inefficient, there is probably a less computational heavy approach.
     for image in image_data:
-        wcs_data = Wcs.objects.values()[image["wcs_id"] - 1]
-        metadata = Metadata.objects.values()[wcs_data["metadata_id"] - 1]
-        images.append({"name": image["small"].split("\\media\\")[1],
-                       "id": image["wcs_id"],
-                       "caption": metadata["telescope"],
-                       "date": metadata["datetime_begin"]})
-    # sorting the images by date with newest images first.
-    images.sort(reverse=True, key=date_sort)
-    images = images[page * count:(page + 1) * count]
+        images.append({"name": image.small,
+                       "id": image.wcs_id})
     return images
 
 
@@ -64,7 +47,7 @@ def render_gallery(request, count=12):
     or if it is a post request returns information on the next set of images.
     The input value count is for how many images per request.
     """
-    number_of_pages = int(np.ceil(len(Thumbnails.objects.values()) / count))
+    number_of_pages = int(np.ceil(Thumbnails.objects.count() / count))
     if request.method == 'GET':
         images = get_images(count, 0)
         return render(request, "gallery.html", {'data': images, "page": 0, "num_of_page": range(number_of_pages)})
@@ -86,8 +69,7 @@ def render_gallery(request, count=12):
 def render_image(request):
     """Processes the users request and renders the image page
     """
-    wcs_id = int(request.get_full_path_info().split("?")[1])
-    image_data = Thumbnails.objects.filter(wcs_id=wcs_id)[0]
-    wcs_data = Wcs.objects.values()[wcs_id - 1]
-    metadata = Metadata.objects.values()[wcs_data["metadata_id"] - 1]
-    return render(request, "images.html", {'image_data': metadata, 'image': image_data})
+    parsed = urlparse(request.get_full_path())
+    wcs_id = parsed.query
+    image_data = Wcs.objects.prefetch_related("metadata", "thumbnails").get(id=wcs_id)
+    return render(request, "images.html", {'image_data': image_data.metadata, "image": image_data.thumbnails})

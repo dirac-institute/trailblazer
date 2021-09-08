@@ -35,10 +35,6 @@ async function get_images(page) {
             "                <a href=\"/gallery/image?" + value.id + "\">\n" +
             "                    <img src=\"/media/" + value.name + "\" width=\"300\" alt=”C:\\Users\\thisi\\PycharmProjects\\trailblazer\\trail\\media\\frame-g-002728-2-0424.png”\n" +
             "                         id=”showSimilarInPopup”>\n" +
-            "                    <div class=”caption”>\n" +
-            "                        <span class=\"date\">" + value.date + "</span>\n" +
-            "                        <span>" + value.caption + "</span>\n" +
-            "                    </div>\n" +
             "                </a>\n" +
             "            </div>"
     })
