@@ -13,37 +13,11 @@
             <p>Have a scroll through the images and see some images that are affected by satellite trails.</p>
         </header>
     </article>
-
-    <!--
-         Posts
-         Loads them from the database and currently it is hard coded to display 12 images per page.
-    -->
-    <section id="image_gallery">
-        {% for image in data %}
-            <div class="gallery_item">
-                <a href="/gallery/image?{{ image.id }}">
-                    <img src="{% get_media_prefix %}{{ image.name }}" width="300" alt=”{{ image.name }}”
-                         id=”showSimilarInPopup”>
-                    <!--<div class=”caption”>
-                        <span class="date">{{ image.date }}</span>
-                        <span>{{ image.caption }}</span>
-                    </div>-->
-                </a>
-            </div>
-        {% endfor %}
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="pagination">
-            <!--<a href="#" class="previous">Prev</a>-->
-            {% for i in num_of_page %}
-                <a id="pagenum_{{ i }}" onclick="get_images({{ i }})" class="page pagenum {% if page == i %} active {% endif %}">{{ i }}</a>
-            {% endfor %}
-        </div>
-    </footer>
+    <div id="table_content">
+        {% include "gallery_table.html" %}
+    </div>
 {% endblock %}
 
 {% block content.scripts.extended %}
-<script src="{% static 'assets/js/pagination_gallery.js' %}"></script>
+<script src="{% static '/assets/js/pagination_gallery.js' %}"></script>
 {% endblock %}

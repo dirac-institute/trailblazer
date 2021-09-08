@@ -34,7 +34,6 @@ def get_images(count, page):
     # getting the data from database
     image_data = Thumbnails.objects.all()[page * count:(page + 1) * count]
 
-    print(image_data[0])
     # processing data for sending to user
     for image in image_data:
         images.append({"name": image.small,
@@ -63,7 +62,8 @@ def render_gallery(request, count=12):
         elif page < 0:
             page = 0
         images = get_images(count, page)
-        return JsonResponse({'data': images})
+        return render(request, "gallery_table.html",
+                      {'data': images, "page": page, "num_of_page": range(number_of_pages)})
 
 
 def render_image(request):

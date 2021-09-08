@@ -1,0 +1,39 @@
+{% load static %}
+<!--
+         Posts
+         Loads them from the database and currently it is hard coded to display 12 images per page.
+    -->
+<div class="pagination">
+    <!--<a href="#" class="previous">Prev</a>-->
+    {% for i in num_of_page %}
+        <!--{{ page }}-->
+        <a id="pagenum_{{ i }}" onclick="get_images({{ i }})"
+           class="page pagenum {% if page == i %} active {% endif %}">{{ i }}</a>
+    {% endfor %}
+</div>
+<section id="image_gallery">
+    {% for image in data %}
+        <div class="gallery_item">
+            <a href="/gallery/image?{{ image.id }}">
+                <img src="{% get_media_prefix %}{{ image.name }}" width="300" alt=”{{ image.name }}”
+                     id=”showSimilarInPopup”>
+                <!--<div class=”caption”>
+                        <span class="date">{{ image.date }}</span>
+                        <span>{{ image.caption }}</span>
+                    </div>-->
+            </a>
+        </div>
+    {% endfor %}
+</section>
+<br>
+<!-- Footer -->
+<footer>
+    <div class="pagination">
+        <!--<a href="#" class="previous">Prev</a>-->
+        {% for i in num_of_page %}
+            <!--{{ page }}-->
+            <a id="pagenum_{{ i }}" onclick="get_images({{ i }})"
+               class="page pagenum {% if page == i %} active {% endif %}">{{ i }}</a>
+        {% endfor %}
+    </div>
+</footer>

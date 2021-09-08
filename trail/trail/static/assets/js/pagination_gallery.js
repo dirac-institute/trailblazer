@@ -26,20 +26,7 @@ async function get_images(page) {
             'X-CSRFToken': csrftoken
         },
         body: page.toString()
-    });//this is the request to the server
-    let data = await response.json()//get the json
-    //Now the code bellow edits the main website changing the images
-    document.getElementById("image_gallery").innerHTML = "";
-    await data.data.forEach(value => {
-        document.getElementById("image_gallery").innerHTML += "<div class=\"gallery_item\">\n" +
-            "                <a href=\"/gallery/image?" + value.id + "\">\n" +
-            "                    <img src=\"/media/" + value.name + "\" width=\"300\" alt=”C:\\Users\\thisi\\PycharmProjects\\trailblazer\\trail\\media\\frame-g-002728-2-0424.png”\n" +
-            "                         id=”showSimilarInPopup”>\n" +
-            "                </a>\n" +
-            "            </div>"
-    })
-    for (let i = 0; i < document.getElementsByClassName("pagenum").length; i++) {
-        document.getElementsByClassName("pagenum")[i].classList.remove("active")
-    }
-    document.getElementById("pagenum_" + page).classList.add("active")
+    });
+    //replace table content
+    document.getElementById("table_content").innerHTML = await response.text()
 }
