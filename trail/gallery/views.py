@@ -32,11 +32,7 @@ def get_images(count, page):
     images = []
     # getting the data from database
     image_data = Thumbnails.objects.all()[page * count:(page + 1) * count]
-
-    # processing data for sending to user
-    for image in image_data:
-        images.append({"name": image.small,
-                       "id": image.wcs_id})
+    images = image_data.values("small", "wcs_id")
     return images
 
 
