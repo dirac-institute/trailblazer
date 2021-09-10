@@ -41,7 +41,8 @@ def render_gallery(request, count=12):
     or if it is a post request returns information on the next set of images.
     The input value count is for how many images per request.
     """
-    number_of_pages = int(np.ceil(Thumbnails.objects.count() / count))
+    number_of_pages = int(
+        np.ceil(Thumbnails.objects.count() / count))  # might want to cache this once it gets too large
     if request.method == 'GET':
         images = get_images(count, 0)
         return render(request, "gallery.html", {'data': images, "page": 0, "num_of_page": range(number_of_pages)})
