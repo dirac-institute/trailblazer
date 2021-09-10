@@ -1,5 +1,5 @@
 from django.test import TestCase
-from gallery.views import get_image
+from gallery.views import get_images
 from uploads.models import Thumbnails
 
 
@@ -14,6 +14,6 @@ class GalleryImageTestCase(TestCase):
         """test that the pages are working"""
         for count in range(20):
             page = 0
-            processed = [image.wcs_id for image in get_image(count, page)]
+            processed = [image.wcs_id for image in get_images(count, page)]
             expected = list(range(page * count, (page + 1) * count))
             self.assertTrue(processed == expected)
