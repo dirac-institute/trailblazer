@@ -1,10 +1,8 @@
 from django.shortcuts import render
-# from django.conf import settings
 from django.apps import apps
 from urllib.parse import urlparse
 import numpy as np
 
-# import os
 
 Metadata = apps.get_model('upload', 'Metadata')
 Thumbnails = apps.get_model('upload', 'Thumbnails')
