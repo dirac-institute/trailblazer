@@ -1,62 +1,23 @@
 {% extends "base.html" %}
+
 {% load static %}
 
-{% block gallery-nav-state%}active{% endblock %}
+{% block gallery-nav-state %}active{% endblock %}
 
 {% block content %}
-<!-- Featured Post -->
-<article class="post featured">
-    <header class="major">
-		    <span class="date">April 25, 2021</span>
-		    <h2><a href="#">WELCOME TO THE GALLERY</a></h2>
-		    <p>Aenean ornare velit lacus varius enim ullamcorper proin aliquam<br />
-				    facilisis ante sed etiam magna interdum congue. Lorem ipsum dolor<br />
-				    amet nullam sed etiam veroeros.</p>
-    </header>
-    <a href="#" class="image main"><img src="{% static 'images/starlink.jpg' %}" alt="" /></a>
-    <ul class="actions special">
-        <li><a href="#" class="button large">Full Frame</a></li>
-    </ul>
-</article>
-
-<!--
-     Posts
-     All these values These should probably be in a database, and there should be a view that retrieves them
-     and creates the tags.
--->
-<section class="posts">
-    {% for image in data %}
-    <article>
-		    <header>
-			      <span class="date">April, 2017</span>
-			      <h2><a href="#">Sed magna<br />
-			          ipsum faucibus</a></h2>
-		    </header>
-		    <a href="{% get_media_prefix %}{{ image.name }}">
-            <img src="{% get_media_prefix %}{{ image.name }}" width="300"  alt=”{{image.name}}” id=”showSimilarInPopup”>
-            <div class=”caption”>
-            </div>
-        </a>
-		    <p>{{image.caption}}</p>
-		    <ul class="actions special">
-			      <li><a href="{% get_media_prefix %}{{ image.name }}" class="button">Full Frame</a></li>
-		    </ul>
-	  </article>
-    {% endfor %}
-</section>
-
-<!-- Footer -->
-<footer>
-    <div class="pagination">
-        <!--<a href="#" class="previous">Prev</a>-->
-        <a href="#" class="page active">1</a>
-        <a href="#" class="page">2</a>
-        <a href="#" class="page">3</a>
-        <span class="extra">&hellip;</span>
-        <a href="#" class="page">8</a>
-        <a href="#" class="page">9</a>
-        <a href="#" class="page">10</a>
-        <a href="#" class="next">Next</a>
+    <!-- Featured Post -->
+    <article class="post featured">
+        <header class="major">
+            <span class="date">April 25, 2021</span>
+            <h2><a href="#">WELCOME TO THE GALLERY</a></h2>
+            <p>Have a scroll through the images and see some images that are affected by satellite trails.</p>
+        </header>
+    </article>
+    <div id="table_content">
+        {% include "gallery_table.html" %}
     </div>
-</footer>
+{% endblock %}
+
+{% block content.scripts.extended %}
+<script src="{% static '/assets/js/pagination_gallery.js' %}"></script>
 {% endblock %}

@@ -3218,7 +3218,7 @@ input, select, textarea {
 			border-color: #18bfef;
 */
             color: var(--hovercolor);
-            border-color: var(--hovercolor);    
+            border-color: var(--hovercolor);
 			z-index: 1;
 		}
 
