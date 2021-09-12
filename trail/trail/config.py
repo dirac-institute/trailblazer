@@ -187,7 +187,8 @@ class Config():
 
     def resolveAbsFromOrigin(self, path):
         """Expands shell variables, and resolves the absolute path as if path
-        was relative to `origin`. Normalizes the result.
+        was relative to `origin`. Normalizes the result. If the given path was
+        already absolute, returns the path unchanged.
 
         Parameters
         ----------
@@ -200,7 +201,7 @@ class Config():
             Expanded and normalized path.
         """
         if os.path.isabs(path):
-            raise ValueError("Path can not be absolute")
+            return path
 
         if self.origin is None:
             raise ValueError("Config has no origin.")
