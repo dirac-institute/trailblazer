@@ -248,10 +248,12 @@ class Thumbnails(models.Model):
 
     @property
     def largeAbsPath(self):
+        """Absolute path to the large thumbnail."""
         return os.path.join(self.LARGE_THUMB_ROOT, self.large)
 
     @property
     def smallAbsPath(self):
+        """Absolute path to the small thumbnail."""
         return os.path.join(self.SMALL_THUMB_ROOT, self.small)
 
     # this is more of a sketch than final code, it's unclear, to me, how not to
@@ -259,12 +261,14 @@ class Thumbnails(models.Model):
     # here as well
     @property
     def largeimg(self):
+        """Large thumbnail image."""
         if self._largeimg is None:
             self._largeimg = self.get_img("large")
         return self._largeimg
 
     @property
     def smallimg(self):
+        """Small thumbnail image."""
         if self._smallimg is None:
             self._smallimg = self.get_img("small")
         return self._largeimg
@@ -278,6 +282,20 @@ class Thumbnails(models.Model):
             return returnval
 
     def abspath(self, which=None):
+        """Return absolute paths to the thumbnails.
+
+        Parameters
+        ----------
+        which : `str`, optional
+            Desired thumbnail, `small` or `large` or None, in which case a
+            both are returned.
+
+        Returns
+        -------
+        abspath : `str` or `dict`
+            If `which` is given returns the desired path as a string, if which
+            is `None` both paths are returned in a dictionary.
+        """
         # TODO: abstract away in an URI class when transitioning
         # to S3
         returnval = {
@@ -287,6 +305,18 @@ class Thumbnails(models.Model):
         return self._specified_return(returnval, which)
 
     def get_img(self, which):
+        """Return one of the thumbnail images as a Pil `Image` object.
+
+        Parameters
+        ----------
+        which : `str`
+            Desired thumbnail, `small` or `large`.
+
+        Returns
+        -------
+        img : `PIL.Image`
+            Requested image.
+        """
         # TODO: add download to tmpdir for S3 if S3 URI
         # consider adding tonumpyarr kwarg or something
         path = self.abspath(which)
