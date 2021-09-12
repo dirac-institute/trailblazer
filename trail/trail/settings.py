@@ -16,13 +16,6 @@ import os
 from . import config
 
 
-TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
-if TRAILBLAZER_ENV == "local":
-    # avoids problematic Windows file permissions when loading default YAMLs
-    siteConf = config.SecretsConfig()
-else:
-    siteConf = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,14 +23,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 REPO_DIR = Path(__file__).resolve().parent.parent.parent
 
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
+if TRAILBLAZER_ENV == "local":
+    # avoids problematic Windows file permissions when loading default YAMLs
+    secrets = config.SecretsConfig()
+
+    SMALL_THUMB_ROOT = MEDIA_ROOT
+    LARGE_THUMB_ROOT = MEDIA_ROOT
+    DATA_ROOT = os.path.join(STATIC_ROOT, "upload/fits")
+else:
+    secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
+    siteConfig = config.Config()
+
+    SMALL_THUMB_ROOT = siteConfig.thumbnails.small
+    LARGE_THUMB_ROOT = siteConfig.thumbnails.large
+    DATA_ROOT = siteConfig.raw_data_path
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = siteConf.django.secret_key
+SECRET_KEY = secrets.django.secret_key
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = siteConf.django.debug
+DEBUG = secrets.django.debug
 
 
 ALLOWED_HOSTS = []
@@ -98,7 +114,7 @@ WSGI_APPLICATION = 'trail.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-DATABASES = {"default": siteConf.db.asDict(capitalizeKeys=True)}
+DATABASES = {"default": secrets.db.asDict(capitalizeKeys=True)}
 
 
 # Password validation
@@ -136,10 +152,4 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
-
 ADMIN_MEDIA_PREFIX = '/media/'

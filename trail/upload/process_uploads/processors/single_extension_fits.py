@@ -29,6 +29,7 @@ class SingleExtensionFits(FitsProcessor):
 
     def createThumbnails(self):
         large, small = self._createThumbnails(self.uploadedFile.basename, self.imageData)
-        self._storeThumbnail(large)
-        self._storeThumbnail(small)
-        return Thumbnails(large=large["savepath"], small=small["savepath"])
+        thumb = Thumbnails(large=large["savepath"], small=small["savepath"])
+        self._storeThumbnail(large["img"], savepath=thumb.largeAbsPath)
+        self._storeThumbnail(small["img"], savepath=thumb.smallAbsPath)
+        return thumb

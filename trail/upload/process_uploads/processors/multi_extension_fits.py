@@ -66,8 +66,11 @@ class MultiExtensionFits(FitsProcessor):
         for i, ext in enumerate(self.exts):
             large, small = self._createThumbnails(self.uploadedFile.basename + f"_ext{i}",
                                                   ext.data)
-            self._storeThumbnail(large)
-            self._storeThumbnail(small)
-            thumbs.append(Thumbnails(large=large["savepath"], small=small["savepath"]))
+            # avoid instantiating with persisted loaded thumb images because of
+            # potential memory limitations, create-save-forget
+            thumb = Thumbnails(large=large["savepath"], small=small["savepath"])
+            self._storeThumbnail(large["img"], savepath=thumb.largeAbsPath)
+            self._storeThumbnail(small["img"], savepath=thumb.smallAbsPath)
+            thumbs.append(thumb)
 
         return thumbs

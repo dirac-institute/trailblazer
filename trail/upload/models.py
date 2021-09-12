@@ -4,10 +4,14 @@ support working with the data.
 """
 
 
+import os
 from dataclasses import dataclass, field
 from typing import Sequence
 
 from django.db import models
+from django.conf import settings
+
+from PIL import Image
 import numpy as np
 
 
@@ -225,9 +229,98 @@ class Thumbnails(models.Model):
     """Model schema for gallery thumbnails.
     Each WCS has an associated thumbnail.
     """
+    SMALL_THUMB_ROOT = settings.SMALL_THUMB_ROOT
+    """Root of the location where small thumbnails will be stored."""
+
+    LARGE_THUMB_ROOT = settings.LARGE_THUMB_ROOT
+    """Root of the location where large thumbnails will be stored."""
+
     wcs = models.OneToOneField(Wcs, on_delete=models.CASCADE, primary_key=True)
-    large = models.CharField("location of large thumbnail", max_length=20)
-    small = models.CharField("location of small thumbnail", max_length=20)
+    large = models.CharField("relative location of large thumbnail", max_length=20)
+    small = models.CharField("relative location of small thumbnail", max_length=20)
+
+    # the manual says not to do this but I don't understand what the point of an
+    # ORM is if I can't have instance attributes
+    def __init__(self, *args, **kwargs):
+        super(Thumbnails, self).__init__(*args, **kwargs)
+        self._largeimg = kwargs.pop("largeimg", None)
+        self._smallimg = kwargs.pop("smallimg", None)
+
+    @property
+    def largeAbsPath(self):
+        """Absolute path to the large thumbnail."""
+        return os.path.join(self.LARGE_THUMB_ROOT, self.large)
+
+    @property
+    def smallAbsPath(self):
+        """Absolute path to the small thumbnail."""
+        return os.path.join(self.SMALL_THUMB_ROOT, self.small)
+
+    # this is more of a sketch than final code, it's unclear, to me, how not to
+    # duplicate code or work in this class.... Consider punting the file IO
+    # here as well
+    @property
+    def largeimg(self):
+        """Large thumbnail image."""
+        if self._largeimg is None:
+            self._largeimg = self.get_img("large")
+        return self._largeimg
+
+    @property
+    def smallimg(self):
+        """Small thumbnail image."""
+        if self._smallimg is None:
+            self._smallimg = self.get_img("small")
+        return self._largeimg
+
+    def _specified_return(self, returnval, which):
+        if which.lowercase() == "small":
+            return returnval["small"]
+        elif which.lowercase() == "large":
+            return returnval["large"]
+        else:
+            return returnval
+
+    def abspath(self, which=None):
+        """Return absolute paths to the thumbnails.
+
+        Parameters
+        ----------
+        which : `str`, optional
+            Desired thumbnail, `small` or `large` or None, in which case a
+            both are returned.
+
+        Returns
+        -------
+        abspath : `str` or `dict`
+            If `which` is given returns the desired path as a string, if which
+            is `None` both paths are returned in a dictionary.
+        """
+        # TODO: abstract away in an URI class when transitioning
+        # to S3
+        returnval = {
+            "large": self.largeAbsPath,
+            "small": self.smallAbsPath
+        }
+        return self._specified_return(returnval, which)
+
+    def get_img(self, which):
+        """Return one of the thumbnail images as a Pil `Image` object.
+
+        Parameters
+        ----------
+        which : `str`
+            Desired thumbnail, `small` or `large`.
+
+        Returns
+        -------
+        img : `PIL.Image`
+            Requested image.
+        """
+        # TODO: add download to tmpdir for S3 if S3 URI
+        # consider adding tonumpyarr kwarg or something
+        path = self.abspath(which)
+        return Image.open(path)
 
 
 @dataclass
