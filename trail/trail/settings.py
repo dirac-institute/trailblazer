@@ -23,13 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 REPO_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-STATIC_ROOT = BASE_DIR / "static"
-STATIC_URL = '/static/'
-
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = '/media/'
-
-
 TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENV", default="local")
 TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG_DIR",
                                              default=BASE_DIR / "config/"))
@@ -52,6 +45,14 @@ else:
 SMALL_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.small_root)
 LARGE_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.large_root)
 DATA_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.data_root)
+
+
+STATIC_ROOT = DATA_ROOT
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = SMALL_THUMB_ROOT
+MEDIA_URL = '/media/'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
