@@ -37,10 +37,9 @@ loggingConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
 if TRAILBLAZER_ENV == "local":
     secrets = config.SecretsConfig()
     if "db" in siteConfig:
-        secrets.db = siteConfig.db
+        secrets.db.name = siteConfig.resolveAbsFromOrigin(siteConfig.db.name)
 else:
     secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
-
 
 SMALL_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.small_root)
 LARGE_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.large_root)
