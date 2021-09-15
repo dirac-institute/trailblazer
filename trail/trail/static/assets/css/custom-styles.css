@@ -25,3 +25,9 @@ Article View
 .image_information {
     text-align: left;
 }
+
+.gallery_images {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
