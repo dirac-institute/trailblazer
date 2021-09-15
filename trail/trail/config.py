@@ -89,17 +89,21 @@ class Config():
     ----------
     confDict : `dict`, optional
         Dictionary whose keys will be mapped to attributes of the class.
+    origin : `str`, optional
+        Path to the config file, if one was used to instantiate a config
+        from.
     """
 
     defaults = {}
     """Default instantiation values."""
 
-    def __init__(self, confDict=None):
+    def __init__(self, confDict=None, origin=None):
         if confDict is None:
             confDict = self.defaults
         self._keys = []
         self._subConfs = []
         self._recurseDownDicts(confDict)
+        self.origin = origin
 
     def _recurseDownDicts(self, confDict):
         """Recursively walks the dictionary keys and values and maps keys to
@@ -134,7 +138,7 @@ class Config():
             the ``CONF_FILE_ENVVAR`` is used. If it doesn't exist the
             ``CONF_FILE_PATH`` is used.
         """
-        return cls(yaml_to_dict(filePath))
+        return cls(yaml_to_dict(filePath), filePath)
 
     def __repr__(self):
         reprStr = f"{self.__class__.__name__}("
@@ -161,6 +165,55 @@ class Config():
                 return False
 
         return equal
+
+    def __contains__(self, key):
+        return key in self._keys or key in self._subConfs
+
+    def normalizePath(self, path):
+        """Expands shell variables and normalizes the given path.
+
+        Parameters
+        ----------
+        path : `str`
+            Path-like string
+
+        Returns
+        -------
+        normedPath : `str`
+            Normalized path.
+        """
+        expanded = os.path.expandvars(os.path.expanduser(path))
+        return os.path.normpath(expanded)
+
+    def resolveAbsFromOrigin(self, path):
+        """Expands shell variables, and resolves the absolute path as if path
+        was relative to `origin`. Normalizes the result. If the given path was
+        already absolute, returns the path unchanged.
+
+        Parameters
+        ----------
+        path : `str`
+            Path-like string, relative to origin.
+
+        Returns
+        -------
+        expandedPath : `str`
+            Expanded and normalized path.
+        """
+        if os.path.isabs(path):
+            return path
+
+        if self.origin is None:
+            raise ValueError("Config has no origin.")
+
+        # just to make sure
+        origin = self.normalizePath(os.path.abspath(self.origin))
+        if os.path.isfile(origin):
+            origin = os.path.dirname(origin)
+
+        path = self.normalizePath(path)
+        resolved = os.path.normpath(os.path.join(origin, path))
+        return os.path.abspath(resolved)
 
     def asDict(self, capitalizeKeys=False):
         """Returns the Conf as a dictionary.
@@ -234,18 +287,16 @@ class SecretsConfig(Config):
             "engine": "django.db.backends.sqlite3",
             "name": str(Path(__file__).resolve().parent.parent.parent.joinpath("db.sqlite3"))
             },
-        'django': {
-            "secret_key": "alalala",
-            "debug": True
-        }
+        "secret_key": "alalala",
     }
     """Default instantiation values."""
 
-    def __init__(self, confDict=None, useAwsSecrets=False, awsRegion=None):
+    def __init__(self, confDict=None, origin=None, useAwsSecrets=False, awsRegion=None):
         if confDict is None:
             confDict = self.defaults
         self._keys = []
         self._subConfs = []
+        self.origin = origin
         self._recurseDownDicts(confDict, useAwsSecrets, awsRegion)
 
     def _resolveAwsSecrets(self, confDict, region):
@@ -337,7 +388,7 @@ class SecretsConfig(Config):
                                   f"incorrect permissions: {mode:o}")
 
         confDict = yaml_to_dict(filePath)
-        return cls(confDict, useAwsSecrets, awsRegion)
+        return cls(confDict, filePath, useAwsSecrets, awsRegion)
 
     def __repr__(self):
         reprStr = super().__repr__()

@@ -23,37 +23,44 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 REPO_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENV", default="local")
+TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG_DIR",
+                                             default=BASE_DIR / "config/"))
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
 
-TRAILBLAZER_ENV = os.environ.get("TRAILBLAZER_ENVIRONMENT", default="local")
+siteConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "site.yaml")
+loggingConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
+
+
+# avoids problematic Windows file permissions when loading default YAMLs by
+# instantiating from existing hardcoded defaults...
 if TRAILBLAZER_ENV == "local":
-    # avoids problematic Windows file permissions when loading default YAMLs
     secrets = config.SecretsConfig()
-
-    SMALL_THUMB_ROOT = MEDIA_ROOT
-    LARGE_THUMB_ROOT = MEDIA_ROOT
-    DATA_ROOT = os.path.join(STATIC_ROOT, "upload/fits")
+    if "db" in siteConfig:
+        secrets.db.name = siteConfig.resolveAbsFromOrigin(siteConfig.db.name)
 else:
     secrets = config.SecretsConfig.fromYaml(config.get_secrets_filepath())
-    siteConfig = config.Config()
 
-    SMALL_THUMB_ROOT = siteConfig.thumbnails.small
-    LARGE_THUMB_ROOT = siteConfig.thumbnails.large
-    DATA_ROOT = siteConfig.raw_data_path
+SMALL_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.small_root)
+LARGE_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.large_root)
+DATA_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.data_root)
+
+
+STATIC_ROOT = DATA_ROOT
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = SMALL_THUMB_ROOT
+MEDIA_URL = '/media/'
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secrets.django.secret_key
+SECRET_KEY = secrets.secret_key
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = secrets.django.debug
+DEBUG = siteConfig.debug
 
 
 ALLOWED_HOSTS = []
@@ -74,9 +81,7 @@ INSTALLED_APPS = [
 ]
 
 
-loggingConf = config.Config.fromYaml(BASE_DIR / "logging.cfg")
-LOGGING = loggingConf.asDict()
-
+LOGGING = loggingConfig.asDict()
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

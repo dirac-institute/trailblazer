@@ -1,0 +1,5 @@
+debug: True
+thumbnails:
+  small_root: ../media/
+  large_root: ../media/
+data_root: ../static/upload/fits
