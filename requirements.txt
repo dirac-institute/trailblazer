@@ -1,6 +1,6 @@
 asgiref==3.3.1
 astropy==4.2
-astroquery==2.4.3
+astroquery==0.4.3
 boto3==1.17.59
 certifi==2020.12.5
 click==7.1.2
@@ -16,7 +16,7 @@ MarkupSafe==1.1.1
 matplotlib==3.3.4
 moto==2.0.5
 numpy==1.20.1
-photutils==4.0
+photutils==1.1.0
 Pillow==8.1.2
 pyerfa==1.7.2
 pyparsing==2.4.7
