@@ -10,13 +10,17 @@ import numpy as np
 from astropy.io.fits import PrimaryHDU, CompImageHDU
 from astropy.wcs import WCS
 import astropy.units as u
+from astroquery.astrometry_net import AstrometryNet
 
 import upload.models as models
 
 __all__ = ["HeaderStandardizer", ]
 
-
 logger = logging.getLogger(__name__)
+
+ast = AstrometryNet()
+
+ast.api_key = 'ethexxgyljfuayob'  # currently the key connected to astronomy.net with the git account JediJoe100
 
 
 class HeaderStandardizer(ABC):
@@ -98,7 +102,7 @@ class HeaderStandardizer(ABC):
         location. Corner is taken to be the (0,0)-th pixel.
         """
         standardizedWcs = {}
-        centerX, centerY = int(dimX/2), int(dimY/2)
+        centerX, centerY = int(dimX / 2), int(dimY / 2)
 
         # TODO: test if a header doesn't actually have a valid WCS
         # what is the error raised?
@@ -128,7 +132,7 @@ class HeaderStandardizer(ABC):
             np.sin(cornerDec)
         ])
 
-        unitRadius = np.linalg.norm(unitSphereCenter-unitSphereCorner)
+        unitRadius = np.linalg.norm(unitSphereCenter - unitSphereCorner)
         standardizedWcs["wcs_radius"] = unitRadius
 
         standardizedWcs["wcs_center_x"] = unitSphereCenter[0]
@@ -203,6 +207,7 @@ class HeaderStandardizer(ABC):
         def get_priority(standardizer):
             """Return standardizers priority."""
             return standardizer.priority
+
         standardizers.sort(key=get_priority, reverse=True)
 
         if standardizers:
@@ -323,3 +328,36 @@ class HeaderStandardizer(ABC):
 
         wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
         return wcs
+
+    def getWcs(self, path_to_file):
+        """Given a fits file it will process and send to astrometry.net
+        where it will obtain the WCS data for the file if it is able to.
+        If not then it will return an empty dictionary
+        (this can be altered to whatever needs to be used for)
+
+        Parameters
+        ----------
+        path_to_file : `string`
+            path to the fits file
+
+        Returns
+        -------
+        header : `dict`
+            returns the header with the WCS data in it if it was found.
+            If an error occurred or no solution is found then returns an empty dictionary.
+
+        Notes
+        -----
+        Currently this just ignores errors in the process.
+        It might be better to just raise the errors and let whatever the other function is to handle it.
+        """
+        try:
+            header = ast.solve_from_image(path_to_file, False)
+            # return that there was an error
+        except TimeoutError:
+            header = {}
+            # return that there was a timeout error
+        except TypeError:
+            header = {}
+            # there was an error in the fits file
+        return header  # return what needs to be parsed
