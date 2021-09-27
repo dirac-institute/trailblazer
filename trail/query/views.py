@@ -42,3 +42,28 @@ def print_results(request):
         query_results = []
         form = MetadataForm()
     return render(request, "query.html", {"data": query_results, "queryform": form, "render_table": True})
+
+
+
+
+
+
+
+from .serializers import MetadataSerializer
+
+from rest_framework import viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
+class MetadataViewSet(viewsets.ModelViewSet):
+    queryset = Metadata.objects.all()
+    serializer_class = MetadataSerializer
+
+
+@api_view(['GET'])
+def get_metadata(request, *args, **kwargs):
+    instrument=kwargs["instrument"]
+    query_results = Metadata.objects.filter(instrument__icontains=instrument)
+    serializer = MetadataSerializer(query_results, many=True)
+    return Response(serializer.data)
