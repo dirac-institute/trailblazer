@@ -1,0 +1,11 @@
+django:
+  secret_key: nonsense
+  static_root: ~/trail/static
+  media_root: ~/trail/media
+db:
+  engine: django.db.backend.postgresql_psycopg2
+  name: dbname
+  user: dbuser
+  password: dbpassword
+  host: dbhost.alala.com
+  port: 5432
