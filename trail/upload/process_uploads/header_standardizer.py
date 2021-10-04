@@ -8,19 +8,23 @@ import logging
 
 import numpy as np
 from astropy.io.fits import PrimaryHDU, CompImageHDU
+from astropy.io import fits
 from astropy.wcs import WCS
 import astropy.units as u
 from astroquery.astrometry_net import AstrometryNet
+from trail.settings import ASTROMETRY_KEY
 
 import upload.models as models
 
 __all__ = ["HeaderStandardizer", ]
 
+
 logger = logging.getLogger(__name__)
 
-ast = AstrometryNet()
+ASTRONET_CLIENT = AstrometryNet()
 
-ast.api_key = 'ethexxgyljfuayob'  # currently the key connected to astronomy.net with the git account JediJoe100
+if ASTROMETRY_KEY:
+    ASTRONET_CLIENT.api_key = ASTROMETRY_KEY
 
 
 class HeaderStandardizer(ABC):
@@ -102,7 +106,7 @@ class HeaderStandardizer(ABC):
         location. Corner is taken to be the (0,0)-th pixel.
         """
         standardizedWcs = {}
-        centerX, centerY = int(dimX / 2), int(dimY / 2)
+        centerX, centerY = int(dimX/2), int(dimY/2)
 
         # TODO: test if a header doesn't actually have a valid WCS
         # what is the error raised?
@@ -287,6 +291,46 @@ class HeaderStandardizer(ABC):
 
         Raises
         ------
+        StandardizeWcsException
+            there is no astrometry.net key in the file
+        StandardizeWcsException
+            no file WCS information could be found from sending to astrometry.net
+        TimeoutError
+            If it does not find a solution with the given time. Does not mean
+            that astrometry.net cannot solve it.
+        TypeError
+            Some error in fits file preventing astrometry.net from working
+        FileNotFoundError
+            File not found from the path to file
+
+        Notes
+        -----
+        Tries to read the WCS from the header.
+        if that does not work then gives it to astrometry.net to look for a solution for the WCS
+        """
+        try:
+            wcs = self._astropyWcsReader(hdu)
+        except ValueError and TypeError:
+            wcs = self._astrometryNetSolver(self.filename)# file path here
+        return wcs
+
+    def _astropyWcsReader(self, hdu=None):
+        """Standardize WCS data a given header.
+
+        Parameters
+        ----------
+        hdu : `object` or `None`, optional
+            An Astropy image-like HDU unit. Useful when dealing with
+            mutli-extension fits files where metadata is in the PrimaryHDU but
+            the WCS and image data are stored in the extensions.
+
+        Returns
+            -------
+            standardizedWCS : `upload.models.Wcs`
+            Standardized WCS keys and values.
+
+        Raises
+        ------
         ValueError
             Header contains no image dimension keys (NAXIS1, NAXIS2) but an
             additional HDU was not provided.
@@ -329,7 +373,7 @@ class HeaderStandardizer(ABC):
         wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
         return wcs
 
-    def getWcs(self, path_to_file):
+    def _astrometryNetSolver(self, path_to_file):
         """Given a fits file it will process and send to astrometry.net
         where it will obtain the WCS data for the file if it is able to.
         If not then it will return an empty dictionary
@@ -346,18 +390,42 @@ class HeaderStandardizer(ABC):
             returns the header with the WCS data in it if it was found.
             If an error occurred or no solution is found then returns an empty dictionary.
 
+        Raises
+        ------
+        StandardizeWcsException
+            Found no solution from astrometry.net
+        StandardizeWcsException
+            There is no astrometry.net key
+        TimeoutError
+            If it does not find a solution with the given time. Does not mean
+            that astrometry.net cannot solve it.
+        TypeError
+            Some error in fits file preventing astrometry.net from working
+        FileNotFoundError
+            File not found from the path to file
+
         Notes
         -----
-        Currently this just ignores errors in the process.
-        It might be better to just raise the errors and let whatever the other function is to handle it.
+        Send the file to astrometry.net to find WCS from the location of the stars in the image
         """
-        try:
-            header = ast.solve_from_image(path_to_file, False)
-            # return that there was an error
-        except TimeoutError:
-            header = {}
-            # return that there was a timeout error
-        except TypeError:
-            header = {}
-            # there was an error in the fits file
-        return header  # return what needs to be parsed
+        dimX, dimY = fits.open(path_to_file).data.shape
+        if ASTROMETRY_KEY:
+            header = ASTRONET_CLIENT.solve_from_image(path_to_file, False, solve_timeout=200)
+            if header == {}:
+                raise StandardizeWcsException("Could not find WCS from fits file")
+        else:
+            raise StandardizeWcsException("There is no astrometry.net key")
+        wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
+        return wcs
+
+
+class StandardizeWcsException(Exception):
+    """Exception raised when error in WCS processing
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="The WCS is not valid"):
+        self.message = message
+        super().__init__(self.message)
