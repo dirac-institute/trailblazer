@@ -27,6 +27,18 @@ if ASTROMETRY_KEY:
     ASTRONET_CLIENT.api_key = ASTROMETRY_KEY
 
 
+class StandardizeWcsException(Exception):
+    """Exception raised when error in WCS processing
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="The WCS is not valid"):
+        self.message = message
+        super().__init__(self.message)
+
+
 class HeaderStandardizer(ABC):
     """Supports standardization of various headers.
 
@@ -292,16 +304,7 @@ class HeaderStandardizer(ABC):
         Raises
         ------
         StandardizeWcsException
-            there is no astrometry.net key in the file
-        StandardizeWcsException
-            no file WCS information could be found from sending to astrometry.net
-        TimeoutError
-            If it does not find a solution with the given time. Does not mean
-            that astrometry.net cannot solve it.
-        TypeError
-            Some error in fits file preventing astrometry.net from working
-        FileNotFoundError
-            File not found from the path to file
+            There was a problem in standardizing the header
 
         Notes
         -----
@@ -309,9 +312,16 @@ class HeaderStandardizer(ABC):
         if that does not work then gives it to astrometry.net to look for a solution for the WCS
         """
         try:
-            wcs = self._astropyWcsReader(hdu)
-        except ValueError and TypeError:
-            wcs = self._astrometryNetSolver(self.filename)# file path here
+            astropy_fail = False
+            try:
+                header, dimX, dimY = self._astropyWcsReader(hdu)
+            except ValueError and TypeError:
+                astropy_fail = True
+            if astropy_fail:
+                header, dimX, dimY = self._astrometryNetSolver(self.filepath)  # file path here need to find correct location
+            wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
+        except ValueError and RuntimeError and TypeError as err:
+            raise StandardizeWcsException("Failed to standardize WCS") from err
         return wcs
 
     def _astropyWcsReader(self, hdu=None):
@@ -369,9 +379,7 @@ class HeaderStandardizer(ABC):
             header = hdu.header
         else:
             header = self.header
-
-        wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
-        return wcs
+        return header, dimX, dimY
 
     def _astrometryNetSolver(self, path_to_file):
         """Given a fits file it will process and send to astrometry.net
@@ -392,9 +400,9 @@ class HeaderStandardizer(ABC):
 
         Raises
         ------
-        StandardizeWcsException
+        ValueError
             Found no solution from astrometry.net
-        StandardizeWcsException
+        RuntimeError
             There is no astrometry.net key
         TimeoutError
             If it does not find a solution with the given time. Does not mean
@@ -412,20 +420,9 @@ class HeaderStandardizer(ABC):
         if ASTROMETRY_KEY:
             header = ASTRONET_CLIENT.solve_from_image(path_to_file, False, solve_timeout=200)
             if header == {}:
-                raise StandardizeWcsException("Could not find WCS from fits file")
+                raise ValueError("Could not find WCS from fits file")
         else:
-            raise StandardizeWcsException("There is no astrometry.net key")
-        wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
-        return wcs
+            logger.info("Astrometry.net api key not found")
+            raise RuntimeError("There is no astrometry.net key")
+        return header, dimX, dimY
 
-
-class StandardizeWcsException(Exception):
-    """Exception raised when error in WCS processing
-
-    Attributes:
-        message -- explanation of the error
-    """
-
-    def __init__(self, message="The WCS is not valid"):
-        self.message = message
-        super().__init__(self.message)
