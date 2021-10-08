@@ -64,6 +64,20 @@ class TestData:
     }
 
 
+class AstrometryNetTestCase(TestCase):
+    def setUp(self):
+        # set up the files
+        pass
+
+    def testKnownFile(self):
+        # tests using a file that we know what to expect
+        pass
+
+    def testRubbishFile(self):
+        # test with like a fits that has a rubbish image
+        pass
+
+
 class WcsTestCase(TestCase):
     def setUp(self):
         self.wcs1 = Wcs(**TestData.wcs1)
