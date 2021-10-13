@@ -69,16 +69,7 @@ class MoaStandardizer(HeaderStandardizer):
         return meta
 
     def standardizeWcs(self, **kwargs):
-        # no matter how hard I try, I do not understand how it would ever be
-        # possible to extract WCS data out of this header. This entire header
-        # is nonsense...
-        wcs = Wcs(
-            wcs_radius=-999.999,
-            wcs_center_x=-999.999,
-            wcs_center_y=-999.999,
-            wcs_center_z=-999.999,
-            wcs_corner_x=-999.999,
-            wcs_corner_y=-999.999,
-            wcs_corner_z=-999.999
-        )
+        # ignores any WCS information in the header and instead just sends it to astrometry.net to solve.
+        header, dimX, dimY = self._astrometryNetSolver(self._kwargs['filepath'])
+        wcs = Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
         return wcs
