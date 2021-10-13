@@ -3,6 +3,9 @@ from copy import copy
 from django.test import TestCase
 from upload.models import Metadata, Wcs, StandardizedHeader
 
+TESTDIR = os.path.abspath(os.path.dirname(__file__))
+
+
 
 class TestData:
     metadata1 = {
@@ -62,20 +65,6 @@ class TestData:
         "metadata": metadata1,
         "wcs": [wcs1, wcs2]
     }
-
-
-class AstrometryNetTestCase(TestCase):
-    def setUp(self):
-        # set up the files
-        pass
-
-    def testKnownFile(self):
-        # tests using a file that we know what to expect
-        pass
-
-    def testRubbishFile(self):
-        # test with like a fits that has a rubbish image
-        pass
 
 
 class WcsTestCase(TestCase):

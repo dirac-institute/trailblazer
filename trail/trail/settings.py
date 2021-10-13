@@ -30,7 +30,6 @@ TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG_DIR",
 
 siteConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "site.yaml")
 loggingConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
-astrometryConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "astrometry.yaml")
 
 
 # avoids problematic Windows file permissions when loading default YAMLs by
@@ -53,7 +52,8 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = SMALL_THUMB_ROOT
 MEDIA_URL = '/media/'
 
-ASTROMETRY_KEY = astrometryConfig.resolveAbsFromOrigin(astrometryConfig.astrometry_key)
+ASTROMETRY_KEY = siteConfig.astrometry_net.key
+ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
 
 
 # Quick-start development settings - unsuitable for production

@@ -12,7 +12,7 @@ from astropy.io import fits
 from astropy.wcs import WCS
 import astropy.units as u
 from astroquery.astrometry_net import AstrometryNet
-from trail.settings import ASTROMETRY_KEY
+from trail.settings import ASTROMETRY_KEY, ASTROMETRY_TIMEOUT
 
 import upload.models as models
 
@@ -416,9 +416,9 @@ class HeaderStandardizer(ABC):
         -----
         Send the file to astrometry.net to find WCS from the location of the stars in the image
         """
-        dimX, dimY = fits.open(path_to_file).data.shape
+        dimX, dimY = fits.open(path_to_file)[0].data.shape
         if ASTROMETRY_KEY:
-            header = ASTRONET_CLIENT.solve_from_image(path_to_file, False, solve_timeout=200)
+            header = ASTRONET_CLIENT.solve_from_image(path_to_file, False, solve_timeout=ASTROMETRY_TIMEOUT)
             if header == {}:
                 raise ValueError("Could not find WCS from fits file")
         else:
