@@ -381,7 +381,8 @@ class HeaderStandardizer(ABC):
             header = self.header
         return header, dimX, dimY
 
-    def _astrometryNetSolver(self, path_to_file):
+    @staticmethod
+    def _astrometryNetSolver(path_to_file):
         """Given a fits file it will process and send to astrometry.net
         where it will obtain the WCS data for the file if it is able to.
         If not then it will return an empty dictionary
