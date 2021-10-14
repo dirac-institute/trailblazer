@@ -52,12 +52,14 @@ class TestAstrometryNet(TestCase):
         test_file = os.path.join(self.testDataDir, "cutout_A3671-C2018_F4-R-3.fit")
         header_standardizer.ASTROMETRY_KEY = "test"
         header_standardizer.ASTRONET_CLIENT = MockAstrometryServer(return_no_solution=True)
-        self.assertRaises(ValueError, header_standardizer.HeaderStandardizer._astrometryNetSolver, path_to_file=test_file)
+        self.assertRaises(ValueError, header_standardizer.HeaderStandardizer._astrometryNetSolver,
+                          path_to_file=test_file)
 
     def testNoKey(self):
         test_file = os.path.join(self.testDataDir, "cutout_A3671-C2018_F4-R-3.fit")
         header_standardizer.ASTROMETRY_KEY = None
-        self.assertRaises(RuntimeError, header_standardizer.HeaderStandardizer._astrometryNetSolver, path_to_file=test_file)
+        self.assertRaises(RuntimeError, header_standardizer.HeaderStandardizer._astrometryNetSolver,
+                          path_to_file=test_file)
 
 
 class TemporaryUploadedFileWrapperTestCase(TestCase):
