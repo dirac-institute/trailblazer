@@ -318,7 +318,7 @@ class HeaderStandardizer(ABC):
             except ValueError and TypeError:
                 astropy_fail = True
             if astropy_fail:
-                header, dimX, dimY = self._astrometryNetSolver(self.filepath)  # file path here need to find correct location
+                header, dimX, dimY = self._astrometryNetSolver(self.filepath)
             wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
         except ValueError and RuntimeError and TypeError as err:
             raise StandardizeWcsException("Failed to standardize WCS") from err
@@ -425,4 +425,3 @@ class HeaderStandardizer(ABC):
             logger.info("Astrometry.net api key not found")
             raise RuntimeError("There is no astrometry.net key")
         return header, dimX, dimY
-
