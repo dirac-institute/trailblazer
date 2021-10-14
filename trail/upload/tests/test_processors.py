@@ -52,12 +52,12 @@ class TemporaryUploadedFileWrapperTestCase(TestCase):
 
         self.testData = {
             # filename: (basename, ext)
-            "reduced_A3671-C2018_F4-R-3.fit": ("reduced_A3671-C2018_F4-R-3", ".fit"),
-            "reduced_bi327715.fits": ("reduced_bi327715", ".fits"),
-            "reduced_c4d_200306_000415_ori.fits.fz": ("reduced_c4d_200306_000415_ori", ".fits.fz"),
-            "reduced_calexp-0941420_23.fits": ("reduced_calexp-0941420_23", ".fits"),
-            "reduced_HSCA21787010.fits": ("reduced_HSCA21787010", ".fits"),
-            "reduced_frame-i-008108-5-0025.fits": ("reduced_frame-i-008108-5-0025", ".fits"),
+            "cutout_A3671-C2018_F4-R-3.fit": ("cutout_A3671-C2018_F4-R-3", ".fit"),
+            "cutout_bi327715.fits": ("cutout_bi327715", ".fits"),
+            "cutout_c4d_200306_000415_ori.fits.fz": ("cutout_c4d_200306_000415_ori", ".fits.fz"),
+            "cutout_calexp-0941420_23.fits": ("cutout_calexp-0941420_23", ".fits"),
+            "cutout_HSCA21787010.fits": ("cutout_HSCA21787010", ".fits"),
+            "cutout_frame-i-008108-5-0025.fits": ("cutout_frame-i-008108-5-0025", ".fits"),
         }
 
         self.fits = []
@@ -160,7 +160,7 @@ class UploadProcessorTestCase(TestCase):
         """Tests whether store header executes on an SDSS frame; this verifies
         the created standardized dictionary has correcly named keys.
         """
-        data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
+        data = MockTmpUploadedFile("cutout_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
         fitsProcessor = UploadProcessor.fromFileWrapper(fits)
@@ -168,7 +168,7 @@ class UploadProcessorTestCase(TestCase):
 
     def testStoreThumbnails(self):
         """Tests whether two thumbnails appear at the expected location."""
-        data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
+        data = MockTmpUploadedFile("cutout_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
         fitsProcessor = UploadProcessor.fromFileWrapper(fits)
