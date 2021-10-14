@@ -3,9 +3,6 @@ from copy import copy
 from django.test import TestCase
 from upload.models import Metadata, Wcs, StandardizedHeader
 
-TESTDIR = os.path.abspath(os.path.dirname(__file__))
-
-
 
 class TestData:
     metadata1 = {

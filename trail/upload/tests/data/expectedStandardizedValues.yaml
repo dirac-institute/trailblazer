@@ -538,13 +538,13 @@ reduced_A3671-C2018_F4-R-3.fit:
     exposure_duration: 300
     filter_name: 'R'
   wcs:
-    wcs_radius: -999.999
-    wcs_center_x: -999.999
-    wcs_center_y: -999.999
-    wcs_center_z: -999.999
-    wcs_corner_x: -999.999
-    wcs_corner_y: -999.999
-    wcs_corner_z: -999.999
+    wcs_radius: 0.00858651139132575
+    wcs_center_x: 0.6296336957739722
+    wcs_center_y: -0.28643899364203035
+    wcs_center_z: -0.7221593398048314
+    wcs_corner_x: 0.6304411323501543
+    wcs_corner_y: -0.27826083730901974
+    wcs_corner_z: -0.7246481111968336
 reduced_bi327715.fits:
   runProcessing:
     True

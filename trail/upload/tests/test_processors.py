@@ -10,9 +10,22 @@ from upload.models import StandardizedHeader, Thumbnails
 from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.fits_processor import FitsProcessor
+import upload.process_uploads.header_standardizer as header_standardizer
 
 
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
+
+
+class MockAstrometryServer:
+    def __init__(self):
+        pass
+
+    def solve_from_image(self, path_to_file, preprocess=True, solve_timeout=120):
+        path = path_to_file.rsplit(".", 1)[0] + ".txt"
+        try:
+            return open(path).read()
+        except FileNotFoundError:
+            return {}
 
 
 class MockTmpUploadedFile:
@@ -91,6 +104,9 @@ class UploadProcessorTestCase(TestCase):
         TemporaryUploadedFileWrapper.save_root = self.tmpTestDir
         Thumbnails.SMALL_THUMB_ROOT = self.tmpTestDir
         Thumbnails.LARGE_THUMB_ROOT = self.tmpTestDir
+
+        header_standardizer.ASTROMETRY_KEY = "test"
+        header_standardizer.ASTRONET_CLIENT = MockAstrometryServer()
 
         fnames = os.listdir(self.testDataDir)
         self.fits = []
