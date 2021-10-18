@@ -73,7 +73,6 @@ class MoaStandardizer(HeaderStandardizer):
         # need to add a catch that catches the errors in astrometryNetSolver
         try:
             header, dimX, dimY = self._astrometryNetSolver(self._kwargs['filepath'])
-            wcs = Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
         except ValueError and RuntimeError and TypeError as err:
             raise StandardizeWcsException("Failed to standardize WCS") from err
-        return wcs
+        return Wcs(**self._computeStandardizedWcs(header, dimX, dimY))

@@ -17,6 +17,7 @@ TESTDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class MockAstrometryServer:
+    """Mock Astrometry function that acts like the astrometry.net server"""
     def __init__(self, return_no_solution=False):
         self.return_no_solution = return_no_solution
 
@@ -43,12 +44,14 @@ class MockTmpUploadedFile:
 
 
 class TestAstrometryNet(TestCase):
+    """Tests the astrometry.net functionality"""
     testDataDir = os.path.join(TESTDIR, "data")
 
     def setup(self):
         pass
 
     def testNoSolution(self):
+        """Verify that the correct error is raised when no solution"""
         test_file = os.path.join(self.testDataDir, "cutout_A3671-C2018_F4-R-3.fit")
         header_standardizer.ASTROMETRY_KEY = "test"
         header_standardizer.ASTRONET_CLIENT = MockAstrometryServer(return_no_solution=True)
@@ -56,6 +59,7 @@ class TestAstrometryNet(TestCase):
                           path_to_file=test_file)
 
     def testNoKey(self):
+        """Verify that the correct error is raised when there is no astrometry key"""
         test_file = os.path.join(self.testDataDir, "cutout_A3671-C2018_F4-R-3.fit")
         header_standardizer.ASTROMETRY_KEY = None
         self.assertRaises(RuntimeError, header_standardizer.HeaderStandardizer._astrometryNetSolver,
