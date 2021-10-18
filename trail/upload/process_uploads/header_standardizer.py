@@ -335,8 +335,8 @@ class HeaderStandardizer(ABC):
             the WCS and image data are stored in the extensions.
 
         Returns
-            -------
-            standardizedWCS : `upload.models.Wcs`
+        -------
+        standardizedWCS : `upload.models.Wcs`
             Standardized WCS keys and values.
 
         Raises
@@ -385,8 +385,7 @@ class HeaderStandardizer(ABC):
     def _astrometryNetSolver(path_to_file):
         """Given a fits file it will process and send to astrometry.net
         where it will obtain the WCS data for the file if it is able to.
-        If not then it will return an empty dictionary
-        (this can be altered to whatever needs to be used for)
+        Otherwise will raise relevant errors.
 
         Parameters
         ----------
@@ -398,6 +397,10 @@ class HeaderStandardizer(ABC):
         header : `dict`
             returns the header with the WCS data in it if it was found.
             If an error occurred or no solution is found then returns an empty dictionary.
+        dimX : `int`
+            width of the image
+        dimY : `int`
+            height of the image
 
         Raises
         ------
