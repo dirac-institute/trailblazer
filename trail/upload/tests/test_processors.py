@@ -21,7 +21,7 @@ class MockAstrometryServer:
     def __init__(self, return_no_solution=False):
         self.return_no_solution = return_no_solution
 
-    def solve_from_image(self, path_to_file, preprocess=True, solve_timeout=120):
+    def solve_from_image(self, path_to_file, **kwargs):
         path = path_to_file.rsplit(".", 1)[0] + ".txt"
         if not self.return_no_solution:
             return open(path).read()
