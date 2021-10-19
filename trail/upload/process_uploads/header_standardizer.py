@@ -312,17 +312,13 @@ class HeaderStandardizer(ABC):
         if that does not work then gives it to astrometry.net to look for a solution for the WCS
         """
         try:
-            astropy_fail = False
             try:
                 header, dimX, dimY = self._astropyWcsReader(hdu)
-            except ValueError and TypeError:
-                astropy_fail = True
-            if astropy_fail:
+            except (ValueError, TypeError):
                 header, dimX, dimY = self._astrometryNetSolver(self.filepath)
-            wcs = models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
-        except ValueError and RuntimeError and TypeError as err:
+        except (ValueError, RuntimeError, TypeError) as err:
             raise StandardizeWcsException("Failed to standardize WCS") from err
-        return wcs
+        return models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
 
     def _astropyWcsReader(self, hdu=None):
         """Standardize WCS data a given header.
