@@ -14,9 +14,14 @@ class MetadataForm(forms.Form):
     unique_instrument = ["DECam", "ff09", "Imager on SDSS 2.5m"]
     # TODO: add more instruments once we support them
     u_instrlist = list((name, name) for name in unique_instrument)
-    instrument = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
+    instrument__icontains = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
     telescope = forms.CharField(max_length=20, required=False)
-    processor_name = forms.CharField(max_length=20, required=False)
+    processor_nm = forms.CharField(max_length=20, required=False)
+
+    def get_query(self):
+        values = self.data.copy()
+        queryable_values = values.pop("csrfmiddlewaretoken", False)
+        return queryable_values
 
 
 def index(request):
@@ -37,7 +42,8 @@ def print_results(request):
     if request.method == "POST":
         form = MetadataForm(request.POST)
         if form.is_valid():
-            query_results = Metadata.objects.filter(instrument__icontains=form.data["instrument"])
+            # breakpoint()
+            query_results = Metadata.objects.filter(**form.get_query(self))
     else:
         query_results = []
         form = MetadataForm()
