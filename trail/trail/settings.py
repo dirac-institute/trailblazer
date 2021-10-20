@@ -55,6 +55,11 @@ MEDIA_URL = '/media/'
 ASTROMETRY_KEY = siteConfig.astrometry_net.key
 ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
 
+if "gallery_image_count" in siteConfig:
+    GALLERY_IMAGE_COUNT = siteConfig.gallery_image_count
+else:
+    GALLERY_IMAGE_COUNT = 12
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
