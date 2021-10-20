@@ -20,7 +20,9 @@ class MetadataForm(forms.Form):
 
     def get_query(self):
         values = self.data.copy()
+        #breakpoint()
         queryable_values = values.pop("csrfmiddlewaretoken", False)
+        #breakpoint()
         return queryable_values
 
 
@@ -43,7 +45,7 @@ def print_results(request):
         form = MetadataForm(request.POST)
         if form.is_valid():
             # breakpoint()
-            query_results = Metadata.objects.filter(**form.get_query(self))
+            query_results = Metadata.objects.filter(**form.get_query())
     else:
         query_results = []
         form = MetadataForm()
