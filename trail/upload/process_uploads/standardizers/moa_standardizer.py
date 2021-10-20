@@ -6,7 +6,7 @@ from datetime import timezone
 
 from astropy.time import Time
 
-from upload.process_uploads.header_standardizer import HeaderStandardizer
+from upload.process_uploads.header_standardizer import HeaderStandardizer, StandardizeWcsException
 from upload.models import Metadata, Wcs
 
 
@@ -69,16 +69,10 @@ class MoaStandardizer(HeaderStandardizer):
         return meta
 
     def standardizeWcs(self, **kwargs):
-        # no matter how hard I try, I do not understand how it would ever be
-        # possible to extract WCS data out of this header. This entire header
-        # is nonsense...
-        wcs = Wcs(
-            wcs_radius=-999.999,
-            wcs_center_x=-999.999,
-            wcs_center_y=-999.999,
-            wcs_center_z=-999.999,
-            wcs_corner_x=-999.999,
-            wcs_corner_y=-999.999,
-            wcs_corner_z=-999.999
-        )
-        return wcs
+        # ignores any WCS information in the header and instead just sends it to astrometry.net to solve.
+        # need to add a catch that catches the errors in astrometryNetSolver
+        try:
+            header, dimX, dimY = self._astrometryNetSolver(self._kwargs['filepath'])
+        except ValueError and RuntimeError and TypeError as err:
+            raise StandardizeWcsException("Failed to standardize WCS") from err
+        return Wcs(**self._computeStandardizedWcs(header, dimX, dimY))

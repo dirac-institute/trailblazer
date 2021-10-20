@@ -1,4 +1,4 @@
-reduced_HSCA21787010.fits:
+cutout_HSCA21787010.fits:
   runProcessing:
     True
   metadata:
@@ -22,7 +22,7 @@ reduced_HSCA21787010.fits:
     wcs_corner_x: 0.9964120360320852
     wcs_corner_y: 0.06815406382084636
     wcs_corner_z: 0.05018045471195688
-reduced_frame-i-008108-5-0025.fits:
+cutout_frame-i-008108-5-0025.fits:
   runProcessing:
     True
   metadata:
@@ -46,7 +46,7 @@ reduced_frame-i-008108-5-0025.fits:
     wcs_corner_x: 0.7839130388040201
     wcs_corner_y: -0.5368776125691581
     wcs_corner_z: 0.31183774100497846
-reduced_calexp-0941420_23.fits:
+cutout_calexp-0941420_23.fits:
   runProcessing:
     True
   metadata:
@@ -70,7 +70,7 @@ reduced_calexp-0941420_23.fits:
     wcs_corner_x: 0.08888124546442465
     wcs_corner_y: 0.9300663767547644
     wcs_corner_z: -0.3564781326181976
-reduced_c4d_200306_000415_ori.fits.fz:
+cutout_c4d_200306_000415_ori.fits.fz:
   runProcessing:
     True
   metadata:
@@ -521,7 +521,7 @@ reduced_c4d_200306_000415_ori.fits.fz:
       wcs_corner_x: 0.08827843716729813
       wcs_corner_y: 0.9222490586405132
       wcs_corner_z: -0.3763822410369366
-reduced_A3671-C2018_F4-R-3.fit:
+cutout_A3671-C2018_F4-R-3.fit:
   runProcessing:
     True
   metadata:
@@ -538,14 +538,14 @@ reduced_A3671-C2018_F4-R-3.fit:
     exposure_duration: 300
     filter_name: 'R'
   wcs:
-    wcs_radius: -999.999
-    wcs_center_x: -999.999
-    wcs_center_y: -999.999
-    wcs_center_z: -999.999
-    wcs_corner_x: -999.999
-    wcs_corner_y: -999.999
-    wcs_corner_z: -999.999
-reduced_bi327715.fits:
+    wcs_radius: 0.00858651139132575
+    wcs_center_x: 0.6296336957739722
+    wcs_center_y: -0.28643899364203035
+    wcs_center_z: -0.7221593398048314
+    wcs_corner_x: 0.6304411323501543
+    wcs_corner_y: -0.27826083730901974
+    wcs_corner_z: -0.7246481111968336
+cutout_bi327715.fits:
   runProcessing:
     True
   metadata:

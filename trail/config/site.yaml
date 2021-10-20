@@ -3,3 +3,6 @@ thumbnails:
   small_root: ../media/
   large_root: ../media/
 data_root: ../static/upload/fits
+astrometry_net:
+  key:
+  timeout: 200

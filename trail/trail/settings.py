@@ -52,6 +52,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = SMALL_THUMB_ROOT
 MEDIA_URL = '/media/'
 
+ASTROMETRY_KEY = siteConfig.astrometry_net.key
+ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/

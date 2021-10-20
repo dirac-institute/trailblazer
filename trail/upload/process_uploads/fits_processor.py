@@ -72,7 +72,8 @@ class FitsProcessor(UploadProcessor):
         self.hdulist = fits.open(uploadedFile.tmpfile.temporary_file_path())
         self.primary = self.hdulist["PRIMARY"].header
         self.standardizer = HeaderStandardizer.fromHeader(self.primary,
-                                                          filename=uploadedFile.filename)
+                                                          filename=uploadedFile.filename,
+                                                          filepath=uploadedFile.tmpfile.temporary_file_path())
         self.isMultiExt = len(self.hdulist) > 1
 
     @staticmethod

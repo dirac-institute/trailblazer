@@ -10,9 +10,24 @@ from upload.models import StandardizedHeader, Thumbnails
 from upload.process_uploads.upload_wrapper import TemporaryUploadedFileWrapper
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.fits_processor import FitsProcessor
+import upload.process_uploads.header_standardizer as header_standardizer
 
 
 TESTDIR = os.path.abspath(os.path.dirname(__file__))
+
+
+class MockAstrometryServer:
+    """Mock Astrometry function that acts like the astrometry.net server"""
+    def __init__(self, return_no_solution=False):
+        self.return_no_solution = return_no_solution
+
+    def solve_from_image(self, path_to_file, preprocess=True, solve_timeout=120):
+        """preprocess and solve_timeout are there as they are defined for the actual function"""
+        path = path_to_file.rsplit(".", 1)[0] + ".txt"
+        if not self.return_no_solution:
+            return open(path).read()
+        else:
+            return {}
 
 
 class MockTmpUploadedFile:
@@ -29,6 +44,29 @@ class MockTmpUploadedFile:
         return self.sourceFilePath
 
 
+class TestAstrometryNet(TestCase):
+    """Tests the astrometry.net functionality"""
+    testDataDir = os.path.join(TESTDIR, "data")
+
+    def setup(self):
+        pass
+
+    def testNoSolution(self):
+        """Verify that the correct error is raised when no solution"""
+        test_file = os.path.join(self.testDataDir, "cutout_A3671-C2018_F4-R-3.fit")
+        header_standardizer.ASTROMETRY_KEY = "test"
+        header_standardizer.ASTRONET_CLIENT = MockAstrometryServer(return_no_solution=True)
+        self.assertRaises(ValueError, header_standardizer.HeaderStandardizer._astrometryNetSolver,
+                          path_to_file=test_file)
+
+    def testNoKey(self):
+        """Verify that the correct error is raised when there is no astrometry key"""
+        test_file = os.path.join(self.testDataDir, "cutout_A3671-C2018_F4-R-3.fit")
+        header_standardizer.ASTROMETRY_KEY = None
+        self.assertRaises(RuntimeError, header_standardizer.HeaderStandardizer._astrometryNetSolver,
+                          path_to_file=test_file)
+
+
 class TemporaryUploadedFileWrapperTestCase(TestCase):
     """Tests the TemporaryUploadedFileWrapper functionality. """
     testDataDir = os.path.join(TESTDIR, "data")
@@ -39,12 +77,12 @@ class TemporaryUploadedFileWrapperTestCase(TestCase):
 
         self.testData = {
             # filename: (basename, ext)
-            "reduced_A3671-C2018_F4-R-3.fit": ("reduced_A3671-C2018_F4-R-3", ".fit"),
-            "reduced_bi327715.fits": ("reduced_bi327715", ".fits"),
-            "reduced_c4d_200306_000415_ori.fits.fz": ("reduced_c4d_200306_000415_ori", ".fits.fz"),
-            "reduced_calexp-0941420_23.fits": ("reduced_calexp-0941420_23", ".fits"),
-            "reduced_HSCA21787010.fits": ("reduced_HSCA21787010", ".fits"),
-            "reduced_frame-i-008108-5-0025.fits": ("reduced_frame-i-008108-5-0025", ".fits"),
+            "cutout_A3671-C2018_F4-R-3.fit": ("cutout_A3671-C2018_F4-R-3", ".fit"),
+            "cutout_bi327715.fits": ("cutout_bi327715", ".fits"),
+            "cutout_c4d_200306_000415_ori.fits.fz": ("cutout_c4d_200306_000415_ori", ".fits.fz"),
+            "cutout_calexp-0941420_23.fits": ("cutout_calexp-0941420_23", ".fits"),
+            "cutout_HSCA21787010.fits": ("cutout_HSCA21787010", ".fits"),
+            "cutout_frame-i-008108-5-0025.fits": ("cutout_frame-i-008108-5-0025", ".fits"),
         }
 
         self.fits = []
@@ -91,6 +129,9 @@ class UploadProcessorTestCase(TestCase):
         TemporaryUploadedFileWrapper.save_root = self.tmpTestDir
         Thumbnails.SMALL_THUMB_ROOT = self.tmpTestDir
         Thumbnails.LARGE_THUMB_ROOT = self.tmpTestDir
+
+        header_standardizer.ASTROMETRY_KEY = "test"
+        header_standardizer.ASTRONET_CLIENT = MockAstrometryServer()
 
         fnames = os.listdir(self.testDataDir)
         self.fits = []
@@ -144,7 +185,7 @@ class UploadProcessorTestCase(TestCase):
         """Tests whether store header executes on an SDSS frame; this verifies
         the created standardized dictionary has correcly named keys.
         """
-        data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
+        data = MockTmpUploadedFile("cutout_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
         fitsProcessor = UploadProcessor.fromFileWrapper(fits)
@@ -152,7 +193,7 @@ class UploadProcessorTestCase(TestCase):
 
     def testStoreThumbnails(self):
         """Tests whether two thumbnails appear at the expected location."""
-        data = MockTmpUploadedFile("reduced_frame-i-008108-5-0025.fits",
+        data = MockTmpUploadedFile("cutout_frame-i-008108-5-0025.fits",
                                    self.testDataDir)
         fits = TemporaryUploadedFileWrapper(data)
         fitsProcessor = UploadProcessor.fromFileWrapper(fits)
