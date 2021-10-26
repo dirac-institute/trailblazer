@@ -16,14 +16,15 @@ class MetadataForm(forms.Form):
     u_instrlist = list((name, name) for name in unique_instrument)
     instrument__icontains = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
     telescope = forms.CharField(max_length=20, required=False)
-    processor_nm = forms.CharField(max_length=20, required=False)
+    processor_name = forms.CharField(max_length=20, required=False)
 
     def get_query(self):
         values = self.data.copy()
-        #breakpoint()
+        # breakpoint()
         query_removed = values.pop("csrfmiddlewaretoken", False)
-        #breakpoint()
-        return values
+        new_query_result = 
+        # breakpoint()
+        return new_query_result
 
 
 def index(request):
