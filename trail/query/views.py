@@ -1,6 +1,7 @@
 from django import forms
 # from django.forms import ModelForm
 from django.apps import apps
+from django.forms.fields import CharField
 from django.shortcuts import render
 
 
@@ -21,10 +22,21 @@ class MetadataForm(forms.Form):
     def get_query(self):
         values = self.data.copy()
         # breakpoint()
-        query_removed = values.pop("csrfmiddlewaretoken", False)
-        new_query_result = 
+        values.pop("csrfmiddlewaretoken", False)
+        # pop telescope if there's no input
+            if telescope.is_valid():
+               if  processor_name.is valid():
+                   values = values
+            eles if telescope == []:
+                if processor_name == []:
+                    values.pop(telescope, processor_name, False)
+                else: 
+                    values.pop(telescope, False)
+            return velues
+            
+            
         # breakpoint()
-        return new_query_result
+        return values
 
 
 def index(request):
