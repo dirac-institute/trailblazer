@@ -1,7 +1,7 @@
 from django import forms
 # from django.forms import ModelForm
 from django.apps import apps
-from django.forms.fields import CharField
+# from django.forms.fields import CharField
 from django.shortcuts import render
 
 
@@ -22,21 +22,13 @@ class MetadataForm(forms.Form):
     def get_query(self):
         values = self.data.copy()
         # breakpoint()
-        values.pop("csrfmiddlewaretoken", False)
-        # pop telescope if there's no input
-            if telescope.is_valid():
-               if  processor_name.is valid():
-                   values = values
-            eles if telescope == []:
-                if processor_name == []:
-                    values.pop(telescope, processor_name, False)
-                else: 
-                    values.pop(telescope, False)
-            return velues
-            
-            
-        # breakpoint()
-        return values
+        if Metadata['instrument'] == ' ':
+            values.pop('instrument__icontains')
+        if Metadata['telescope'] == ' ':
+            values.pop('telescope')
+        if Metadata['processor_name'] == ' ':
+            values.pop('processor_name')
+        return self
 
 
 def index(request):
@@ -58,8 +50,8 @@ def print_results(request):
         form = MetadataForm(request.POST)
         if form.is_valid():
             # breakpoint()
-            print(form)
-            print(form.get_query())
+            # print(form)
+            # print(form.get_query())
             query_results = Metadata.objects.filter(**form.get_query())
     else:
         query_results = []
