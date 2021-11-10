@@ -1,12 +1,9 @@
 from django import forms
-# from django.forms import ModelForm
 from django.apps import apps
-# from django.forms.fields import CharField
 from django.shortcuts import render
 
 
 Metadata = apps.get_model('upload', 'Metadata')
-# Needs to think about adding SELECT DISTINCT etc.
 
 
 class MetadataForm(forms.Form):
@@ -20,15 +17,11 @@ class MetadataForm(forms.Form):
     processor_name = forms.CharField(max_length=20, required=False)
 
     def get_query(self):
-        values = self.data.copy()
-        # breakpoint()
-        if Metadata['instrument'] == ' ':
-            values.pop('instrument__icontains')
-        if Metadata['telescope'] == ' ':
-            values.pop('telescope')
-        if Metadata['processor_name'] == ' ':
-            values.pop('processor_name')
-        return self
+        new_dict = {}
+        for key in self.data:
+            if self.data[key] and key != 'csrfmiddlewaretoken':
+                new_dict[key] = self.data[key]
+        return new_dict
 
 
 def index(request):
@@ -49,9 +42,6 @@ def print_results(request):
     if request.method == "POST":
         form = MetadataForm(request.POST)
         if form.is_valid():
-            # breakpoint()
-            # print(form)
-            # print(form.get_query())
             query_results = Metadata.objects.filter(**form.get_query())
     else:
         query_results = []
