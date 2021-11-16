@@ -19,19 +19,21 @@ def get_query1(test):
     return new_dict
 
 
-def get_query(d):
+def get_query(d, argument = True):
     new_dict = {}
+    # argument = True
     for key in d:
-        if d[key] != ' ':
+        if d[key]:
             # add the key 
             # test.pop(key)
-            new_dict[key] = d[key]
+            if argument == True:
+                new_dict[key] = d[key]
     return new_dict
 
-print(get_query(Test1))
-print(get_query(Test2))
-print(get_query(Test3))
-print(get_query(Test4))
+print(get_query(Test1, False))
+# print(get_query(Test2))
+#print(get_query(Test3))
+#print(get_query(Test4))
 
 
 class TestClass():

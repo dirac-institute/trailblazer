@@ -12,15 +12,19 @@ class MetadataForm(forms.Form):
     unique_instrument = ["DECam", "ff09", "Imager on SDSS 2.5m"]
     # TODO: add more instruments once we support them
     u_instrlist = list((name, name) for name in unique_instrument)
-    instrument__icontains = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
+    instrument = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
     telescope = forms.CharField(max_length=20, required=False)
     processor_name = forms.CharField(max_length=20, required=False)
 
-    def get_query(self):
-        new_dict = {}
+    def get_query(self, casesensitive=True):
+        # key_icontains (partially matching or full matching)
+        # icontains case not sensitvie; contains case sensitive
+        new_dict = []
         for key in self.data:
-            if self.data[key] and key != 'csrfmiddlewaretoken':
-                new_dict[key] = self.data[key]
+            keyk__contains = self.data.get(key)
+            if self.data[keyk__contains] and self.data[keyk__contains] != 'csrfmiddlewaretoken':
+                if casesensitive:  # if True:
+                    new_dict[key] = self.data[key]
         return new_dict
 
 
