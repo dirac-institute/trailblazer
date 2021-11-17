@@ -17,9 +17,9 @@ class MetadataForm(forms.Form):
     processor_name = forms.CharField(max_length=20, required=False)
 
     def get_query(self, casesensitive=True):
-        new_dict = []
+        new_dict = {}
         for key in self.data:
-            if self.data[key] and self.data[key] != 'csrfmiddlewaretoken':
+            if self.data[key] and key != 'csrfmiddlewaretoken':
                 if casesensitive:
                     keyk = key + "__contains"
                     new_dict[keyk] = self.data[key]
