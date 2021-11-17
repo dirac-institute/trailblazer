@@ -17,14 +17,16 @@ class MetadataForm(forms.Form):
     processor_name = forms.CharField(max_length=20, required=False)
 
     def get_query(self, casesensitive=True):
-        # key_icontains (partially matching or full matching)
-        # icontains case not sensitvie; contains case sensitive
         new_dict = []
         for key in self.data:
-            keyk__contains = self.data.get(key)
-            if self.data[keyk__contains] and self.data[keyk__contains] != 'csrfmiddlewaretoken':
-                if casesensitive:  # if True:
-                    new_dict[key] = self.data[key]
+            if self.data[key] and self.data[key] != 'csrfmiddlewaretoken':
+                if casesensitive:
+                    keyk = key + "__contains"
+                    new_dict[keyk] = self.data[key]
+                elif not casesensitive:
+                    keyk = key + "__icontains"
+                    new_dict[keyk] = self.data[key]
+                # any other situation?
         return new_dict
 
 
