@@ -3,6 +3,8 @@ Test2 = {'instrument': 'DECam', 'telescope': 'asd', 'processor_name': ' ', 'col'
 Test3 = {'instrument': 'DECam', 'telescope': 'asd', 'processor_name': 'asss', 'col': ' '}
 Test4 = {'instrument': 'DECam', 'telescope': ' ', 'processor_name': 'asss', 'col': ' '}
 
+Metadata = apps.get_model('upload', 'Metadata')
+query_results = Metadata.objects.filter(**form.get_query())
 
 def get_query1(test, arugment=True):
     # values = test.copy()
@@ -18,6 +20,8 @@ def get_query1(test, arugment=True):
                 new_dict[keyk] = test[key]
     return new_dict
 
+string = headers
+table.sort(string)
 
 # def get_query(d, argument=True):
 #     new_dict = {}

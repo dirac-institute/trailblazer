@@ -52,8 +52,10 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = SMALL_THUMB_ROOT
 MEDIA_URL = '/media/'
 
-ASTROMETRY_KEY = siteConfig.astrometry_net.key
-ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
+# ASTROMETRY_KEY = siteConfig.astrometry_net.key
+# ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
+ASTROMETRY_KEY = ""
+ASTROMETRY_TIMEOUT = ""
 
 if "gallery_image_count" in siteConfig:
     GALLERY_IMAGE_COUNT = siteConfig.gallery_image_count
