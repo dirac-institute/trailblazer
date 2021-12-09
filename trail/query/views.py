@@ -15,6 +15,8 @@ class MetadataForm(forms.Form):
     instrument = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
     telescope = forms.CharField(max_length=20, required=False)
     processor_name = forms.CharField(max_length=20, required=False)
+    obs_lon = forms.CharField(max_length=20, required=False)
+    WCS_info = forms.CharField(max_length=20, required=False)
 
     def get_query(self, casesensitive=True):
         new_dict = {}
@@ -48,6 +50,9 @@ def print_results(request):
     if request.method == "POST":
         form = MetadataForm(request.POST)
         if form.is_valid():
+            # breakpoint
+            # manual, dir, 
+            # open the puller quest
             query_results = Metadata.objects.filter(**form.get_query())
     else:
         query_results = []
