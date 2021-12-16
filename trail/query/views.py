@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 
 Metadata = apps.get_model('upload', 'Metadata')
+# Wcs = apps.get_model('upload', 'Metadata')
 
 
 class MetadataForm(forms.Form):
@@ -16,7 +17,7 @@ class MetadataForm(forms.Form):
     telescope = forms.CharField(max_length=20, required=False)
     processor_name = forms.CharField(max_length=20, required=False)
     obs_lon = forms.CharField(max_length=20, required=False)
-    WCS_info = forms.CharField(max_length=20, required=False)
+    # WCS_info = forms.CharField(max_length=20, required=False)
 
     def get_query(self, casesensitive=True):
         new_dict = {}
@@ -54,6 +55,15 @@ def print_results(request):
             # manual, dir, 
             # open the puller quest
             query_results = Metadata.objects.filter(**form.get_query())
+            breakpoint()
+            a = 1
+            # wcs_piece = query_results[0].wcs_set
+            # print(wcs_piece)
+            # breakpoint()
+            # print()
+            # print(query_results)
+            # print()
+            # breakpoint()
     else:
         query_results = []
         form = MetadataForm()
