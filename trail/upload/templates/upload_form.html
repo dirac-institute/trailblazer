@@ -1,0 +1,100 @@
+{% load static %}
+
+<div class="uploadform_drop_area" id="uploadform_drop_area">
+
+    <script type="text/javascript">
+     var ACCEPTABLE_FILE_TYPES = '{{accept}}';
+     var MAX_FILE_SIZE_MB = {{max_file_size_mb}};
+    </script>
+
+    <form method="post" enctype="multipart/form-data" action="{{ action }}" class="uploadform_form" novalidate>
+        {% csrf_token %}
+
+
+        {% if file_errors %}
+        <div class="alert alert-danger">
+        {% else %}
+        <div class="alert alert-danger" style="display: none">
+        {% endif %}
+                <strong>Can not upload following files:</strong>
+            <ul class="errorlist">
+                {% for error in file_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if form.fields|length %}
+        <div class="extra_fields">
+            {% for field in form %}
+                <div class="form-row{% if field.errors %} errors{% endif %} field-{{ field.html_name }}">
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}
+                    <p class="help">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="file_list_input">
+            <p>Select multiple files with the file dialog or by dragging and dropping them onto the dashed region</p>
+
+            <label class="button">
+                <input style="display: none;" type="file" name="files[]" accept="{{accept}}" multiple onchange="UploadForm.handleFiles(this.files)">
+                <img src="{% static 'icons/cloud-upload-svgrepo-com.svg' %}" alt=" 'upload' %}">
+                <p>Select some files</p>
+            </label>
+        </div>
+        <div class="file_list_wrapper" style="display: none;">
+            <div class="submit">
+                <div>Press the button below to proceed with files upload</div>
+                <button type="submit" class="btn btn-success btn-lg">
+                    <img src="{% static 'icons/cloud-upload-svgrepo-com.svg' %}" class="icon">&nbsp;&nbsp; Send
+                </button>
+            </div>
+            <div class="progress" style="display: none;">
+                <div class="progress-bar progress-bar-success progress-bar-striped active"
+                     role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                </div>
+            </div>
+            <div class="uploadform_user_message_wrapper" style="padding:10px;padding-top:30px;padding-bottom:30px">
+                <div class="uploadform_user_message">
+                    You files have been uploaded! <br>
+                    We are applying oils and incantations. This could take a while. <br>
+                    Success report may or may not be displayed at the end of it. <br>
+                    It is safe to leave this page now. <br>
+                    Thank you.
+                </div>
+            </div>
+            <table class="uploadform_file_list">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>
+                            <a href="#" class="uploadform_remove_all_files" title="remove all">
+                                <img src="{% static 'icons/trash-svgrepo-com.svg' %}" class="icon">
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- {% if all_files|length %}
+                         {% for file in all_files %}
+                         <tr>
+                         <td class="filetype">{{file.content_type}}</td>
+                         <td class="filename">{{file.name}}</td>
+                         <td class="numeric">{{file.size|filesizeformat}}</td>
+                         <td class="delete"><a href="#" class="uploadform_remove_file" title="remove this"><img src="/static/icons/trash-svgrepo-com.svg" class="icon"></a></td>
+                         {% endfor %}
+                         {% endif %} -->
+                </tbody>
+            </table>
+        </div>
+
+    </form>
+
+</div>

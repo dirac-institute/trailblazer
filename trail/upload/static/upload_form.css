@@ -1,0 +1,282 @@
+.alert {
+    background-color: rgba(255, 0, 0, 0.5);
+    padding-left: 3%;
+}
+
+.uploadform_drop_area {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    font-family: sans-serif;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.uploadform_drop_area.highlight {
+    border-color: #69f;
+    background-color: #666;
+}
+
+
+.uploadform_drop_area .file_list_input label {
+    width: 60%;
+    padding: 10px;
+    font-size: 1.8em;
+    text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    color: #444;
+    background-color: #999;
+    border-radius: 20px;
+}
+
+.uploadform_drop_area label p {
+    text-align: center;
+}
+
+.uploadform_drop_area label img {
+    text-align: center;
+    height: 60px;
+    width: 100%;
+    color: #444 !important;
+}
+
+.uploadform_drop_area .file_list_wrapper table {
+    margin: 0 auto;
+    width: 80%;
+    color: #999;
+    border: 1px solid #999;
+}
+
+.uploadform_drop_area .file_list_wrapper table th,
+.uploadform_drop_area .file_list_wrapper table td {
+    border: 1px solid #999;
+    padding: 0 4px;
+}
+
+.uploadform_drop_area .file_list_wrapper table th {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.uploadform_drop_area .file_list_wrapper td.delete {
+    text-align: center;
+}
+
+.uploadform_drop_area .file_list_wrapper button img.icon {
+    height: 20px;
+}
+
+.uploadform_drop_area .errorlist {
+    list-style: dash;
+}
+
+.uploadform_drop_area .errorlist li {
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.uploadform_drop_area .submit button {
+    margin: 10px 0;
+}
+
+.uploadform_drop_area .uploadform_file_list img.icon {
+    height: 12px;
+    /*width: 100%;*/
+}
+
+.uploadform_drop_area .file_list_wrapper .progress {
+    margin-bottom: 10px;
+}
+
+.uploadform_drop_area .extra_fields {
+    margin-bottom: 10px;
+}
+
+.uploadform_drop_area .extra_fields .form-row.errors {
+    border: 1px solid red;
+}
+
+.uploadform_user_message{
+    display: none;
+    background-color: rgba(92,184,92, 0.2);
+    text-align: center;
+    line-height: initial;
+}
+
+.progress-bar{
+    float:left;
+    width:0%;
+    height:100%;
+    font-size:12px;
+    line-height:20px;
+    color:#fff;
+    text-align:center;
+    background-color:#337ab7;
+    -webkit-box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-transition:width .6s ease;
+    -o-transition:width .6s ease;
+    transition:width .6s ease
+}
+
+.progress-bar-striped,.progress-striped .progress-bar{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent);
+    -webkit-background-size:40px 40px;
+    background-size:40px 40px
+}
+
+.progress-bar.active,.progress.active .progress-bar{
+    -webkit-animation:progress-bar-stripes 2s linear infinite;
+    -o-animation:progress-bar-stripes 2s linear infinite;
+    animation:progress-bar-stripes 2s linear infinite
+}
+
+.progress-bar-success{
+    background-color:#5cb85c
+}
+
+.progress-striped .progress-bar-success{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+.progress-bar-info{
+    background-color:#5bc0de
+}
+
+.progress-striped .progress-bar-info{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+.progress-bar-warning{
+    background-color:#f0ad4e
+}
+
+.progress-striped .progress-bar-warning{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+.progress-bar-danger{
+    background-color:#d9534f
+}
+
+.progress-striped .progress-bar-danger{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
