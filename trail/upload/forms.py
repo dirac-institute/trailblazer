@@ -3,7 +3,6 @@ import os
 
 from django import forms
 from django.template.loader import render_to_string
-from django.http import JsonResponse, HttpResponse
 
 # These uploads are required here so that the subclasses register themselves
 # and that can't be done in __init__ because django AppRegistryNotReady error
@@ -143,7 +142,7 @@ class UploadForm(forms.Form):
         """
         text = self.allowed_file_types if self.allowed_file_types is not None else ""
         # Allow multiple separators
-        tokens = text.lower().replace(',',' ').replace(';',' ').split()
+        tokens = text.lower().replace(',', ' ').replace(';', ' ').split()
         # Add leading dot when required
         tokens = [t if t.startswith('.') else ('.'+t) for t in tokens]
         return tokens
@@ -200,6 +199,6 @@ class UploadForm(forms.Form):
             if size_MB > max_file_size_MB:
                 self.file_errors.append(f"{file.name}: File size exceeds {max_file_size_MB}MB.")
 
-        #return len(self.file_errors) <= 0
+        # return len(self.file_errors) <= 0
         valid = super().is_valid() and len(self.file_errors) <= 0
         return valid

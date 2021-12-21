@@ -8,7 +8,7 @@ import os
 from dataclasses import dataclass, field
 from typing import Sequence
 
-from django.db import models, transaction
+from django.db import models
 from django.conf import settings
 
 from PIL import Image
@@ -70,7 +70,6 @@ def dataToComponent(data, component):
         compValue = data
 
     return compValue
-
 
 
 class UploadInfo(models.Model):
@@ -483,25 +482,6 @@ class StandardizedHeader:
         metadataDict.update(wcsDicts)
         return metadataDict
 
-#    @transaction.atomic
-#    def save(self, withUploadInfo=None):
-#        """Insert standardized metadata and wcs data into the database."""
-#        if withUploadInfo is None and self.metadata.upload_info.id is None:
-#            raise RuntimeError("Can not commit to database without identifying the uploader!")
-#        elif self.metadata.upload_info.id is None:
-#            self.metadata.upload_info = withUploadInfo
-#
-#        self.metadata.save()
-#
-#        # just in case Wcs was appended before metadata, set them explicitly
-#        for wcs in self.wcs:
-#            wcs.metadata = self.metadata
-#            wcs.save()
-#
-#        # TODO: this doesn't work, why?
-#        # Wcs.objects.bulk_create(self.wcs)
-
-
 
 @dataclass
 class StandardizedResult:
@@ -539,10 +519,11 @@ class StandardizedResult:
         except TypeError:
             pass
 
-        i=0
-        while (thumbnails is None and i<len(cls._thumbkeys)):
+        i = 0
+        thumbnails = None
+        while (thumbnails is None and i < len(cls._thumbkeys)):
             thumbnails = data.pop(cls._thumbkeys[i])
-            i+=1
+            i += 1
 
         # try one more time with a flat dict, just in case someone was too lazy
         # Otherwise, thumbnails were retrieved as a dict, or a list of dicts
@@ -614,7 +595,7 @@ class StandardizedResult:
     def extendThumbnails(self, thumbnails):
         for thumb in thumbnails:
             self.appendThumbnail(thumb)
-        
+
     def toDict(self):
         """Returns a dictionary of standardized metadata, wcs an thumbnails."""
         metadataDict = self.header.toDict()
@@ -622,22 +603,6 @@ class StandardizedResult:
             thumbDicts = {"thumbnails": [thumb.toDict() for thumb in self.thumbnails]}
         else:
             thumbDicts = {"thumbnails": {"large": self.thumbnails[0].large,
-                                       "small":self.thumbnails[0].small}}
+                                         "small": self.thumbnails[0].small}}
         metadataDict.update(thumbDicts)
         return metadataDict
-
-#    @transaction.atomic
-#    def save(self, withUploadInfo=None):
-#        """Insert standardized metadata and wcs data into the database."""
-#        self.header.save(withUploadInfo)
-#
-#        for thumb, wcs in zip(self.thumbnails, self.wcs):
-#            thumb.wcs = wcs
-#            thumb.save()
-#        # Again!
-#        #Thumbnails.objects.bulk_create(self.thumbnails)
-#        #wcs.save()
-#
-#    
-#        # TODO: this doesn't work, why?
-#        # Wcs.objects.bulk_create(self.wcs)

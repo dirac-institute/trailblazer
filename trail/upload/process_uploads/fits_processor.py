@@ -314,7 +314,6 @@ class FitsProcessor(UploadProcessor):
         # get the new metadata and set up the relationship between metadata and
         # UploadInfo, Relationship between Meta and WCS are set in stdHead.save
         standardizedResult = StandardizedResult(header=self.standardizeHeader())
-        #standardizedHeader = self.standardizeHeader()
 
         standardizedResult.metadata.upload_info = self.uploadInfo
         standardizedResult.metadata.save()
