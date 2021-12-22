@@ -43,14 +43,14 @@
         <th>wcs_radius</th>
     </tr>
     {% for dat in data %}
-        {% for wcsdata in wcs_data %}
+        {% for wcs in wcsdata %}
         <tr>
             <td>{{ dat.instrument }}</td>
             <td>{{ dat.telescope }}</td>
             <td>{{ dat.datetime_begin }}</td>
             <td>{{ dat.exposure_duration }}</td>
             <td>{{ dat.obs_lon }}</td>
-            <td>{{ wcs_data.wcsdata }}</td>
+            <td>{{ wcs }}</td>
         </tr>
         {% endfor %}
 	{% endfor %}

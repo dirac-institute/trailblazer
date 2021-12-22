@@ -2,28 +2,40 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "trail.settings")
 import django
 django.setup()
-from core.models import (
-    Company, 
-    DomainDetails, 
-    SponsorshipTrail, 
-    JobBoard
-)
+#from core.models import (
+    #Company, 
+    #DomainDetails, 
+    #SponsorshipTrail, 
+    #JobBoard
+#)
 
 from django.apps import apps
-from django.conf import settings
+# from django.conf import settings
 
-settings.configure(
-    DATABASES = {
-        "ENGINE":"django.db.backends.sqlite3",
-        "NAME":"/c/Users/jasmi/Desktop/ASTR 499/astr499_summer21/trailblazer-testdata/db.sqlite3"
-    }
-)
+#settings.configure(
+    #DATABASES = {
+        #"ENGINE":"django.db.backends.sqlite3",
+        #"NAME":"/c/Users/jasmi/Desktop/ASTR 499/astr499_summer21/trailblazer-testdata/db.sqlite3"
+    #}
+#)
 
 Test5 = {'instrument': 'DECam'}
+print(Test5)
+
 Metadata = apps.get_model('upload', 'Metadata')
+Wcs = apps.get_model('upload', 'Wcs')
 query_results = Metadata.objects.filter(instrument='DECam')
+
+wcs_list = []
+for obj in query_results:
+    wcs_info = obj.wcs_set.all()
+    wcs_list.append(wcs_info)
+
+print(wcs_list)
 print(query_results)
 
+output = 1
+print(output)
 breakpoint()
 
 
