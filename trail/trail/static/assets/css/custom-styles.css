@@ -21,6 +21,12 @@ Article View
     flex: 25%;
     border: rgba(30, 37, 45, 0.32) 1px solid;
 }
+
+/*pagination styles*/
+.pagination_container{
+     text-align: center;
+}
+
 /*image information*/
 .image_information {
     text-align: left;

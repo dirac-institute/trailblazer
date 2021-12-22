@@ -6,3 +6,4 @@ data_root: ../static/upload/fits
 astrometry_net:
   key:
   timeout: 200
+gallery_image_count: 12

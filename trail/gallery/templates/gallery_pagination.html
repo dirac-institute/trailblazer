@@ -1,0 +1,31 @@
+{% load static %}
+<div class="pagination_container">
+    <div class="pagination">
+        {% if page > 0 %}
+            <a id="pagenum_0" onclick="get_images(0)"
+               class="page pagenum">1</a>
+        {% endif %}
+        {% if page > 2 %}
+            <a id="pagenum_{{ page|add:"-2" }}" onclick="get_images({{ page|add:"-2" }})"
+               class="page pagenum">{{ page|add:"-1" }}</a>
+        {% endif %}
+        {% if page > 1 %}
+            <a id="pagenum_{{ page|add:"-1" }}" onclick="get_images({{ page|add:"-1" }})"
+               class="page pagenum">{{ page }}</a>
+        {% endif %}
+        <a id="pagenum_{{ page }}" onclick="get_images({{ page }})"
+           class="page pagenum active">{{ page|add:"1" }}</a>
+        {% if page < num_of_page|add:"-2" %}
+            <a id="pagenum_{{ page|add:"1" }}" onclick="get_images({{ page|add:"1" }})"
+               class="page pagenum">{{ page|add:"2" }}</a>
+        {% endif %}
+        {% if page < num_of_page|add:"-3" %}
+            <a id="pagenum_{{ page|add:"2" }}" onclick="get_images({{ page|add:"2" }})"
+               class="page pagenum">{{ page|add:"3" }}</a>
+        {% endif %}
+        {% if page < num_of_page|add:"-1" %}
+            <a id="pagenum_{{ num_of_page }}" onclick="get_images({{ num_of_page }})"
+               class="page pagenum">{{ num_of_page }}</a>
+        {% endif %}
+    </div>
+</div>
