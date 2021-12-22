@@ -51,20 +51,15 @@ def print_results(request):
     if request.method == "POST":
         form = MetadataForm(request.POST)
         if form.is_valid():
-            # breakpoint
-            # manual, dir, 
-            # open the puller quest
             query_results = Metadata.objects.filter(**form.get_query())
-            breakpoint()
-            a = 1
-            # wcs_piece = query_results[0].wcs_set
-            # print(wcs_piece)
-            # breakpoint()
-            # print()
-            # print(query_results)
-            # print()
-            # breakpoint()
+            wcs_list = []
+            for obj in query_results:
+                wcs_info = obj.wcs_set.all()
+                wcs_list.append(wcs_info)
+            
     else:
         query_results = []
         form = MetadataForm()
-    return render(request, "query.html", {"data": query_results, "queryform": form, "render_table": True})
+        wcs_list = []
+     
+    return render(request, "query.html", {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
