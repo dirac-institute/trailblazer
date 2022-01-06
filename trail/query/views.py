@@ -4,7 +4,6 @@ from django.shortcuts import render
 
 
 Metadata = apps.get_model('upload', 'Metadata')
-# Wcs = apps.get_model('upload', 'Metadata')
 
 
 class MetadataForm(forms.Form):
@@ -17,7 +16,6 @@ class MetadataForm(forms.Form):
     telescope = forms.CharField(max_length=20, required=False)
     processor_name = forms.CharField(max_length=20, required=False)
     obs_lon = forms.CharField(max_length=20, required=False)
-    # WCS_info = forms.CharField(max_length=20, required=False)
 
     def get_query(self, casesensitive=True):
         new_dict = {}
@@ -29,7 +27,6 @@ class MetadataForm(forms.Form):
                 elif not casesensitive:
                     keyk = key + "__icontains"
                     new_dict[keyk] = self.data[key]
-                # any other situation?
         return new_dict
 
 
@@ -56,10 +53,11 @@ def print_results(request):
             for obj in query_results:
                 wcs_info = obj.wcs_set.all()
                 wcs_list.append(wcs_info)
-            
+
     else:
         query_results = []
         form = MetadataForm()
         wcs_list = []
-     
-    return render(request, "query.html", {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
+
+    return render(request, "query.html",
+                  {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
