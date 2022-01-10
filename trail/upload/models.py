@@ -604,7 +604,7 @@ class StandardizedResult:
 
         thumbnails: `list`
             Iterable containing Thumbnail objects or dicts with required data
-            to construct a Thumbnail object. 
+            to construct a Thumbnail object.
         """
         for thumb in thumbnails:
             self.appendThumbnail(thumb)
