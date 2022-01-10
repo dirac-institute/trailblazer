@@ -45,11 +45,11 @@ class UploadForm(forms.Form):
 
     class Media:
         css = {
-            'all': ('upload_form.css', )
+            'all': ('assets/css/upload_form.css', )
         }
         js = (
-            'upload_form.js',
-            'filelist.js',
+            'assets/js/upload_form.js',
+            'assets/js/filelist.js',
         )
 
     def __init__(self, data=None, files=None, **kwargs):
