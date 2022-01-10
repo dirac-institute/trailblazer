@@ -122,7 +122,7 @@ window.UploadFormFileList = (function() {
                 var fname = file.name;
                 var ftype = file.name.split('.').pop();
                 var fsize = _fileSize(file.size);
-                var rmlink = '<a href="#" class="uploadform_remove_file" title="remove this"><img src="/static/icons/trash-svgrepo-com.svg" class="icon"></a>';
+                var rmlink = '<a href="#" class="uploadform_remove_file" title="Remove item"><img src="/static/icons/trash-svgrepo-com.svg" class="icon"></a>';
                 fileDisplay.append(
                     '<tr>' +
                     '<td class="filetype">' + ftype + '</td>' +

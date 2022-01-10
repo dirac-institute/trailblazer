@@ -108,9 +108,9 @@ class UploadForm(forms.Form):
                 "wcsid": res.wcs[0].id,
                 "processor": res.metadata.processor_name,
                 "standardizer": res.metadata.standardizer_name,
-                "obs_lon": res.metadata.obs_lon,
-                "obs_lat": res.metadata.obs_lat,
-                "datetime": res.metadata.datetime_begin,
+                "obs_lon": round(res.metadata.obs_lon, 2),
+                "obs_lat": round(res.metadata.obs_lat, 2),
+                "datetime": res.metadata.datetime_begin.replace("T", " "),
             })
 
         html = render_to_string(

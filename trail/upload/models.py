@@ -586,6 +586,13 @@ class StandardizedResult:
         return len(self.wcs) > 1
 
     def appendThumbnail(self, thumbnail):
+        """Append a Thumbnail to the end of the thumbnails list.
+
+        Parameters
+        -----------
+        thumbnail: `dict`, `Thumbnail`
+            Thumbnail or a data required to construct a Thumbnail object.
+        """
         thumb = dataToComponent(thumbnail, Thumbnails)
         if thumb is not None:
             self.thumbnails.append(thumb)
@@ -593,6 +600,12 @@ class StandardizedResult:
             raise ValueError("Could not create a Thumbnail from the given data!")
 
     def extendThumbnails(self, thumbnails):
+        """Extend thumbnails list by appending elements from an iterable.
+
+        thumbnails: `list`
+            Iterable containing Thumbnail objects or dicts with required data
+            to construct a Thumbnail object. 
+        """
         for thumb in thumbnails:
             self.appendThumbnail(thumb)
 

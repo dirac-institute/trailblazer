@@ -7,18 +7,13 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div id="upload-box" class="text-center" style="width: 100%">
-
-            {{ form_as_html }}
-
-        </div>
-    </div>
+<div id="upload-box" class="text-center" style="width: 100%">
+    {{ form_as_html }}
 </div>
 {% endblock %} {% block page_content %}{% endblock %}
 
 {% block content.scripts.extended %}
 {{block.super}}
 {{form.media}}
+<script src="/static/upload_button_state.js"></script>
 {% endblock %}

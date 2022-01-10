@@ -136,7 +136,7 @@ window.UploadForm = (function() {
             alertwrap.show();
             $(failed_validation).each(function(index, item){
                 alertlist.append(
-                    '<li>' + item[0].name +': ' + item[1] + '</li>'
+                    '<li><h4>' + item[0].name +': ' + item[1] + '</h4></li>'
                 );
             });
         }

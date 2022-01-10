@@ -31,15 +31,15 @@ section, summary, time, mark, audio, video {
 	border: 0;
 	font-size: 100%;
 	font: inherit;
-	vertical-align: baseline;}
+	vertical-align: baseline;
+}
 
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;}
 
-
 body {
-	line-height: 1;
+    min-height: 100vh;
 }
 
 ol, ul {
@@ -2264,7 +2264,7 @@ input, select, textarea {
 			display: -webkit-flex;
 			display: -ms-flex;
 			display: flex;
-			-moz-flex-wrap: wrap;
+			flex-wrap: wrap;
 			-webkit-flex-wrap: wrap;
 			-ms-flex-wrap: wrap;
 			flex-wrap: wrap;
@@ -2273,11 +2273,11 @@ input, select, textarea {
 		}
 
 			form > .fields > .field {
-				-moz-flex-grow: 0;
+				flex-grow: 0;
 				-webkit-flex-grow: 0;
 				-ms-flex-grow: 0;
 				flex-grow: 0;
-				-moz-flex-shrink: 0;
+				flex-shrink: 0;
 				-webkit-flex-shrink: 0;
 				-ms-flex-shrink: 0;
 				flex-shrink: 0;
@@ -2709,7 +2709,7 @@ input, select, textarea {
 		}
 
 		ul.actions.special {
-			-moz-justify-content: center;
+			justify-content: center;
 			-webkit-justify-content: center;
 			-ms-justify-content: center;
 			justify-content: center;
@@ -2722,7 +2722,7 @@ input, select, textarea {
 			}
 
 		ul.actions.stacked {
-			-moz-flex-direction: column;
+			flex-direction: column;
 			-webkit-flex-direction: column;
 			-ms-flex-direction: column;
 			flex-direction: column;
@@ -2742,11 +2742,11 @@ input, select, textarea {
 		}
 
 			ul.actions.fit li {
-				-moz-flex-grow: 1;
+				flex-grow: 1;
 				-webkit-flex-grow: 1;
 				-ms-flex-grow: 1;
 				flex-grow: 1;
-				-moz-flex-shrink: 1;
+				flex-shrink: 1;
 				-webkit-flex-shrink: 1;
 				-ms-flex-shrink: 1;
 				flex-shrink: 1;
@@ -2764,7 +2764,7 @@ input, select, textarea {
 		@media screen and (max-width: 480px) {
 
 			ul.actions:not(.fixed) {
-				-moz-flex-direction: column;
+				flex-direction: column;
 				-webkit-flex-direction: column;
 				-ms-flex-direction: column;
 				flex-direction: column;
@@ -2773,11 +2773,11 @@ input, select, textarea {
 			}
 
 				ul.actions:not(.fixed) li {
-					-moz-flex-grow: 1;
+					flex-grow: 1;
 					-webkit-flex-grow: 1;
 					-ms-flex-grow: 1;
 					flex-grow: 1;
-					-moz-flex-shrink: 1;
+					flex-shrink: 1;
 					-webkit-flex-shrink: 1;
 					-ms-flex-shrink: 1;
 					flex-shrink: 1;
@@ -3246,6 +3246,7 @@ input, select, textarea {
 		position: relative;
 		z-index: 1;
 		overflow: hidden;
+    min-height: 100vh;
 	}
 
 		#wrapper > .bg {
@@ -3307,7 +3308,7 @@ input, select, textarea {
 	#intro {
 		color: #ffffff;
 		padding: 8rem 4rem 6rem 4rem ;
-		-moz-align-items: center;
+		align-items: center;
 		-webkit-align-items: center;
 		-ms-align-items: center;
 		align-items: center;
@@ -3315,11 +3316,11 @@ input, select, textarea {
 		display: -webkit-flex;
 		display: -ms-flex;
 		display: flex;
-		-moz-flex-direction: column;
+		flex-direction: column;
 		-webkit-flex-direction: column;
 		-ms-flex-direction: column;
 		flex-direction: column;
-		-moz-justify-content: -moz-flex-end;
+		justify-content: -moz-flex-end;
 		-webkit-justify-content: -webkit-flex-end;
 		-ms-justify-content: -ms-flex-end;
 		justify-content: flex-end;
@@ -3519,7 +3520,7 @@ input, select, textarea {
 
 	#header {
 		color: #ffffff;
-		-moz-align-items: center;
+		align-items: center;
 		-webkit-align-items: center;
 		-ms-align-items: center;
 		align-items: center;
@@ -3527,11 +3528,11 @@ input, select, textarea {
 		display: -webkit-flex;
 		display: -ms-flex;
 		display: flex;
-		-moz-flex-direction: column;
+		flex-direction: column;
 		-webkit-flex-direction: column;
 		-ms-flex-direction: column;
 		flex-direction: column;
-		-moz-justify-content: -moz-flex-end;
+		justify-content: -moz-flex-end;
 		-webkit-justify-content: -webkit-flex-end;
 		-ms-justify-content: -ms-flex-end;
 		justify-content: flex-end;
@@ -3662,7 +3663,7 @@ input, select, textarea {
 		}
 
 		#nav ul.icons li a.icon:hover:before {
-			#color: #18bfef;
+			/*color: #18bfef;*/
             color: var(--hovercolor);
 		}
 
@@ -3671,7 +3672,7 @@ input, select, textarea {
 		}
 
 		#nav ul.icons.alt li a.icon:hover:before {
-			#box-shadow: inset 0 0 0 2px #18bfef;
+			/*box-shadow: inset 0 0 0 2px #18bfef;*/
             box-shadow: inset 0 0 0 2px var(--hovercolor);
 		}
 
@@ -3716,11 +3717,11 @@ input, select, textarea {
 			display: -webkit-flex;
 			display: -ms-flex;
 			display: flex;
-			-moz-flex-grow: 1;
+			flex-grow: 1;
 			-webkit-flex-grow: 1;
 			-ms-flex-grow: 1;
 			flex-grow: 1;
-			-moz-flex-shrink: 1;
+			flex-shrink: 1;
 			-webkit-flex-shrink: 1;
 			-ms-flex-shrink: 1;
 			flex-shrink: 1;
@@ -3768,11 +3769,11 @@ input, select, textarea {
 						}
 
 		#nav ul.icons {
-			-moz-flex-grow: 0;
+			flex-grow: 0;
 			-webkit-flex-grow: 0;
 			-ms-flex-grow: 0;
 			flex-grow: 0;
-			-moz-flex-shrink: 0;
+			flex-shrink: 0;
 			-webkit-flex-shrink: 0;
 			-ms-flex-shrink: 0;
 			flex-shrink: 0;
@@ -3862,11 +3863,11 @@ input, select, textarea {
 			display: -webkit-flex;
 			display: -ms-flex;
 			display: flex;
-			-moz-flex-wrap: wrap;
+			flex-wrap: wrap;
 			-webkit-flex-wrap: wrap;
 			-ms-flex-wrap: wrap;
 			flex-wrap: wrap;
-			-moz-align-items: -moz-stretch;
+			align-items: -moz-stretch;
 			-webkit-align-items: -webkit-stretch;
 			-ms-align-items: -ms-stretch;
 			align-items: stretch;
@@ -3876,11 +3877,11 @@ input, select, textarea {
 		}
 
 			#main > .posts > * {
-				-moz-flex-shrink: 1;
+				flex-shrink: 1;
 				-webkit-flex-shrink: 1;
 				-ms-flex-shrink: 1;
 				flex-shrink: 1;
-				-moz-flex-grow: 0;
+				flex-grow: 0;
 				-webkit-flex-grow: 0;
 				-ms-flex-grow: 0;
 				flex-grow: 0;
@@ -4235,15 +4236,15 @@ input, select, textarea {
 		}
 
 		#footer > section {
-			-moz-flex-basis: 50%;
+			flex-basis: 50%;
 			-webkit-flex-basis: 50%;
 			-ms-flex-basis: 50%;
 			flex-basis: 50%;
-			-moz-flex-grow: 1;
+			flex-grow: 1;
 			-webkit-flex-grow: 1;
 			-ms-flex-grow: 1;
 			flex-grow: 1;
-			-moz-flex-shrink: 1;
+			flex-shrink: 1;
 			-webkit-flex-shrink: 1;
 			-ms-flex-shrink: 1;
 			flex-shrink: 1;
@@ -4260,7 +4261,7 @@ input, select, textarea {
 				display: -webkit-flex;
 				display: -ms-flex;
 				display: flex;
-				-moz-flex-direction: column;
+				flex-direction: column;
 				-webkit-flex-direction: column;
 				-ms-flex-direction: column;
 				flex-direction: column;
@@ -4286,7 +4287,7 @@ input, select, textarea {
 					display: -webkit-flex;
 					display: -ms-flex;
 					display: flex;
-					-moz-align-items: center;
+					align-items: center;
 					-webkit-align-items: center;
 					-ms-align-items: center;
 					align-items: center;
@@ -4298,11 +4299,11 @@ input, select, textarea {
 					}
 
 					#footer > section.split.contact > section > :first-child {
-						-moz-flex-shrink: 0;
+						flex-shrink: 0;
 						-webkit-flex-shrink: 0;
 						-ms-flex-shrink: 0;
 						flex-shrink: 0;
-						-moz-flex-grow: 0;
+						flex-grow: 0;
 						-webkit-flex-grow: 0;
 						-ms-flex-grow: 0;
 						flex-grow: 0;
@@ -4310,11 +4311,11 @@ input, select, textarea {
 					}
 
 					#footer > section.split.contact > section > :last-child {
-						-moz-flex-shrink: 1;
+						flex-shrink: 1;
 						-webkit-flex-shrink: 1;
 						-ms-flex-shrink: 1;
 						flex-shrink: 1;
-						-moz-flex-grow: 1;
+						flex-grow: 1;
 						-webkit-flex-grow: 1;
 						-ms-flex-grow: 1;
 						flex-grow: 1;
@@ -4329,7 +4330,7 @@ input, select, textarea {
 					}
 
 					#footer > section.split.contact > section.alt {
-						-moz-align-items: -moz-flex-start;
+						align-items: -moz-flex-start;
 						-webkit-align-items: -webkit-flex-start;
 						-ms-align-items: -ms-flex-start;
 						align-items: flex-start;

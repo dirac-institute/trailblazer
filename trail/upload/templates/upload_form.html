@@ -16,10 +16,11 @@
         {% else %}
         <div class="alert alert-danger" style="display: none">
         {% endif %}
-                <strong>Can not upload following files:</strong>
-            <ul class="errorlist">
+                <h3>Can not upload following files:</h3>
+            <ul class="errorlist h4">
                 {% for error in file_errors %}
-                    <li>{{ error }}</li>
+                <!-- Note the list elements are set in JS as well. -->
+                <li><h4>{{ error }}</h4></li>
                 {% endfor %}
             </ul>
         </div>
@@ -39,33 +40,32 @@
         {% endif %}
 
         <div class="file_list_input">
-            <p>Select multiple files with the file dialog or by dragging and dropping them onto the dashed region</p>
-
             <label class="button">
                 <input style="display: none;" type="file" name="files[]" accept="{{accept}}" multiple onchange="UploadForm.handleFiles(this.files)">
                 <img src="{% static 'icons/cloud-upload-svgrepo-com.svg' %}" alt=" 'upload' %}">
-                <p>Select some files</p>
+                <h3>Select multiple files with the file dialog or by dragging and dropping them onto the dashed region</h3>
             </label>
         </div>
         <div class="file_list_wrapper" style="display: none;">
             <div class="submit">
-                <div>Press the button below to proceed with files upload</div>
-                <button type="submit" class="btn btn-success btn-lg">
-                    <img src="{% static 'icons/cloud-upload-svgrepo-com.svg' %}" class="icon">&nbsp;&nbsp; Send
+                <input type="checkbox" id="copyright-disclaimer" name="copyright-disclaimer">
+                <label class="copyright_label" for="copyright-disclaimer" style="">By uploading to Trailblazer, you affirm you have all necessary rights and permission to share the files, and agree to make all uploaded materials publicly accessible via Trailblazer under <a href="https://creativecommons.org/licenses/by/4.0/legalcode">CC BY 4.0</a></label>
+                <button type="submit" class="btn-success btn-lg disabled">
+                    <h3>Upload</h3>
                 </button>
             </div>
-            <div class="progress" style="display: none;">
+            <div class="progress">
                 <div class="progress-bar progress-bar-success progress-bar-striped active"
                      role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                 </div>
             </div>
-            <div class="uploadform_user_message_wrapper" style="padding:10px;padding-top:30px;padding-bottom:30px">
+            <div class="uploadform_user_message_wrapper">
                 <div class="uploadform_user_message">
-                    You files have been uploaded! <br>
-                    We are applying oils and incantations. This could take a while. <br>
-                    Success report may or may not be displayed at the end of it. <br>
-                    It is safe to leave this page now. <br>
-                    Thank you.
+                    <h3>You files have been uploaded!</h3>
+                    <h4>
+                        Processing them could take a while. It is safe to leave this page now. <br>
+                        Thank you for contributing to Trailblazer!
+                    </h4>
                 </div>
             </div>
             <table class="uploadform_file_list">
@@ -75,7 +75,7 @@
                         <th>Name</th>
                         <th>Size</th>
                         <th>
-                            <a href="#" class="uploadform_remove_all_files" title="remove all">
+                            <a href="#" class="uploadform_remove_all_files" title="Remove all">
                                 <img src="{% static 'icons/trash-svgrepo-com.svg' %}" class="icon">
                             </a>
                         </th>
@@ -97,4 +97,4 @@
 
     </form>
 
-</div>
+        </div>

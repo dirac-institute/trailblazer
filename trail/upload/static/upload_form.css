@@ -1,10 +1,6 @@
-.alert {
-    background-color: rgba(255, 0, 0, 0.5);
-    padding-left: 3%;
-}
+/* Upload Area */
 
 .uploadform_drop_area {
-    border: 2px dashed #ccc;
     border-radius: 20px;
     font-family: sans-serif;
     margin: 0 auto;
@@ -12,48 +8,58 @@
     text-align: center;
 }
 
+.uploadform_drop_area label{
+    border: 2px dashed #ccc;
+}
+
+.copyright_label{
+    border: unset !important;
+    /* note the left and right margins match the
+     * 100 - width % of the upload-form-drop-area
+    */
+    margin-left: 10%;
+    margin-right: 10%
+}
+
 .uploadform_drop_area.highlight {
     border-color: #69f;
     background-color: #666;
 }
 
-
 .uploadform_drop_area .file_list_input label {
-    width: 60%;
+    width: 80%;
     padding: 10px;
-    font-size: 1.8em;
     text-overflow: ellipsis;
-    /*white-space: nowrap;*/
     cursor: pointer;
     display: inline-block;
-    overflow: hidden;
-    color: #444;
-    background-color: #999;
+    height: fit-content;
     border-radius: 20px;
+    box-shadow: unset;
+}
+
+.uploadform_drop_area h3 {
+    text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    white-space: normal;
+    margin: unset;
+    padding: 1rem;
 }
 
 .uploadform_drop_area label p {
     text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    white-space: normal;
+    font-size: x-large;
 }
 
 .uploadform_drop_area label img {
     text-align: center;
-    height: 60px;
-    width: 100%;
+    height: inherit;
+    width: 30%;
+    max-height: 500px;
     color: #444 !important;
-}
-
-.uploadform_drop_area .file_list_wrapper table {
-    margin: 0 auto;
-    width: 80%;
-    color: #999;
-    border: 1px solid #999;
-}
-
-.uploadform_drop_area .file_list_wrapper table th,
-.uploadform_drop_area .file_list_wrapper table td {
-    border: 1px solid #999;
-    padding: 0 4px;
 }
 
 .uploadform_drop_area .file_list_wrapper table th {
@@ -68,6 +74,7 @@
 
 .uploadform_drop_area .file_list_wrapper button img.icon {
     height: 20px;
+    box-shadow: unset;
 }
 
 .uploadform_drop_area .errorlist {
@@ -82,11 +89,11 @@
 
 .uploadform_drop_area .submit button {
     margin: 10px 0;
+    height: fit-content;
 }
 
 .uploadform_drop_area .uploadform_file_list img.icon {
-    height: 12px;
-    /*width: 100%;*/
+    height: 1rem;
 }
 
 .uploadform_drop_area .file_list_wrapper .progress {
@@ -101,12 +108,46 @@
     border: 1px solid red;
 }
 
+
+
+/* Rejected files alert */
+
+.alert h3{
+    color: red;
+    text-align: left;
+}
+
+.errorlist{
+    padding-left: 5rem;
+}
+
+
+/* Successful upload message area */
+
+.uploadform_user_message_wrapper{
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+
 .uploadform_user_message{
     display: none;
-    background-color: rgba(92,184,92, 0.2);
     text-align: center;
     line-height: initial;
 }
+
+.uploadform_user_message h3 {
+    color: rgb(37, 140, 37);
+    padding-bottom: 1em;
+}
+
+.uploadform_user_message h4 {
+    white-space: normal;
+    word-break: normal;
+}
+
+
+/* Progress bar  */
 
 .progress-bar{
     float:left;
@@ -279,4 +320,30 @@
                                      rgba(255,255,255,.15) 75%,
                                      transparent 75%,
                                      transparent)
+}
+
+
+/* Post uplaod report table */
+table{
+    vertical-align: middle;
+    text-align: center;
+    text-transform: none;
+}
+
+
+table th{
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1rem;
+
+}
+
+table td{
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.075em;
+    line-height: 1.5;
+    padding: 0 1;
+    vertical-align: middle;
 }
