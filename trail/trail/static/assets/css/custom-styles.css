@@ -1,6 +1,11 @@
 /*
 Custom styles for the website
- */
+*/
+
+.subtitle{
+    width: 80%;
+    text-align: center;
+}
 
 /*
 Article View

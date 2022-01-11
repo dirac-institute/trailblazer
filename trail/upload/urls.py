@@ -6,5 +6,5 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.FileFieldView.as_view(), name='upload'),
+    path('', views.upload_view, name='upload'),
 ]

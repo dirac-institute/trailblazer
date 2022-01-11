@@ -1,42 +1,32 @@
 """This code runs when a user visits the 'upload' URL."""
 
+from django.shortcuts import render
+from django.http import JsonResponse
 
-from django.urls import reverse_lazy
-from django.views.generic.edit import FormView
-from .forms import FileFieldForm
-
-# These uploads are required here so that the subclasses register themselves
-# and that can't be done in __init__ because django AppRegistryNotReady error
-from .process_uploads.processors import *  # noqa: F403, F401
-from .process_uploads.standardizers import *  # noqa: F403, F401
-from .process_uploads.upload_processor import UploadProcessor
+from upload.forms import UploadForm
 
 
-def process_uploads(request):
-    """Given a uploaded file, normalizes and inserts header data into the DB,
-    creates and stores small and large thumbnails and saves a copy of the
-    uploaded file.
+def upload_view(request):
+    """Renders the /uploads/ page.
 
     Parameters
     ----------
     request : `django.requst.HttpRequest`
         HTTP request made to the server.
     """
-    processors = UploadProcessor.fromRequest(request)
-    for processor in processors:
-        processor.process()
-
-
-class FileFieldView(FormView):
-    form_class = FileFieldForm
-    template_name = 'upload.html'
-    success_url = reverse_lazy('upload')
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
+    if request.method == 'GET':
+        form = UploadForm()
+    else:
+        form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
-            process_uploads(request)
-            return self.form_valid(form)
+            return JsonResponse({'action': 'replace', 'html': form.form_valid(request), })
         else:
-            return self.form_invalid(form)
+            return JsonResponse({'action': 'replace', 'html': form.as_html(request), })
+
+    return render(
+        request,
+        'upload.html', {
+            'form': form,
+            'form_as_html': form.as_html(request),
+        }
+    )

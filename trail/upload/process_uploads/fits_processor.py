@@ -15,7 +15,7 @@ from django.db import transaction
 
 from upload.process_uploads.upload_processor import UploadProcessor
 from upload.process_uploads.header_standardizer import HeaderStandardizer
-from upload.models import StandardizedHeader, Thumbnails
+from upload.models import StandardizedHeader, StandardizedResult, Thumbnails
 
 
 __all__ = ["FitsProcessor", ]
@@ -273,6 +273,7 @@ class FitsProcessor(UploadProcessor):
 
     def standardizeHeader(self):
         """Convenience function that standardizes the WCS and header metadata.
+        Does not commit data to the database.
 
         Returns
         -------
@@ -299,6 +300,12 @@ class FitsProcessor(UploadProcessor):
             * standardizing all WCS from image-like headers,
             * creating thumbnails
             * inserting the new data into the database
+
+        Returns
+        -------
+        standardizedResult : `upload.models.StandardizedReselt`
+            A dataclass containing the standardized header and locations of the
+            Thumbnails.
         """
         # TODO: get some error handling here
         # Insert upload info into DB
@@ -306,26 +313,33 @@ class FitsProcessor(UploadProcessor):
 
         # get the new metadata and set up the relationship between metadata and
         # UploadInfo, Relationship between Meta and WCS are set in stdHead.save
-        standardizedHeader = self.standardizeHeader()
-        standardizedHeader.metadata.upload_info = self.uploadInfo
-        standardizedHeader.save()
+        standardizedResult = StandardizedResult(header=self.standardizeHeader())
+
+        standardizedResult.metadata.upload_info = self.uploadInfo
+        standardizedResult.metadata.save()
+        for wcs in standardizedResult.wcs:
+            wcs.metadata = standardizedResult.metadata
+            wcs.save()
 
         # Create thumbnails (their DB models and the files) and then set up
         # relationship between particular wcs data and thumbs; then insert them
         # TODO: I'm iffed how this is set here, maybe refactor?
         logger.info(f"ID {self.uploadInfo.id}: Creating thumbnails.")
-        thumbnails = self.createThumbnails()
-        if isinstance(thumbnails, Thumbnails):
-            for wcs in standardizedHeader.wcs:
-                thumbnails.wcs = wcs
-            thumbnails.save()
+        tmpResult = self.createThumbnails()
+        if isinstance(tmpResult, Thumbnails):
+            standardizedResult.appendThumbnail(tmpResult)
         else:
-            # probably good: if len(wcs) != len(thumbnails): raise Error
-            for wcs, thumb in zip(standardizedHeader.wcs, thumbnails):
-                thumb.wcs = wcs
-            # TODO: figure out why this doesn't work in StandardizedHeader.save
-            Thumbnails.objects.bulk_create(thumbnails)
+            standardizedResult.extendThumbnails(tmpResult)
+
+        if len(standardizedResult.thumbnails) != len(standardizedResult.wcs):
+            raise RuntimeError("Can not unambiguously assign thumbnails to WCSs!")
+
+        for thumb, wcs in zip(standardizedResult.thumbnails, standardizedResult.wcs):
+            thumb.wcs = wcs
+            thumb.save()
 
         # lastly, don't forget to upload the original science data.
         logger.info(f"ID {self.uploadInfo.id}: Uploading raw file.")
         self.uploadedFile.save()
+
+        return standardizedResult

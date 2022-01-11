@@ -47,6 +47,31 @@ def set_keys_from_columns(cls):
     cls.required_keys = required
 
 
+def dataToComponent(data, component):
+    """Converts data to the desired component.
+
+    Parameters
+    ----------
+    data : `dict`, `object`
+        Data from which the component will be constructed. This can be an
+        dictionary with keys that are exact match for parameters required
+        by component, or a superset, or could be an instance of component
+        already.
+    component : `cls`
+        Class the data will convert to.
+    """
+    compValue = None
+    if isinstance(data, dict):
+        try:
+            compValue = component(**data)
+        except KeyError:
+            compValue = component.fromDictSubset(data)
+    elif isinstance(data, component):
+        compValue = data
+
+    return compValue
+
+
 class UploadInfo(models.Model):
     """Records originator and time of upload of an sngle metadata entry. """
     # integer autoincrement primary fields is automatically added by Django
@@ -225,7 +250,7 @@ class Wcs(models.Model, StandardizedKeysMixin):
             return np.allclose(slfVals, othVals, **kwargs)
 
 
-class Thumbnails(models.Model):
+class Thumbnails(models.Model, StandardizedKeysMixin):
     """Model schema for gallery thumbnails.
     Each WCS has an associated thumbnail.
     """
@@ -274,9 +299,9 @@ class Thumbnails(models.Model):
         return self._largeimg
 
     def _specified_return(self, returnval, which):
-        if which.lowercase() == "small":
+        if which.lower() == "small":
             return returnval["small"]
-        elif which.lowercase() == "large":
+        elif which.lower() == "large":
             return returnval["large"]
         else:
             return returnval
@@ -382,30 +407,6 @@ class StandardizedHeader:
         """True when the header is a multi extension header."""
         return len(self.wcs) > 1
 
-    def _dataToComponent(self, data, component):
-        """Converts data to the desired component.
-
-        Parameters
-        ----------
-        data : `dict`, `object`
-            Data from which the component will be constructed. This can be an
-            dictionary with keys that are exact match for parameters required
-            by component, or a superset, or could be an instance of component
-            already.
-        component : `cls`
-            Class the data will convert to.
-        """
-        compValue = None
-        if isinstance(data, dict):
-            try:
-                compValue = component(**data)
-            except KeyError:
-                compValue = component.fromDictSubset(data)
-        elif isinstance(data, component):
-            compValue = data
-
-        return compValue
-
     def updateMetadata(self, standardizedMetadata):
         """Update metadata values from a dictionary or another Metadata object.
 
@@ -414,11 +415,11 @@ class StandardizedHeader:
         standardizedMetadata : `dict` or `Metadata`
             All, or subset of all, metadata keys which values will be updated.
         """
-        metadata = self._dataToComponent(standardizedMetadata, Metadata)
+        metadata = dataToComponent(standardizedMetadata, Metadata)
         if metadata is not None:
             self.metadata = metadata
         else:
-            raise ValueError("Could not create metadata from the given data!")
+            raise ValueError(f"Could not create metadata from the given data: {standardizedMetadata}")
 
     def appendWcs(self, standardizedWcs):
         """Append a WCS component.
@@ -428,15 +429,15 @@ class StandardizedHeader:
         standardizedWcs : `dict` or `Wcs`
             Data which to append to the current collection of associated wcs's.
         """
-        wcs = self._dataToComponent(standardizedWcs, Wcs)
+        wcs = dataToComponent(standardizedWcs, Wcs)
         if wcs is not None:
             self.wcs.append(wcs)
         else:
-            raise ValueError("Could not create metadata from the given data!")
+            raise ValueError(f"Could not create a WCS from the given data: {standardizedWcs}")
 
     def extendWcs(self, standardizedWcs):
         """Extend current collection of associated wcs by appending elements
-        from the iterable.
+        from an iterable.
 
         Parameters
         ----------
@@ -481,14 +482,140 @@ class StandardizedHeader:
         metadataDict.update(wcsDicts)
         return metadataDict
 
-    def save(self):
-        """Insert standardized metadata and wcs data into the database."""
-        self.metadata.save()
 
-        # just in case Wcs was appended before metadata, set them explicitly
-        for wcs in self.wcs:
-            wcs.metadata = self.metadata
-            wcs.save()
+@dataclass
+class StandardizedResult:
+    """A dataclass that associates standardized header metadata with one or
+    more standardized WCS and their thumbnails.
+    """
+    _thumbkeys = ["thumbnails", "thumbs", "thumbnail", "thumb"]
+    header: StandardizedHeader = None
+    thumbnails: Sequence[Thumbnails] = field(default_factory=list)
 
-        # TODO: this doesn't work, why?
-        # Wcs.objects.bulk_create(self.wcs)
+    @classmethod
+    def __resolve_thumbs(cls, data):
+        """Resolve what format and under which commonly used abbreviation were
+        the thumbs given in - a dict, a dict in a dict, a list of dicts etc -
+        and then return them as a list of `Thumbnails` object(s).
+
+        Parameters
+        ----------
+        data : `dict`
+            Dictionary containing at least the required standardized keys for
+            `Metadata`, `Wcs` and `Thumbnail`.
+
+        Returns
+        -------
+        thumbs : `list`
+            A list of one or more `Thumbnails` objects.
+        """
+        if isinstance(data, Thumbnails):
+            return [data, ]
+
+        # assume all of them are Thumbnails in a list and return
+        try:
+            if isinstance(data[0], Thumbnails):
+                return data
+        except TypeError:
+            pass
+
+        i = 0
+        thumbnails = None
+        while (thumbnails is None and i < len(cls._thumbkeys)):
+            thumbnails = data.pop(cls._thumbkeys[i])
+            i += 1
+
+        # try one more time with a flat dict, just in case someone was too lazy
+        # Otherwise, thumbnails were retrieved as a dict, or a list of dicts
+        if thumbnails is None:
+            large = data.pop("large", None)
+            small = data.pop("small", None)
+            thumbs = [Thumbnails(large=large, small=small), ]
+        elif isinstance(thumbnails, dict):
+            thumbs = [Thumbnails(large=large, small=small), ]
+        else:
+            thumbs = []
+            for thumb in thumbnails:
+                thumbs.append(Thumbnails(large=thumb["large"], small=thumb["small"]))
+
+        return thumbs
+
+    @classmethod
+    def fromDict(cls, data):
+        """Construct an StandardizedResult from a dictionary.
+
+        The dictionary can contain either a flattened set of values of a single
+        result f.e.:
+
+            {obs_lon: ... <metadata keys>, wcs_radius: ... <wcs_keys>, large: ... <thumbnail_keys>}
+
+        or have separated metadata, wcs and thumbnail keys like:
+
+            {metadata: {...}, wcs: {...}, thumbnails: {...}}
+
+        in which case the wcs and thumbnails can be iterable, i.e.
+
+            {metadata: {...}, wcs: [{...}, {...}, ... ],  thumbnails: [{...}, {...}, ... ],}
+
+        Parameters
+        ----------
+        data : `dict`
+            Dictionary containing at least the required standardized keys for
+            `Metadata`, `Wcs` and `Thumbnail`.
+        """
+        thumbs = cls.__resolve_thumbs(data)
+        header = StandardizedHeader.fromDict(data)
+        return cls(header=header, thumbnails=thumbs)
+
+    def __eq__(self, other):
+        return self.header.isClose(other)
+
+    @property
+    def wcs(self):
+        """Standardized wcs."""
+        return self.header.wcs
+
+    @property
+    def metadata(self):
+        """Standardized metadata."""
+        return self.header.metadata
+
+    @property
+    def isMultiExt(self):
+        """True when the header is a multi extension header."""
+        return len(self.wcs) > 1
+
+    def appendThumbnail(self, thumbnail):
+        """Append a Thumbnail to the end of the thumbnails list.
+
+        Parameters
+        -----------
+        thumbnail: `dict`, `Thumbnail`
+            Thumbnail or a data required to construct a Thumbnail object.
+        """
+        thumb = dataToComponent(thumbnail, Thumbnails)
+        if thumb is not None:
+            self.thumbnails.append(thumb)
+        else:
+            raise ValueError("Could not create a Thumbnail from the given data!")
+
+    def extendThumbnails(self, thumbnails):
+        """Extend thumbnails list by appending elements from an iterable.
+
+        thumbnails: `list`
+            Iterable containing Thumbnail objects or dicts with required data
+            to construct a Thumbnail object.
+        """
+        for thumb in thumbnails:
+            self.appendThumbnail(thumb)
+
+    def toDict(self):
+        """Returns a dictionary of standardized metadata, wcs an thumbnails."""
+        metadataDict = self.header.toDict()
+        if self.isMultiExt:
+            thumbDicts = {"thumbnails": [thumb.toDict() for thumb in self.thumbnails]}
+        else:
+            thumbDicts = {"thumbnails": {"large": self.thumbnails[0].large,
+                                         "small": self.thumbnails[0].small}}
+        metadataDict.update(thumbDicts)
+        return metadataDict

@@ -1,0 +1,32 @@
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <th></th>
+                <th></th>
+                <th>Processed by <br> (Processor/Standardizer)</th>
+                <th>Obs <br> (lat/lon)</th>
+                <th>Taken on</th>
+            </thead>
+            <tbody>
+            {% for upload in data %}
+                <tr>
+                    <td style="text-align: left;">
+                        <a href="/gallery/image?{{ upload.wcsid }}">
+                            <img src="{% get_media_prefix %}{{ upload.smallthumb }}"  alt=”{{ upload.smallthumb }}”  style="vertical-align: middle;height: 100px;object-fit: cover;">
+                        </a>
+                    </td>
+                    <td style="color: green;font-size: 1rem;"> Success </td>
+                    <td>{{ upload.processor }} <br> {{ upload.standardizer }}</td>
+                    <td>{{ upload.obs_lat }} <br> {{ upload.obs_lon }}</td>
+                    <td>{{ upload.datetime }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

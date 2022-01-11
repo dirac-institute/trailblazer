@@ -1,0 +1,349 @@
+/* Upload Area */
+
+.uploadform_drop_area {
+    border-radius: 20px;
+    font-family: sans-serif;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.uploadform_drop_area label{
+    border: 2px dashed #ccc;
+}
+
+.copyright_label{
+    border: unset !important;
+    /* note the left and right margins match the
+     * 100 - width % of the upload-form-drop-area
+    */
+    margin-left: 10%;
+    margin-right: 10%
+}
+
+.uploadform_drop_area.highlight {
+    border-color: #69f;
+    background-color: #666;
+}
+
+.uploadform_drop_area .file_list_input label {
+    width: 80%;
+    padding: 10px;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    display: inline-block;
+    height: fit-content;
+    border-radius: 20px;
+    box-shadow: unset;
+}
+
+.uploadform_drop_area h3 {
+    text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    white-space: normal;
+    margin: unset;
+    padding: 1rem;
+}
+
+.uploadform_drop_area label p {
+    text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
+    white-space: normal;
+    font-size: x-large;
+}
+
+.uploadform_drop_area label img {
+    text-align: center;
+    height: inherit;
+    width: 30%;
+    max-height: 500px;
+    color: #444 !important;
+}
+
+.uploadform_drop_area .file_list_wrapper table th {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.uploadform_drop_area .file_list_wrapper td.delete {
+    text-align: center;
+}
+
+.uploadform_drop_area .file_list_wrapper button img.icon {
+    height: 20px;
+    box-shadow: unset;
+}
+
+.uploadform_drop_area .errorlist {
+    list-style: dash;
+}
+
+.uploadform_drop_area .errorlist li {
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.uploadform_drop_area .submit button {
+    margin: 10px 0;
+    height: fit-content;
+}
+
+.uploadform_drop_area .uploadform_file_list img.icon {
+    height: 1rem;
+}
+
+.uploadform_drop_area .file_list_wrapper .progress {
+    margin-bottom: 10px;
+}
+
+.uploadform_drop_area .extra_fields {
+    margin-bottom: 10px;
+}
+
+.uploadform_drop_area .extra_fields .form-row.errors {
+    border: 1px solid red;
+}
+
+
+
+/* Rejected files alert */
+
+.alert h3{
+    color: red;
+    text-align: left;
+}
+
+.errorlist{
+    padding-left: 5rem;
+}
+
+
+/* Successful upload message area */
+
+.uploadform_user_message_wrapper{
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+
+.uploadform_user_message{
+    display: none;
+    text-align: center;
+    line-height: initial;
+}
+
+.uploadform_user_message h3 {
+    color: rgb(37, 140, 37);
+    padding-bottom: 1em;
+}
+
+.uploadform_user_message h4 {
+    white-space: normal;
+    word-break: normal;
+}
+
+
+/* Progress bar  */
+
+.progress-bar{
+    float:left;
+    width:0%;
+    height:100%;
+    font-size:12px;
+    line-height:20px;
+    color:#fff;
+    text-align:center;
+    background-color:#337ab7;
+    -webkit-box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-transition:width .6s ease;
+    -o-transition:width .6s ease;
+    transition:width .6s ease
+}
+
+.progress-bar-striped,.progress-striped .progress-bar{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent);
+    -webkit-background-size:40px 40px;
+    background-size:40px 40px
+}
+
+.progress-bar.active,.progress.active .progress-bar{
+    -webkit-animation:progress-bar-stripes 2s linear infinite;
+    -o-animation:progress-bar-stripes 2s linear infinite;
+    animation:progress-bar-stripes 2s linear infinite
+}
+
+.progress-bar-success{
+    background-color:#5cb85c
+}
+
+.progress-striped .progress-bar-success{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+.progress-bar-info{
+    background-color:#5bc0de
+}
+
+.progress-striped .progress-bar-info{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+.progress-bar-warning{
+    background-color:#f0ad4e
+}
+
+.progress-striped .progress-bar-warning{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+.progress-bar-danger{
+    background-color:#d9534f
+}
+
+.progress-striped .progress-bar-danger{
+    background-image:-webkit-linear-gradient(45deg,
+                                             rgba(255,255,255,.15) 25%,
+                                             transparent 25%,
+                                             transparent 50%,
+                                             rgba(255,255,255,.15) 50%,
+                                             rgba(255,255,255,.15) 75%,
+                                             transparent 75%,
+                                             transparent);
+    background-image:-o-linear-gradient(45deg,
+                                        rgba(255,255,255,.15) 25%,
+                                        transparent 25%,
+                                        transparent 50%,
+                                        rgba(255,255,255,.15) 50%,
+                                        rgba(255,255,255,.15) 75%,
+                                        transparent 75%,
+                                        transparent);
+    background-image:linear-gradient(45deg,
+                                     rgba(255,255,255,.15) 25%,
+                                     transparent 25%,
+                                     transparent 50%,
+                                     rgba(255,255,255,.15) 50%,
+                                     rgba(255,255,255,.15) 75%,
+                                     transparent 75%,
+                                     transparent)
+}
+
+
+/* Post uplaod report table */
+table{
+    vertical-align: middle;
+    text-align: center;
+    text-transform: none;
+}
+
+
+table th{
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1rem;
+
+}
+
+table td{
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.075em;
+    line-height: 1.5;
+    padding: 0 1;
+    vertical-align: middle;
+}

@@ -174,13 +174,16 @@ class UploadProcessor(ABC):
         return processorCls(uploadInfo, uploadedFile)
 
     @classmethod
-    def fromRequest(cls, request):
+    def fromRequest(cls, request, keyname="files"):
         """Return Processor(s) that can process the request.
 
         Parameters
         ----------
         request : `django.requst.HttpRequest`
             HTTP Request made to the server.
+        keyname : `str`
+            Name of the key under which the file list can be found. By default
+            `files`.
 
         Returns
         -------
@@ -196,7 +199,7 @@ class UploadProcessor(ABC):
         uploadInfo = UploadInfo(ip=ip)
 
         processors = []
-        for uploadedFile in request.FILES.getlist("file_field"):
+        for uploadedFile in request.FILES.getlist(keyname):
             uploadedFile = TemporaryUploadedFileWrapper(uploadedFile)
             processorCls = cls.getProcessor(uploadedFile)
             processors.append(processorCls(uploadInfo, uploadedFile))

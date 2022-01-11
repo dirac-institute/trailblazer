@@ -47,5 +47,3 @@ loggers:
     upload: 
         handlers: [console, processing]
         level: INFO
-    
-    
