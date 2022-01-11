@@ -325,11 +325,11 @@ class FitsProcessor(UploadProcessor):
         # relationship between particular wcs data and thumbs; then insert them
         # TODO: I'm iffed how this is set here, maybe refactor?
         logger.info(f"ID {self.uploadInfo.id}: Creating thumbnails.")
-        thumbnails = self.createThumbnails()
-        if isinstance(thumbnails, Thumbnails):
-            standardizedResult.appendThumbnail(thumbnails)
+        tmpResult = self.createThumbnails()
+        if isinstance(tmpResult, Thumbnails):
+            standardizedResult.appendThumbnail(tmpResult)
         else:
-            standardizedResult.extendThumbnails(thumbnails)
+            standardizedResult.extendThumbnails(tmpResult)
 
         if len(standardizedResult.thumbnails) != len(standardizedResult.wcs):
             raise RuntimeError("Can not unambiguously assign thumbnails to WCSs!")
