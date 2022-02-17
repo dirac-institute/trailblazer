@@ -24,7 +24,7 @@ jobs:
       - name: Install newest astro_metadata_translator
         run: |
           git clone https://github.com/lsst/astro_metadata_translator.git
-          pip install astro_metadata_translator
+          pip install astro_metadata_translator/
       - name: Run tests
         run: |
           cd trail
