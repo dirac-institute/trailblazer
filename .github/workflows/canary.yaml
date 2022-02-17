@@ -2,7 +2,7 @@ name: "Test current stable Python releases"
 
 on:
   schedule:
-    - chron: "0 30 15 ? * MON * "
+    - cron: "30 15 * * MON"
 
 jobs:
   main:
@@ -29,3 +29,4 @@ jobs:
         run: |
           cd trail
           python -W error::DeprecationWarning manage.py test -v2 -b
+
