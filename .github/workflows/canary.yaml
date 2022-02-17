@@ -28,4 +28,4 @@ jobs:
       - name: Run tests
         run: |
           cd trail
-          python manage.py test -v2 -b
+          python -W error::DeprecationWarning manage.py test -v2 -b
