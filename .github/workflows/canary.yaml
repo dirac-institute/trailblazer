@@ -1,0 +1,31 @@
+name: "Test current stable Python releases"
+
+on:
+  schedule:
+    - chron: "0 30 15 ? * MON * "
+
+jobs:
+  main:
+    name: Canary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: "main"
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.X"
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Install newest astro_metadata_translator
+        run: |
+          git clone https://github.com/lsst/astro_metadata_translator.git
+          pip install astro_metadata_translator
+      - name: Run tests
+        run: |
+          cd trail
+          python manage.py test -v2 -b
