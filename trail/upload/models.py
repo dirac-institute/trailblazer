@@ -74,7 +74,7 @@ def dataToComponent(data, component):
 
 class UploadInfo(models.Model):
     """Records originator and time of upload of an sngle metadata entry. """
-    # integer autoincrement primary fields is automatically added by Django
+    id = models.AutoField(primary_key=True)
     created = models.DateTimeField("date on which data was uploaded", auto_now_add=True)
     ip = models.GenericIPAddressField("IP address of the uploader", default="127.0.0.1")
 
@@ -130,6 +130,8 @@ class Metadata(models.Model, StandardizedKeysMixin):
 
     # This will need to be fixed, cascading can orphan metadata entries
     upload_info = models.ForeignKey(UploadInfo, on_delete=models.PROTECT)
+
+    id = models.AutoField(primary_key=True)
 
     # verbose_names should be lowercase, Django will capitalize
     # https://docs.djangoproject.com/en/3.1/topics/db/models/#verbose-field-names
@@ -207,6 +209,8 @@ class Wcs(models.Model, StandardizedKeysMixin):
     # same as above, cascading can orphan WCS entries
     metadata = models.ForeignKey(Metadata, on_delete=models.PROTECT)
 
+    id = models.AutoField(primary_key=True)
+
     wcs_radius = models.FloatField("distance between center and corner pixel")
 
     wcs_center_x = models.FloatField("unit sphere coordinate of central pixel")
@@ -239,15 +243,13 @@ class Wcs(models.Model, StandardizedKeysMixin):
         Note
         ----
         Only values in `_closeEqualityKeys` will be tested approximately, the
-        rest will be matched exactly. For Wcs, these are keys.
+        rest will be matched exactly.
         """
-        try:
-            return np.allclose(self.values(), other.values(), **kwargs)
-        except TypeError:
-            # same problem as in Metadata isClose
-            slfVals = np.array(self.values(), dtype=float)
-            othVals = np.array(other.values(), dtype=float)
-            return np.allclose(slfVals, othVals, **kwargs)
+        slfVals = np.fromiter((getattr(self, k) for k in self._closeEqualityKeys), dtype=float,
+                              count=len(self._closeEqualityKeys))
+        othVals = np.fromiter((getattr(other, k) for k in other._closeEqualityKeys), dtype=float,
+                              count=len(other._closeEqualityKeys))
+        return np.allclose(slfVals, othVals)
 
 
 class Thumbnails(models.Model, StandardizedKeysMixin):

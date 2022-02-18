@@ -6,6 +6,7 @@ from upload.models import Metadata, Wcs, StandardizedHeader
 
 class TestData:
     metadata1 = {
+        'id': None,
         'processor_name': 'generic',
         'standardizer_name': 'generic',
         'obs_lon': 1,
@@ -21,6 +22,7 @@ class TestData:
     }
 
     metadata2 = {
+        'id': None,
         'processor_name': 'generic',
         'standardizer_name': 'generic',
         'obs_lon': 1.1,
@@ -36,6 +38,7 @@ class TestData:
     }
 
     wcs1 = {
+        'id': None,
         'wcs_radius': 12,
         'wcs_center_x': 13,
         'wcs_center_y': 14,
@@ -46,6 +49,7 @@ class TestData:
     }
 
     wcs2 = {
+        'id': None,
         'wcs_radius': 12.1,
         'wcs_center_x': 13.1,
         'wcs_center_y': 14.1,
@@ -113,7 +117,7 @@ class MetadataTestCase(TestCase):
 
     def testRequiredKeys(self):
         """Test Metadata recognizes all required keys."""
-        requiredKeys = ['processor_name', 'standardizer_name',
+        requiredKeys = ['id', 'processor_name', 'standardizer_name',
                         'obs_lon', 'obs_lat', 'obs_height',
                         'datetime_begin', 'datetime_end']
         self.assertCountEqual(self.metadata1.required_keys, requiredKeys)
