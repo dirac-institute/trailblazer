@@ -22,7 +22,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.x
+        python-version: 3.9
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -50,9 +50,7 @@ jobs:
       - name: Install newest astro_metadata_translator
         run: |
           git clone https://github.com/lsst/astro_metadata_translator.git
-          cd astro_metadata_translator
-          python setup.py install
-          cd ..
+          pip install astro_metadata_translator/
       - name: Run tests
         run: |
           cd trail
@@ -86,9 +84,7 @@ jobs:
       - name: Install newest astro_metadata_translator
         run: |
           git clone https://github.com/lsst/astro_metadata_translator.git
-          cd astro_metadata_translator
-          python setup.py install
-          cd ..
+          pip install astro_metadata_translator/
       - name: Run tests
         run: |
           cd trail
