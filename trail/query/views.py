@@ -1,11 +1,9 @@
 from django import forms
-# from django.forms import ModelForm
 from django.apps import apps
 from django.shortcuts import render
 
 
 Metadata = apps.get_model('upload', 'Metadata')
-# Needs to think about adding SELECT DISTINCT etc.
 
 
 class MetadataForm(forms.Form):
@@ -17,6 +15,19 @@ class MetadataForm(forms.Form):
     instrument = forms.CharField(max_length=20, widget=forms.Select(choices=u_instrlist))
     telescope = forms.CharField(max_length=20, required=False)
     processor_name = forms.CharField(max_length=20, required=False)
+    obs_lon = forms.CharField(max_length=20, required=False)
+
+    def get_query(self, casesensitive=True):
+        new_dict = {}
+        for key in self.data:
+            if self.data[key] and key != 'csrfmiddlewaretoken':
+                if casesensitive:
+                    keyk = key + "__contains"
+                    new_dict[keyk] = self.data[key]
+                elif not casesensitive:
+                    keyk = key + "__icontains"
+                    new_dict[keyk] = self.data[key]
+        return new_dict
 
 
 def index(request):
@@ -37,8 +48,16 @@ def print_results(request):
     if request.method == "POST":
         form = MetadataForm(request.POST)
         if form.is_valid():
-            query_results = Metadata.objects.filter(instrument__icontains=form.data["instrument"])
+            query_results = Metadata.objects.filter(**form.get_query())
+            wcs_list = []
+            for obj in query_results:
+                wcs_info = obj.wcs_set.all()
+                wcs_list.append(wcs_info)
+
     else:
         query_results = []
         form = MetadataForm()
-    return render(request, "query.html", {"data": query_results, "queryform": form, "render_table": True})
+        wcs_list = []
+
+    return render(request, "query.html",
+                  {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
