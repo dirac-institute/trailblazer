@@ -88,7 +88,8 @@ INSTALLED_APPS = [
     'upload',
     'query',
     'trail',
-    'rest_framework'
+    'rest_framework',
+    'drf_yasg',
 ]
 
 

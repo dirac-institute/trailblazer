@@ -1,8 +1,10 @@
 from django import forms
 from django.apps import apps
 from django.shortcuts import render
-
-
+from rest_framework import status
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 Metadata = apps.get_model('upload', 'Metadata')
 
 
@@ -61,3 +63,16 @@ def print_results(request):
 
     return render(request, "query.html",
                   {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
+
+@api_view(['GET'])
+def get_metadata(request, *args, **kwargs):
+    instrument=kwargs["instrument"]
+    query_results = Metadata.objects.filter(instrument__icontains=instrument)
+    serializer = MetadataSerializer(query_results, many=True)
+    return Response(serializer.data)
+
+
+class MetaDataQuery(APIView):
+    
+    def get(self, request):
+        return Response({"Message": 'well done'}, status = stat)

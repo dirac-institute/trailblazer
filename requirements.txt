@@ -30,3 +30,4 @@ six==1.15.0
 SQLAlchemy==1.4.1
 sqlparse==0.4.1
 Werkzeug==1.0.1
+drf-yasg

@@ -18,6 +18,22 @@ from django.contrib.staticfiles.urls import static
 from django.conf import settings
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="TrailBlazer API",
+      default_version='v1',
+      description="Test PR",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="MAKE_SURE_WE_CHANGE_THIS@gmail.com"),
+      license=openapi.License(name="BSD License?????"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
@@ -29,6 +45,7 @@ urlpatterns = [
     # in the new template the index is the gallery, we don't need so many apps
     re_path(r'^index/', include('gallery.urls')),
     re_path(r'^',  include('gallery.urls')),
+    path('swagger', schema_view.with_ui(cache_timeout=0), name="swagger-json"),
     # re_path(r'^index/', TemplateView.as_view(template_name='index.html')),
     # re_path(r'^$', TemplateView.as_view(template_name='index.html')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
