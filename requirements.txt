@@ -6,3 +6,4 @@ matplotlib==3.5.1
 moto==3.0.3
 numpy==1.22.2
 Pillow==9.0.1
+pyqt5>=5.0
