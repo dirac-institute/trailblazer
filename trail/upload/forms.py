@@ -49,6 +49,7 @@ class UploadForm(forms.Form):
         }
         js = (
             'assets/js/upload_form.js',
+            'assets/js/upload_button_state.js',
             'assets/js/filelist.js',
         )
 
