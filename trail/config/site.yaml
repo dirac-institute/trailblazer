@@ -7,3 +7,12 @@ astrometry_net:
   key:
   timeout: 200
 gallery_image_count: 12
+api_doc:
+  title: "TrailBlazer API"
+  version: "v1"
+  description: "Add description later!"
+  contact_email: "changethis@gmail.com"
+  license:
+    name: "MIT License"
+    url: "https://github.com/dirac-institute/trailblazer/blob/main/LICENSE"
+    
