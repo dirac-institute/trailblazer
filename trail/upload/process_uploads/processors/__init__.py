@@ -3,4 +3,3 @@ from .single_extension_fits import *
 from .multi_extension_fits import *
 from .rubin_processor import *
 from .decam_processor import *
-
