@@ -1,10 +1,10 @@
 from django import forms
-from django.apps import apps
 from django.shortcuts import render
 from rest_framework.views import APIView
 from upload.models import Metadata
 from django.http import HttpResponse
 import json
+
 
 class MetadataForm(forms.Form):
     """Defines the variables corresponding to the metadata columns.
@@ -62,9 +62,10 @@ def print_results(request):
     return render(request, "query.html",
                   {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
 
+
 class MetaDataQuery(APIView):
     DATA_RETURNCOLS = "returnCols"
-    DATA_QUERYPARAM =  "queryParams"
+    DATA_QUERYPARAM = "queryParams"
     DATA_RETURNALL = "returnAllCols"
 
     def post(self, request):
@@ -79,7 +80,7 @@ class MetaDataQuery(APIView):
             # "queryParams" : [{"observer" : "me", "location" : "seattle"}]
             iterationSet = querySet
             if not (returnAll == 1):
-                iterationSet = iterationSet.filter(**queryParam).values(*returnCols) 
+                iterationSet = iterationSet.filter(**queryParam).values(*returnCols)
             else:
                 iterationSet = iterationSet.filter(**queryParam).values()
             resultSet = resultSet | iterationSet

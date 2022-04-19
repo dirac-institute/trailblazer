@@ -22,8 +22,6 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-from .import settings
-
 schema_view = get_schema_view(
    openapi.Info(
       title=settings.API_DOC_TITLE,
@@ -32,13 +30,13 @@ schema_view = get_schema_view(
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email=settings.API_DOC_CONTACT_EMAIL),
       license=openapi.License(
-          name = settings.API_DOC_LICENSE_NAME, 
-          url = settings.API_DOC_LICENSE_URL
+          name=settings.API_DOC_LICENSE_NAME,
+          url=settings.API_DOC_LICENSE_URL
         ),
    ),
    public=True,
    permission_classes=[permissions.AllowAny],
-) 
+)
 
 urlpatterns = [
     path(r'admin/', admin.site.urls),
