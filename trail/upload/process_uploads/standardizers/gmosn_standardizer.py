@@ -42,6 +42,7 @@ class GmosnStandardizer(HeaderStandardizer):
 
         # TODO: filter out what is the filter standardization here?
         # After uploading, no "astrometry.net key" runtime err?
+        # Do we need science program?
         meta = Metadata(
             obs_lon=self.header["GEOLON"],
             obs_lat=self.header["GEOLAT"],
@@ -49,11 +50,11 @@ class GmosnStandardizer(HeaderStandardizer):
             datetime_begin=begin,
             datetime_end= end,
             telescope="Gemini North",
-            instrument="GMOS", 
+            instrument="Hamamatsu CCD", #Instrument given from official
             exposure_duration=self.header["EXPTIME"],
             filter_name=self.header["FILTER"].strip()
         )
-
+        
         return meta
 
     def standardizeWcs(self, **kwargs):
