@@ -2,9 +2,13 @@ from django import forms
 from django.shortcuts import render
 from rest_framework.views import APIView
 from upload.models import Metadata
+from upload.models import Wcs
+from upload.serializers import MetadataSerializer
 from django.http import HttpResponse
+from django.http import JsonResponse
+from rest_framework import status
+import numpy as np
 import json
-
 
 class MetadataForm(forms.Form):
     """Defines the variables corresponding to the metadata columns.
@@ -63,11 +67,16 @@ def print_results(request):
                   {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
 
 
-class MetaDataQuery(APIView):
+class MetadataQuery(APIView):
     DATA_RETURNCOLS = "returnCols"
     DATA_QUERYPARAM = "queryParams"
     DATA_RETURNALL = "returnAllCols"
+    RALOW = "raLow"
+    RAHIGH = "raHigh"
+    DECLOW = "decLow"
+    DECHIGH = "decHigh"
 
+    # gets all the metadata entry that matches the query parameters.
     def post(self, request):
         returnAll = request.data[self.DATA_RETURNALL]
         returnCols = request.data[self.DATA_RETURNCOLS]
@@ -87,3 +96,61 @@ class MetaDataQuery(APIView):
 
         result = json.dumps(list(resultSet), default=str)
         return HttpResponse(result, content_type="application/json")
+
+    # gets all the metadata entry that looks at a certain part of the sky
+    # 
+    def get(self, request):
+        if self.isWcsQueryParamMissing(request.query_params):
+            return JsonResponse({"error" : "invalid response"}, status=status.HTTP_404_NOT_FOUND)
+        
+        lowerRight = self.getXYZFromWcs(float(request.query_params.get(self.RALOW)), float(request.query_params.get(self.DECLOW)))
+        upperLeft = self.getXYZFromWcs(float(request.query_params.get(self.RAHIGH)), float(request.query_params.get(self.DECHIGH)))
+
+        filteredWcs = Wcs.objects.all().filter(**self.makeFilterDictForWcs(upperLeft, lowerRight))
+        
+        # for every wcs, find the metadata id
+        metadataIds = set([metadataId['metadata'] for metadataId in filteredWcs.values('metadata')])
+        metadatas = self.getMetadatasByIds(metadataIds)
+        print(metadatas)
+        serializedMetadata = MetadataSerializer(metadatas, many=True)
+
+        return JsonResponse(
+                            serializedMetadata.data, 
+                            status=status.HTTP_200_OK, 
+                            safe=False
+                            )
+    
+    def getMetadatasByIds(self, metadataIds):
+        result = []
+        for id in metadataIds:
+            result.append(Metadata.objects.get(id=id))
+        return result
+
+    def makeFilterDictForWcs(self, upperLeft, lowerRight):
+        return {
+                "wcs_center_x__gte": upperLeft["x"], 
+                "wcs_center_x__lte": lowerRight["x"],
+                "wcs_center_y__lte": upperLeft["y"],
+                "wcs_center_y__gte": lowerRight["y"],
+                "wcs_center_z__lte": upperLeft["z"],
+                "wcs_center_z__gte": lowerRight["z"]
+                }
+
+    def getXYZFromWcs(self, ra, dec):
+        x = np.cos(dec) * np.cos(ra)
+        y = np.cos(dec) * np.sin(ra)
+        z = np.sin(dec)
+
+        return {"x": x, "y": y, "z": z}
+
+
+    def isWcsQueryParamMissing(self, queryParams):
+        RALOW = "raLow"
+        RAHIGH = "raHigh"
+        DECLOW = "decLow"
+        DECHIGH = "decHigh"
+
+        return not (self.RALOW in queryParams and self.RAHIGH in queryParams
+                and self.DECHIGH in queryParams and self.DECLOW in queryParams)
+
+        
