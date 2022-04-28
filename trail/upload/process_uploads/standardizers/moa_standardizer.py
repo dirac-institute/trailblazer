@@ -6,8 +6,8 @@ from datetime import timezone
 
 from astropy.time import Time
 
-from upload.process_uploads.header_standardizer import HeaderStandardizer, StandardizeWcsException
-from upload.models import Metadata, Wcs
+from upload.process_uploads.header_standardizer import HeaderStandardizer
+from upload.models import Metadata
 
 
 __all__ = ["MoaStandardizer", ]
