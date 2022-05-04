@@ -13,7 +13,7 @@ __all__ = ["GeminiNorthStandardizer", ]
 
 class GeminiNorthStandardizer(HeaderStandardizer):
 
-    name = "gmosn_standardizer"
+    name = "gemini_north_standardizer"
     priority = 1
 
     def __init__(self, header, **kwargs):
