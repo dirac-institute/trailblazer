@@ -82,6 +82,8 @@ class HeaderStandardizer(ABC):
 
     def __init__(self, header, **kwargs):
         self.header = header
+        self.filename = kwargs.pop("filename", None)
+        self.filepath = kwargs.pop("filepath", None)
         self._kwargs = kwargs
 
     def __init_subclass__(cls, **kwargs):
@@ -120,8 +122,6 @@ class HeaderStandardizer(ABC):
         standardizedWcs = {}
         centerX, centerY = int(dimX/2), int(dimY/2)
 
-        # TODO: test if a header doesn't actually have a valid WCS
-        # what is the error raised?
         with warnings.catch_warnings(record=True) as warns:
             wcs = WCS(header)
             if warns:
@@ -310,17 +310,24 @@ class HeaderStandardizer(ABC):
         -----
         Tries to read the WCS from the header.
         if that does not work then gives it to astrometry.net to look for a solution for the WCS
+
+        The test variable is a variable used to make sure that the _computeStandardizeWcs function
+        actually works. We ran into a AttributeError when using the function for the MOA standardizer,
+        so the test variable is used to make sure we don't run into that error when actually passing
+        in those header files.
         """
         try:
             try:
-                header, dimX, dimY = self._astropyWcsReader(hdu)
-            except (ValueError, TypeError):
+                header, dimX, dimY = self._guessHeaderAndDims(hdu)
+                test = self._computeStandardizedWcs(header, dimX, dimY)
+            except (ValueError, TypeError, AttributeError):
                 header, dimX, dimY = self._astrometryNetSolver(self.filepath)
+                test = self._computeStandardizedWcs(header, dimX, dimY)
         except (ValueError, RuntimeError, TypeError) as err:
             raise StandardizeWcsException("Failed to standardize WCS") from err
-        return models.Wcs(**self._computeStandardizedWcs(header, dimX, dimY))
+        return models.Wcs(**test)
 
-    def _astropyWcsReader(self, hdu=None):
+    def _guessHeaderAndDims(self, hdu=None):
         """Standardize WCS data a given header.
 
         Parameters
