@@ -4,13 +4,25 @@ from rest_framework.views import APIView
 from upload.models import Metadata
 from upload.models import Wcs
 from upload.serializers import MetadataSerializer
-from django.http import HttpResponse
-from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 import numpy as np
-import json
+
+METADATA_COLS = set([
+                        "id", "processor_name",
+                        "instrument", "telescope",
+                        "science_program",
+                        "obs_lon", "obs_lat",
+                        "obs_height", "datetime_begin",
+                        "datetime_end", "exposure_duration",
+                        "upload_info_id", "filter_name",
+                        "standardizer_name"
+                    ])
+
 
 class MetadataForm(forms.Form):
+
     """Defines the variables corresponding to the metadata columns.
     """
     unique_instrument = ["DECam", "ff09", "Imager on SDSS 2.5m"]
@@ -67,59 +79,43 @@ def print_results(request):
                   {"data": query_results, "wcsdata": wcs_list, "queryform": form, "render_table": True})
 
 
-class MetadataQuery(APIView):
-    DATA_RETURNCOLS = "returnCols"
-    DATA_QUERYPARAM = "queryParams"
-    DATA_RETURNALL = "returnAllCols"
+# gets all the metadata entry that looks at a certain part of the sky
+class WcsQuery(APIView):
+
     RALOW = "raLow"
     RAHIGH = "raHigh"
     DECLOW = "decLow"
     DECHIGH = "decHigh"
 
-    # gets all the metadata entry that matches the query parameters.
-    def post(self, request):
-        returnAll = request.data[self.DATA_RETURNALL]
-        returnCols = request.data[self.DATA_RETURNCOLS]
-        queryParams = request.data[self.DATA_QUERYPARAM]
-
-        querySet = Metadata.objects.all()
-        resultSet = Metadata.objects.none()
-        for queryParam in queryParams:
-            # each one is a dict and it is or operation
-            # "queryParams" : [{"observer" : "me", "location" : "seattle"}]
-            iterationSet = querySet
-            if not (returnAll == 1):
-                iterationSet = iterationSet.filter(**queryParam).values(*returnCols)
-            else:
-                iterationSet = iterationSet.filter(**queryParam).values()
-            resultSet = resultSet | iterationSet
-
-        result = json.dumps(list(resultSet), default=str)
-        return HttpResponse(result, content_type="application/json")
-
-    # gets all the metadata entry that looks at a certain part of the sky
-    # 
     def get(self, request):
-        if self.isWcsQueryParamMissing(request.query_params):
-            return JsonResponse({"error" : "invalid response"}, status=status.HTTP_404_NOT_FOUND)
-        
-        lowerRight = self.getXYZFromWcs(float(request.query_params.get(self.RALOW)), float(request.query_params.get(self.DECLOW)))
-        upperLeft = self.getXYZFromWcs(float(request.query_params.get(self.RAHIGH)), float(request.query_params.get(self.DECHIGH)))
 
+        """
+        Returns the Metadata associated with the part of sky the user specifies
+        ----------
+        raLow: the lower bound for ra
+        raHigh: the upper bound for ra
+        decLow: the lower bound for dec
+        decHigh: the upper bound for dec
+
+        """
+        if self.isWcsQueryParamMissing(request.query_params):
+            return Response({"error": "invalid reqeust"}, status=status.HTTP_404_NOT_FOUND)
+
+        lowerRight = self.getXYZFromWcs(float(request.query_params.get(self.RALOW)),
+                                        float(request.query_params.get(self.DECLOW)))
+        upperLeft = self.getXYZFromWcs(float(request.query_params.get(self.RAHIGH)),
+                                       float(request.query_params.get(self.DECHIGH)))
         filteredWcs = Wcs.objects.all().filter(**self.makeFilterDictForWcs(upperLeft, lowerRight))
-        
         # for every wcs, find the metadata id
         metadataIds = set([metadataId['metadata'] for metadataId in filteredWcs.values('metadata')])
         metadatas = self.getMetadatasByIds(metadataIds)
-        print(metadatas)
         serializedMetadata = MetadataSerializer(metadatas, many=True)
 
-        return JsonResponse(
-                            serializedMetadata.data, 
-                            status=status.HTTP_200_OK, 
-                            safe=False
-                            )
-    
+        return Response(
+                            serializedMetadata.data,
+                            status=status.HTTP_200_OK,
+                        )
+
     def getMetadatasByIds(self, metadataIds):
         result = []
         for id in metadataIds:
@@ -128,7 +124,7 @@ class MetadataQuery(APIView):
 
     def makeFilterDictForWcs(self, upperLeft, lowerRight):
         return {
-                "wcs_center_x__gte": upperLeft["x"], 
+                "wcs_center_x__gte": upperLeft["x"],
                 "wcs_center_x__lte": lowerRight["x"],
                 "wcs_center_y__lte": upperLeft["y"],
                 "wcs_center_y__gte": lowerRight["y"],
@@ -143,14 +139,48 @@ class MetadataQuery(APIView):
 
         return {"x": x, "y": y, "z": z}
 
-
     def isWcsQueryParamMissing(self, queryParams):
-        RALOW = "raLow"
-        RAHIGH = "raHigh"
-        DECLOW = "decLow"
-        DECHIGH = "decHigh"
-
         return not (self.RALOW in queryParams and self.RAHIGH in queryParams
-                and self.DECHIGH in queryParams and self.DECLOW in queryParams)
+                    and self.DECHIGH in queryParams and self.DECLOW in queryParams)
 
-        
+
+class MetadataQuery(APIView):
+
+    """Support Query that returns metadata entry as a result through metadata info
+
+
+
+    Notes
+    -----
+    """
+
+    DATA_FIELDS = "fields"
+
+    # gets all the metadata entry that matches the query parameters.
+    @swagger_auto_schema(responses={200: MetadataSerializer(many=True)})
+    def get(self, request):
+
+        """
+        Returns the Metadata entries that meets the users input
+        Parameters
+        ----------
+        fields: list of wanted field in the metadata returned
+        queryParam: list of criterias for metadata
+
+        """
+        fields = request.query_params.getlist(self.DATA_FIELDS, None)
+        queryParams = request.query_params
+
+        querySet = Metadata.objects.all()
+        resultSet = None
+
+        if request.query_params:
+            for key, val in queryParams.items():
+                if key in METADATA_COLS:
+                    querySet = querySet.filter(**{key + "__icontains": val})
+
+        resultSet = querySet
+
+        result = MetadataSerializer(resultSet, many=True, fields=fields)
+
+        return Response(result.data, status=status.HTTP_200_OK)

@@ -94,9 +94,16 @@ INSTALLED_APPS = [
     'upload',
     'query',
     'trail',
+    'rest_framework',
     'drf_yasg',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
 
 LOGGING = loggingConfig.asDict()
 
