@@ -22,6 +22,22 @@ class DynamicMetadataSerializer(serializers.ModelSerializer):
 
 class MetadataSerializer(DynamicMetadataSerializer):
 
+    METADATA_COLS = set([
+                        "id", "processor_name",
+                        "instrument", "telescope",
+                        "science_program",
+                        "obs_lon", "obs_lat",
+                        "obs_height", "datetime_begin",
+                        "datetime_end", "exposure_duration",
+                        "upload_info", "filter_name",
+                        "standardizer_name"
+                        ])
+
     class Meta:
         model = Metadata
         fields = '__all__'
+
+    def create(self, validated_data):
+
+        metadata = Metadata.objects.create(**validated_data)
+        return metadata

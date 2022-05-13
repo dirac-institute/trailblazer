@@ -92,10 +92,17 @@ class WcsQuery(APIView):
         """
         Returns the Metadata associated with the part of sky the user specifies
         ----------
+
+        Parameters
+        ----------------
         raLow: the lower bound for ra
         raHigh: the upper bound for ra
         decLow: the lower bound for dec
         decHigh: the upper bound for dec
+
+        Note
+        -------------------
+        if the parameters is not specified correctly, will return a bad request
 
         """
         if self.isWcsQueryParamMissing(request.query_params):
@@ -168,7 +175,7 @@ class MetadataQuery(APIView):
         queryParam: list of criterias for metadata
 
         """
-        fields = request.query_params.getlist(self.DATA_FIELDS, None)
+        fields = request.query_params.getlist(self.DATA_FIELDS)
         queryParams = request.query_params
 
         querySet = Metadata.objects.all()
@@ -180,6 +187,9 @@ class MetadataQuery(APIView):
                     querySet = querySet.filter(**{key + "__icontains": val})
 
         resultSet = querySet
+
+        if len(fields) == 0:
+            fields = None
 
         result = MetadataSerializer(resultSet, many=True, fields=fields)
 
