@@ -27,23 +27,21 @@ class LbtStandardizer(HeaderStandardizer):
         return False
 
     def standardizeMetadata(self):
-        #TODO: Find end date and begining date using same process for gmosn
-        # DATEOBS = self.header["DATE-OBS"]
-        # EXP = self.header["EXPTIME"]
-        # begin = datetime.strptime(DATEOBS, "%Y-%m-%dT%H:%M:%S.%f")
-        # begin = begin.replace(tzinfo=timezone.utc)
-        # end = begin + timedelta(seconds=EXP)
+        DATE_OBS = self.header["DATE_OBS"]
+        EXPTIME = self.header["EXPTIME"]
+        begin = datetime.strptime(DATE_OBS, "%Y-%m-%dT%H:%M:%S.%f")
+        begin = begin.replace(tzinfo=timezone.utc)
+        end = begin + timedelta(seconds=EXPTIME)
 
         meta = Metadata(
             obs_lon=self.header["LBTLONG"],
             obs_lat=self.header["LBTLAT"],
-            #TODO: find height
-            obs_height=4213,  # height in meters from official website
-            datetime_begin=begin.isoformat(),
-            datetime_end=end.isoformat(),
+            obs_height= 3221, # height in meters from official website
+            datetime_begin= begin.isoformat(),
+            datetime_end= end.isoformat(),
             telescope=self.header["TELESCOP"],
             instrument=self.header["INSTRUME"],
-            exposure_duration=self.header["EXPTIME"],
+            exposure_duration= EXPTIME,
             filter_name=self.header["FILTER"].strip()
         )
 
