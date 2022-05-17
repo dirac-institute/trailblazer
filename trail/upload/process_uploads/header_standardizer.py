@@ -423,7 +423,10 @@ class HeaderStandardizer(ABC):
         -----
         Send the file to astrometry.net to find WCS from the location of the stars in the image
         """
-        dimX, dimY = fits.open(path_to_file)[0].data.shape
+        try:
+            dimX, dimY = fits.open(path_to_file)[0].data.shape
+        except AttributeError:
+            dimX, dimY = fits.open(path_to_file)[1].data.shape
         if ASTROMETRY_KEY:
             header = ASTRONET_CLIENT.solve_from_image(path_to_file, False, solve_timeout=ASTROMETRY_TIMEOUT)
             if header == {}:

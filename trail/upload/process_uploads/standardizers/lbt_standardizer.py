@@ -36,12 +36,12 @@ class LbtStandardizer(HeaderStandardizer):
         meta = Metadata(
             obs_lon=self.header["LBTLONG"],
             obs_lat=self.header["LBTLAT"],
-            obs_height= 3221, # height in meters from official website
-            datetime_begin= begin.isoformat(),
-            datetime_end= end.isoformat(),
+            obs_height=3221,  # height in meters from official website
+            datetime_begin=begin.isoformat(),
+            datetime_end=end.isoformat(),
             telescope=self.header["TELESCOP"],
             instrument=self.header["INSTRUME"],
-            exposure_duration= EXPTIME,
+            exposure_duration=EXPTIME,
             filter_name=self.header["FILTER"].strip()
         )
 
