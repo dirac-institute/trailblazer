@@ -1,16 +1,12 @@
 from django.test import TestCase
 from upload.models import Metadata
-from upload.serializers import MetadataSerializer
-from rest_framework.test import APIClient
-from upload.models import UploadInfo
-from rest_framework import status
-import io
-from rest_framework.parsers import JSONParser
+from upload.models import UploadInfo, Wcs
+from query.views import MetadataDAO
 # Create your tests here.
 
 
 class MetadataQueryTest(TestCase):
-    client = APIClient()
+    metadataDao = MetadataDAO()
 
     def setUp(self):
         info = UploadInfo()
@@ -46,18 +42,34 @@ class MetadataQueryTest(TestCase):
             exposure_duration=30.0,
             filter_name='i'
         )
+        wcs1 = {
+            'metadata': meta,
+            'wcs_radius': 1,
+            'wcs_center_x': 0.4,
+            'wcs_center_y': 0.3,
+            'wcs_center_z': 0.7,
+            'wcs_corner_x': 16,
+            'wcs_corner_y': 17,
+            'wcs_corner_z': 0.7
+        }
         meta.save()
         meta2.save()
 
+        self.wcs = Wcs(**wcs1)
+        self.wcs.save()
+
     def testBasicQueries(self):
-        response = self.client.get("/query/getMetadata?processor_name=fits")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        """Tests getMetadataByParams in metadataDao is functional"""
+        queryParam = {"processor_name__icontains": "fits"}
+        response = self.metadataDao.getMetadataByParams(queryParam)
 
-        stream = io.BytesIO(response.content)
-        data = JSONParser().parse(stream)
+        self.assertEqual(len(response), 2)
+        for metadata in response:
+            self.assertTrue("fits" in metadata.processor_name.lower())
 
-        metadatas = MetadataSerializer(data=data, many=True)
+    def testBasicWcsQuery(self):
+        """Tests getMeatadataInSpecifiedSky in metadataDao is functional"""
+        queryParam = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000}
+        response = self.metadataDao.getMeatadataInSpecifiedSky(queryParam)
 
-        self.assertTrue(metadatas.is_valid(raise_exception=True))
-        result = metadatas.create(metadatas.validated_data)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(response), 1)
