@@ -7,7 +7,7 @@ import warnings
 import logging
 
 import numpy as np
-from astropy.io.fits import PrimaryHDU, CompImageHDU
+from astropy.io.fits import PrimaryHDU, CompImageHDU, ImageHDU
 from astropy.io import fits
 from astropy.wcs import WCS
 import astropy.units as u
@@ -371,7 +371,7 @@ class HeaderStandardizer(ABC):
                                  "(NAXIS1, NAXIS2) but an additional HDU was "
                                  "not provided")
 
-            if not (isinstance(hdu, PrimaryHDU) or isinstance(hdu, CompImageHDU)):
+            if not (isinstance(hdu, PrimaryHDU) or isinstance(hdu, CompImageHDU) or isinstance(hdu, ImageHDU)):
                 raise TypeError(f"Expected image-like HDU, got {type(hdu)} instead.")
 
             if hdu.data is None:
@@ -423,10 +423,7 @@ class HeaderStandardizer(ABC):
         -----
         Send the file to astrometry.net to find WCS from the location of the stars in the image
         """
-        try:
-            dimX, dimY = fits.open(path_to_file)[0].data.shape
-        except AttributeError:
-            dimX, dimY = fits.open(path_to_file)[1].data.shape
+        dimX, dimY = fits.open(path_to_file)[0].data.shape
         if ASTROMETRY_KEY:
             header = ASTRONET_CLIENT.solve_from_image(path_to_file, False, solve_timeout=ASTROMETRY_TIMEOUT)
             if header == {}:
