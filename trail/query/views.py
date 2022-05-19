@@ -4,6 +4,10 @@ from rest_framework.views import APIView
 from upload.models import Metadata
 from upload.models import Wcs
 import numpy as np
+from upload.serializers import MetadataSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 
 
 class MetadataForm(forms.Form):
@@ -95,7 +99,6 @@ class MetadataDAO(APIView):
         """
 
         querySet = Metadata.objects.all()
-
         if paramDict is not None:
             querySet = querySet.filter(**paramDict)
 
@@ -160,3 +163,65 @@ class MetadataDAO(APIView):
     def isWcsQueryParamMissing(self, queryParams):
         return not (self.RALOW in queryParams and self.RAHIGH in queryParams
                     and self.DECHIGH in queryParams and self.DECLOW in queryParams)
+
+
+class MetadataQuery(APIView):
+
+    """Support Query that returns metadata entry as a result through metadata info
+    Notes
+    -----
+    """
+
+    DATA_FIELDS = "fields"
+    metadataDao = MetadataDAO()
+
+    # gets all the metadata entry that matches the query parameters.
+    @swagger_auto_schema(responses={200: MetadataSerializer(many=True)})
+    def get(self, request):
+
+        """
+        Returns the Metadata entries that meets the users input
+        Parameters
+        ----------
+        fields: list of wanted field in the metadata returned
+        queryParam: list of criterias for metadata
+        """
+        fields = request.query_params.getlist(self.DATA_FIELDS)
+
+        queryParams = request.query_params.dict()
+        queryParams.pop(self.DATA_FIELDS, None)
+        results = self.metadataDao.getMetadataByParams(queryParams)
+        if len(fields) == 0:
+            fields = None
+
+        result = MetadataSerializer(results, many=True, fields=fields)
+
+        return Response(result.data, status=status.HTTP_200_OK)
+
+
+class WcsQuery(APIView):
+
+    metadataDao = MetadataDAO()
+
+    def get(self, request):
+
+        """
+        Returns the Metadata associated with the part of sky the user specifies
+        ----------
+        Parameters
+        ----------------
+        raLow: the lower bound for ra
+        raHigh: the upper bound for ra
+        decLow: the lower bound for dec
+        decHigh: the upper bound for dec
+        Note
+        -------------------
+        if the parameters is not specified correctly, will return a bad request
+        """
+        metadatas = self.metadataDao.getMeatadataInSpecifiedSky(request.query_params)
+        serializedMetadata = MetadataSerializer(metadatas, many=True)
+
+        return Response(
+                            serializedMetadata.data,
+                            status=status.HTTP_200_OK,
+                        )
