@@ -83,3 +83,5 @@ class MetadataQueryTest(TestCase):
         metadataParams = {"processor_name__icontains": "fits"}
         paramDict = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000, "metadataParams": metadataParams}
         response = self.metadataDao.queryJoinWcsAndMetadataParam(paramDict)
+
+        self.assertEqual(len(response), 1)
