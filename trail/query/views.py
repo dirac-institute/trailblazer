@@ -78,6 +78,49 @@ class MetadataDAO(APIView):
     RAHIGH = "raHigh"
     DECLOW = "decLow"
     DECHIGH = "decHigh"
+    JOINPARAMS = "metadataParams"
+
+    def queryJoinWcsAndMetadataParam(self, paramDict):
+        """
+        Returns the Metadata entries that meets both of the sky specified and the params given by the user
+
+        Parameters
+        ----------
+        raLow: float
+            the lower bound for ra
+        raHigh: float
+            the upper bound for ra
+        decLow: float
+            the lower bound for dec
+        decHigh: float
+            the upper bound for dec
+        params: Dictionary
+            the dictionary in the paramDict that contains the criterias for metadata object  Ex.(id = 3, processName=fits)
+        
+        
+
+        Returns
+        -------
+        results: list of metadata objects
+            a list of metadata objects that matches the param specified by users and is in the boundary box.
+
+        Note
+        -----
+        If users do not specify a dict, the method will return all metadatas.
+        If users do not specify a params, no metadata would be return.
+        """
+        if self.isWcsQueryParamMissing(paramDict):
+            return []
+
+        lowerRight = self.getXYZFromWcs(float(paramDict.get(self.RALOW)),
+                                        float(paramDict.get(self.DECLOW)))
+        upperLeft = self.getXYZFromWcs(float(paramDict.get(self.RAHIGH)),
+                                       float(paramDict.get(self.DECHIGH)))
+
+        skyBoundary = self.makeFilterDictForWcs(upperLeft, lowerRight)
+        joinQuery = self.makeJoinQueryForReverseLookup(skyBoundary, paramDict.get(self.JOINPARAMS))
+        filteredWcs = Wcs.objects.all().filter(**joinQuery)
+        print(list(filteredWcs)[0].__dict__)
 
     def queryByParams(self, paramDict):
 
@@ -145,6 +188,17 @@ class MetadataDAO(APIView):
         metadatas = self.getMetadatasByIds(metadataIds)
 
         return metadatas
+
+    # Helpers -----------------------------------------
+    def makeJoinQueryForReverseLookup(self, skyBoundary, paramDict):
+
+        result = dict()
+        for key, val in paramDict.items():
+            result["metadata__" + key] = val
+        
+        result.update(skyBoundary)
+
+        return result
 
     def getMetadatasByIds(self, metadataIds):
         """

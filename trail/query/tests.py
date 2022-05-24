@@ -77,16 +77,9 @@ class MetadataQueryTest(TestCase):
 
         self.assertEqual(len(response), 1)
 
-    def testCoordinateConversion(self):
-        ra = 200 * np.pi / 180
-        dec = 87 * np.pi / 180
+    def testBasicJoinQuery(self):
+        """Tests getMeatadataInSpecifiedSky in metadataDao is functional"""
 
-        cartersian = getXYZFromWcs(ra, dec)
-
-        self.assertTrue(abs(cartersian["x"] - (-0.049) < 0.1))
-        self.assertTrue(abs(cartersian["y"] - (-0.018) < 0.1))
-        self.assertTrue(abs(cartersian["z"] - (0.9986) < 0.1))
-
-        backToPolar = getRaDecFromXYZ(cartersian["x"], cartersian["y"], cartersian["z"])
-        self.assertTrue(abs(backToPolar["ra"] - ra < 0.1))
-        self.assertTrue(abs(backToPolar["dec"] - dec < 0.1))
+        metadataParams = {"processor_name__icontains": "fits"}
+        paramDict = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000, "metadataParams": metadataParams}
+        response = self.metadataDao.queryJoinWcsAndMetadataParam(paramDict)
