@@ -22,7 +22,7 @@ class LdtStandardizer(HeaderStandardizer):
     @classmethod
     def canStandardize(self, header, **kwargs):
         lat = header.get("GEOLAT", False)
-        if lat and 19.8200 == lat:
+        if lat and 34.7444 == lat:
             return True
         return False
 
@@ -33,14 +33,16 @@ class LdtStandardizer(HeaderStandardizer):
         begin = begin.replace(tzinfo=timezone.utc)
         end = begin + timedelta(seconds=EXP)
 
+
+        #TODO: Find Height, Find Instrument
         meta = Metadata(
             obs_lon=self.header["GEOLON"],
             obs_lat=self.header["GEOLAT"],
-            obs_height=4213,  # height in meters from official website
+            obs_height=0,  # height in meters from official website
             datetime_begin=begin.isoformat(),
             datetime_end=end.isoformat(),
-            telescope="Gemini North",
-            #instrument=instrument,
+            telescope="Lowell Discovery Telescope",
+            instrument="",
             exposure_duration=self.header["EXPTIME"],
             filter_name=self.header["FILTER"].strip()
         )
