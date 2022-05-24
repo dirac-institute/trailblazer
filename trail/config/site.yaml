@@ -8,7 +8,7 @@ astrometry_net:
   timeout: 200
 gallery_image_count: 12
 api_doc:
-  title: "TrailBlazer API"
+  title: "Trailblazer API"
   version: "v1"
   description: "Trailblazer backend rest API"
   contact_email: "changethis@gmail.com"

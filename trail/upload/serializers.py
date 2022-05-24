@@ -21,7 +21,10 @@ class DynamicMetadataSerializer(serializers.ModelSerializer):
 
 
 class MetadataSerializer(DynamicMetadataSerializer):
-
+    """
+    A MetadataSerializer that takes an additional `fields` argument that
+    controls which fields should be displayed.
+    """
     class Meta:
         model = Metadata
         fields = '__all__'

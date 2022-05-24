@@ -72,8 +72,6 @@ class MetadataDAO(APIView):
     """
      Data Accessing objects for metadata, all query for metadatas are implemented here
 
-    Notes
-    -----
     """
 
     RALOW = "raLow"
@@ -81,21 +79,24 @@ class MetadataDAO(APIView):
     DECLOW = "decLow"
     DECHIGH = "decHigh"
 
-    """Support Query that returns metadata entry as a result through metadata info
-
-    Notes
-    -----
-    """
-    # gets all the metadata entry that matches the query parameters.
-    def getMetadataByParams(self, paramDict):
+    def queryByParams(self, paramDict):
 
         """
         Returns the Metadata entries that meets the users input
+
         Parameters
         ----------
-        fields: list of wanted field in the metadata returned
-        queryParam: list of criterias for metadata
+        queryParam: dictionary
+            List of criterias for metadata
 
+        Returns
+        -------
+        results: list of metadata objects
+            a list of metadata objects that matches the param specified by users.
+
+        Note
+        -----
+        If users do not specify a dict, the method will return all metadats
         """
 
         querySet = Metadata.objects.all()
@@ -104,11 +105,10 @@ class MetadataDAO(APIView):
 
         return list(querySet)
 
-    def getMeatadataInSpecifiedSky(self, paramDict):
+    def queryBySpecifiedSky(self, paramDict):
 
         """
         Returns the Metadata associated with the part of sky the user specifies
-        ----------
 
         Parameters
         ----------------
@@ -117,9 +117,14 @@ class MetadataDAO(APIView):
         decLow: the lower bound for dec
         decHigh: the upper bound for dec
 
+        Returns
+        -------
+        metadatas: list
+            list of metadatas that is in the part of sky specified by the users
+
         Note
         -------------------
-        if the parameters is not specified correctly, will return a bad request
+        if the parameters is not specified correctly, will return an empty result
 
         """
         if self.isWcsQueryParamMissing(paramDict):
@@ -138,12 +143,20 @@ class MetadataDAO(APIView):
         return metadatas
 
     def getMetadatasByIds(self, metadataIds):
+        """
+        Helper function for getting metadata objects that matches the ids specified
+
+        """
         result = []
         for id in metadataIds:
             result.append(Metadata.objects.get(id=id))
         return result
 
     def makeFilterDictForWcs(self, upperLeft, lowerRight):
+        """
+        Helper function for putting the sky boundary into a dictionary that could be pass into querySet.filter()
+
+        """
         return {
                 "wcs_center_x__gte": upperLeft["x"],
                 "wcs_center_x__lte": lowerRight["x"],
@@ -154,6 +167,10 @@ class MetadataDAO(APIView):
                 }
 
     def getXYZFromWcs(self, ra, dec):
+        """
+        Convert ra and dec into xyz coordinates
+
+        """
         x = np.cos(dec) * np.cos(ra)
         y = np.cos(dec) * np.sin(ra)
         z = np.sin(dec)
@@ -161,36 +178,55 @@ class MetadataDAO(APIView):
         return {"x": x, "y": y, "z": z}
 
     def isWcsQueryParamMissing(self, queryParams):
+        """
+        Check if the sky boundary is correctly specified
+
+        """
         return not (self.RALOW in queryParams and self.RAHIGH in queryParams
                     and self.DECHIGH in queryParams and self.DECLOW in queryParams)
 
 
 class MetadataQuery(APIView):
 
-    """Support Query that returns metadata entry as a result through metadata info
-    Notes
-    -----
+    """
+    Support Query that returns metadata entry as a result through metadata info
+
+    Attributes
+    ----------
+    metadataDao: MetadataDao
+        Data accessing objects for metadata table
+
     """
 
     DATA_FIELDS = "fields"
-    metadataDao = MetadataDAO()
+
+    def __init__(self):
+        self.metadataDao = MetadataDAO()
 
     # gets all the metadata entry that matches the query parameters.
     @swagger_auto_schema(responses={200: MetadataSerializer(many=True)})
     def get(self, request):
 
         """
-        Returns the Metadata entries that meets the users input
+        Returns the Metadata entries that meets the users input in json
+
         Parameters
         ----------
-        fields: list of wanted field in the metadata returned
-        queryParam: list of criterias for metadata
+        fields: List of strings that is the key of wanted string
+            list of wanted field in the metadata returned
+        queryParam: Dictionary
+            list of criterias for metadatas specified by users
+
+        Return
+        ------
+        A json response that contains the list of metadatas wanted
+
         """
         fields = request.query_params.getlist(self.DATA_FIELDS)
 
         queryParams = request.query_params.dict()
         queryParams.pop(self.DATA_FIELDS, None)
-        results = self.metadataDao.getMetadataByParams(queryParams)
+        results = self.metadataDao.queryByParams(queryParams)
         if len(fields) == 0:
             fields = None
 
@@ -200,25 +236,36 @@ class MetadataQuery(APIView):
 
 
 class WcsQuery(APIView):
+    """
+    Support Query that returns metadata entry that is in the part of sky specified by the users.
 
-    metadataDao = MetadataDAO()
+    Attributes
+    ----------
+    metadataDao: MetadataDao
+        Data accessing objects for metadata table
+
+    """
+
+    def __init__(self):
+        self.metadataDao = MetadataDAO()
 
     def get(self, request):
 
         """
         Returns the Metadata associated with the part of sky the user specifies
-        ----------
+
         Parameters
         ----------------
         raLow: the lower bound for ra
         raHigh: the upper bound for ra
         decLow: the lower bound for dec
         decHigh: the upper bound for dec
+
         Note
         -------------------
         if the parameters is not specified correctly, will return a bad request
         """
-        metadatas = self.metadataDao.getMeatadataInSpecifiedSky(request.query_params)
+        metadatas = self.metadataDao.queryBySpecifiedSky(request.query_params)
         serializedMetadata = MetadataSerializer(metadatas, many=True)
 
         return Response(

@@ -61,7 +61,7 @@ class MetadataQueryTest(TestCase):
     def testBasicQueries(self):
         """Tests getMetadataByParams in metadataDao is functional"""
         queryParam = {"processor_name__icontains": "fits"}
-        response = self.metadataDao.getMetadataByParams(queryParam)
+        response = self.metadataDao.queryByParams(queryParam)
 
         self.assertEqual(len(response), 2)
         for metadata in response:
@@ -70,6 +70,6 @@ class MetadataQueryTest(TestCase):
     def testBasicWcsQuery(self):
         """Tests getMeatadataInSpecifiedSky in metadataDao is functional"""
         queryParam = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000}
-        response = self.metadataDao.getMeatadataInSpecifiedSky(queryParam)
+        response = self.metadataDao.queryBySpecifiedSky(queryParam)
 
         self.assertEqual(len(response), 1)
