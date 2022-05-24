@@ -93,19 +93,18 @@ class MetadataDAO(APIView):
             the lower bound for dec
         decHigh: float
             the upper bound for dec
-        metadataParams: key-value pairs
-            the key-value pairs in the paramDict that contains the criterias for metadata object
-                Ex.(id = 3, processName=fits)
+        params: Dictionary
+            the dictionary in the paramDict that contains the criterias for metadata object  Ex.(id = 3, processName=fits)
 
         Returns
         -------
         results: list of metadata objects
             a list of metadata objects that matches the param specified by users and is in the boundary box.
 
-        Notes
+        Note
         -----
         If users do not specify a dict, the method will return all metadatas.
-        If users do not specify a params, it will return an empty list.
+        If users do not specify a params, no metadata would be return.
         """
         if self.isWcsQueryParamMissing(paramDict):
             return []
@@ -116,11 +115,9 @@ class MetadataDAO(APIView):
                                        float(paramDict.get(self.DECHIGH)))
 
         skyBoundary = self.makeFilterDictForWcs(upperLeft, lowerRight)
-        joinQuery = self.makeJoinQueryForReverseLookup(skyBoundary, paramDict)
+        joinQuery = self.makeJoinQueryForReverseLookup(skyBoundary, paramDict.get(self.JOINPARAMS))
         filteredWcs = Wcs.objects.all().filter(**joinQuery)
-        metadataIds = set([metadataId['metadata'] for metadataId in filteredWcs.values('metadata')])
-        metadatas = self.getMetadatasByIds(metadataIds)
-        return metadatas
+        print(list(filteredWcs)[0].__dict__)
 
     def queryByParams(self, paramDict):
 
@@ -191,30 +188,12 @@ class MetadataDAO(APIView):
 
     # Helpers -----------------------------------------
     def makeJoinQueryForReverseLookup(self, skyBoundary, paramDict):
-        """
-        Helper function for formatting the queryDict so that it could lookups that span relationship.
-
-        Parameters
-        ----------
-        skyBoundary: The dict that contains all wcs query info
-        paramDict: the unprocessed paramDict which contains queryInfo from join query
-        """
-
         result = dict()
         for key, val in paramDict.items():
-            if not self.isWcsParam(key):
-                result["metadata__" + key] = val
-
+            result["metadata__" + key] = val
         result.update(skyBoundary)
 
         return result
-
-    def isWcsParam(self, key):
-        """
-        Helper function for verifying if the given key is a wcs query
-
-        """
-        return key == self.RALOW or key == self.RAHIGH or key == self.DECLOW or key == self.DECHIGH
 
     def getMetadatasByIds(self, metadataIds):
         """
