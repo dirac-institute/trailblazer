@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 
+from django.db.models import Q
+from django.db.models import F
 
 class MetadataForm(forms.Form):
 
@@ -117,7 +119,9 @@ class MetadataDAO(APIView):
         skyBoundary = self.makeFilterDictForWcs(upperLeft, lowerRight)
         joinQuery = self.makeJoinQueryForReverseLookup(skyBoundary, paramDict.get(self.JOINPARAMS))
         filteredWcs = Wcs.objects.all().filter(**joinQuery)
-        print(list(filteredWcs)[0].__dict__)
+        metadataIds = set([metadataId['metadata'] for metadataId in filteredWcs.values('metadata')])
+        metadatas = self.getMetadatasByIds(metadataIds)
+        return metadatas
 
     def queryByParams(self, paramDict):
 
@@ -191,6 +195,7 @@ class MetadataDAO(APIView):
         result = dict()
         for key, val in paramDict.items():
             result["metadata__" + key] = val
+
         result.update(skyBoundary)
 
         return result
@@ -227,6 +232,8 @@ class MetadataDAO(APIView):
             A query dictionary that goes can go into the querySet.filter function
         """
 
+        #TODO change the dict to use Q and F to find either center pixel is in the box,
+        # or if the center pixel is within distance r with the boundary points
         return {
                 "wcs_center_x__gte": upperLeft["x"],
                 "wcs_center_x__lte": lowerRight["x"],
