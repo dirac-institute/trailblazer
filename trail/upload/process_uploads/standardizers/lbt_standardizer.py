@@ -1,6 +1,3 @@
-"""
-Class that facilitates header metadata translation for Large Binocular Telescope Observatory
-"""
 
 from datetime import datetime, timedelta, timezone
 
@@ -12,6 +9,14 @@ __all__ = ["LbtStandardizer", ]
 
 
 class LbtStandardizer(HeaderStandardizer):
+    """
+    Class that facilitates header metadata translation for Large Binocular Telescope Observatory
+
+    Parameters
+    ----------
+    header: 'astropy.io.fits.header.Header'
+        The header file for the FITS image
+    """
 
     name = "large_binocular_telescope_standardizer"
     priority = 1
@@ -21,12 +26,31 @@ class LbtStandardizer(HeaderStandardizer):
 
     @classmethod
     def canStandardize(self, header, **kwargs):
+        """Determines whether standardizer can standardizer a header file
+
+        Parameters
+        ----------
+        header: 'astropy.io.fits.header.Header'
+            FITS header file for image
+
+        Returns
+        -------
+        can_standardize: 'bool'
+            Whether standardizer can standardize
+        """
         origin = header.get("ORIGIN", False)
         if origin and "LBT Observatory" == origin:
             return True
         return False
 
     def standardizeMetadata(self):
+        """Standardizes metadata from header of the FITS file
+
+        Returns
+        -------
+        metadata: 'upload.models.Metadata'
+            The metadata
+        """
         DATE_OBS = self.header["DATE_OBS"]
         EXPTIME = self.header["EXPTIME"]
         begin = datetime.strptime(DATE_OBS, "%Y-%m-%dT%H:%M:%S.%f")
