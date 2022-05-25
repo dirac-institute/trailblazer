@@ -2,6 +2,9 @@ from django.test import TestCase
 from upload.models import Metadata
 from upload.models import UploadInfo, Wcs
 from query.views import MetadataDAO
+from coordinates import getXYZFromWcs, getRaDecFromXYZ
+import numpy as np
+
 # Create your tests here.
 
 
@@ -73,3 +76,17 @@ class MetadataQueryTest(TestCase):
         response = self.metadataDao.queryBySpecifiedSky(queryParam)
 
         self.assertEqual(len(response), 1)
+
+    def testCoordinateConversion(self):
+        ra = 200 * np.pi / 180
+        dec = 87 * np.pi / 180
+
+        cartersian = getXYZFromWcs(ra, dec)
+
+        self.assertTrue(abs(cartersian["x"] - (-0.049) < 0.1))
+        self.assertTrue(abs(cartersian["y"] - (-0.018) < 0.1))
+        self.assertTrue(abs(cartersian["z"] - (0.9986) < 0.1))
+
+        backToPolar = getRaDecFromXYZ(cartersian["x"], cartersian["y"], cartersian["z"])
+        self.assertTrue(abs(backToPolar["ra"] - ra < 0.1))
+        self.assertTrue(abs(backToPolar["dec"] - dec < 0.1))

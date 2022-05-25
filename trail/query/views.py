@@ -3,11 +3,11 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from upload.models import Metadata
 from upload.models import Wcs
-import numpy as np
 from upload.serializers import MetadataSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from coordinates import getXYZFromWcs
 
 
 class MetadataForm(forms.Form):
@@ -112,10 +112,14 @@ class MetadataDAO(APIView):
 
         Parameters
         ----------------
-        raLow: the lower bound for ra
-        raHigh: the upper bound for ra
-        decLow: the lower bound for dec
-        decHigh: the upper bound for dec
+        raLow: float
+            the lower bound for ra
+        raHigh: float
+            the upper bound for ra
+        decLow: float
+            the lower bound for dec
+        decHigh: float
+            the upper bound for dec
 
         Returns
         -------
@@ -130,10 +134,10 @@ class MetadataDAO(APIView):
         if self.isWcsQueryParamMissing(paramDict):
             return []
 
-        lowerRight = self.getXYZFromWcs(float(paramDict.get(self.RALOW)),
-                                        float(paramDict.get(self.DECLOW)))
-        upperLeft = self.getXYZFromWcs(float(paramDict.get(self.RAHIGH)),
-                                       float(paramDict.get(self.DECHIGH)))
+        lowerRight = getXYZFromWcs(float(paramDict.get(self.RALOW)),
+                                   float(paramDict.get(self.DECLOW)))
+        upperLeft = getXYZFromWcs(float(paramDict.get(self.RAHIGH)),
+                                  float(paramDict.get(self.DECHIGH)))
 
         filteredWcs = Wcs.objects.all().filter(**self.makeFilterDictForWcs(upperLeft, lowerRight))
         # for every wcs, find the metadata id
@@ -146,6 +150,10 @@ class MetadataDAO(APIView):
         """
         Helper function for getting metadata objects that matches the ids specified
 
+        Parameters
+        ----------
+        metadaIds: list
+            A list of metadata id that we need to fetch
         """
         result = []
         for id in metadataIds:
@@ -154,8 +162,20 @@ class MetadataDAO(APIView):
 
     def makeFilterDictForWcs(self, upperLeft, lowerRight):
         """
-        Helper function for putting the sky boundary into a dictionary that could be pass into querySet.filter()
+        Helper function for putting the sky boundary into a dictionary
+        that could be pass into querySet.filter()
 
+        Parameters
+        ----------
+        upperLeft: dictonary
+            The upper left boundary for the sky specified
+        lowerRight: dictionary
+            The lower right boundary for the sky specified
+
+        Return
+        ------
+        Dictionary
+            A query dictionary that goes can go into the querySet.filter function
         """
         return {
                 "wcs_center_x__gte": upperLeft["x"],
@@ -166,21 +186,18 @@ class MetadataDAO(APIView):
                 "wcs_center_z__gte": lowerRight["z"]
                 }
 
-    def getXYZFromWcs(self, ra, dec):
-        """
-        Convert ra and dec into xyz coordinates
-
-        """
-        x = np.cos(dec) * np.cos(ra)
-        y = np.cos(dec) * np.sin(ra)
-        z = np.sin(dec)
-
-        return {"x": x, "y": y, "z": z}
-
     def isWcsQueryParamMissing(self, queryParams):
         """
         Check if the sky boundary is correctly specified
 
+        Parameters
+        ----------
+        queryParams: Dictionary
+            A dictionary that contains the boundary for the sky
+
+        Return
+        ------
+        Return true if any of the param needed is not there
         """
         return not (self.RALOW in queryParams and self.RAHIGH in queryParams
                     and self.DECHIGH in queryParams and self.DECLOW in queryParams)
