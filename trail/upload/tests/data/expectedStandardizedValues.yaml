@@ -569,3 +569,72 @@ cutout_bi327715.fits:
     wcs_corner_x: 0.6228509496180825
     wcs_corner_y: -0.2394182147117784
     wcs_corner_z: -0.744805755230233
+cutout_lbcb.20210407.120357.fits:
+  runProcessing: 
+    True
+  metadata:
+    processor_name: 'MultiExtensionFits'
+    standardizer_name: 'large_binocular_telescope_standardizer'
+    instrument: 'LBC_BLUE'
+    telescope: 'LBT-SX'
+    science_program: null
+    obs_lon: -109.889
+    obs_lat: 32.7013
+    obs_height: 3221
+    datetime_begin: '2021-04-07T12:03:57.256000+00:00'
+    datetime_end: '2021-04-07T12:05:57.526000+00:00'
+    exposure_duration: 120.27
+    filter_name: 'g-SLOAN'
+  wcs:
+    - wcs_radius: 0.00012141152117128689
+      wcs_center_x: -0.777503444800708
+      wcs_center_y: -0.5658370054022952
+      wcs_center_z: 0.2744392039057018
+      wcs_corner_x: -0.7774515488026796
+      wcs_corner_y: -0.5659335910396581
+      wcs_corner_z: 0.27438706200779844
+    - wcs_radius: 0.00012141121109244698
+      wcs_center_x: -0.7761450743325468
+      wcs_center_y: -0.5676984309250546
+      wcs_center_z: 0.2744400027593583
+      wcs_corner_x: -0.7760929841589164
+      wcs_corner_y: -0.56779487444028
+      wcs_corner_z: 0.2743877921822589
+    - wcs_radius: 0.00012140974056399126
+      wcs_center_x: -0.7747825888536086
+      wcs_center_y: -0.5695568332460579
+      wcs_center_z: 0.2744393443222424
+      wcs_corner_x: -0.7747303054661585
+      wcs_corner_y: -0.5696531331993587
+      wcs_corner_z: 0.2743870653446815
+    - wcs_radius: 0.00012141161481384379
+      wcs_center_x: -0.7770261532628296
+      wcs_center_y: -0.564099240770843
+      wcs_center_z: 0.27932490706581825
+      wcs_corner_x: -0.7770825400419963
+      wcs_corner_y: -0.5640732163565952
+      wcs_corner_z: 0.27922058045746745
+cutout_GMOSN.i.2021-01-17T14_35_11.5_2PAC.fits:
+  runProcessing:
+    True
+  metadata: 
+    processor_name: 'SingleExtensionFits'
+    standardizer_name: 'gemini_north_standardizer'
+    instrument: 'Hamamatsu'
+    telescope: 'Gemini North'
+    science_program: null
+    obs_lon: -155.47
+    obs_lat: 19.82
+    obs_height: 4213
+    datetime_begin: '2021-01-17T14:35:11.500000+00:00'
+    datetime_end: '2021-01-17T14:36:01.500000+00:00'
+    exposure_duration: 50.0
+    filter_name: 'i'
+  wcs: 
+    wcs_radius: 0.00016994914245495142
+    wcs_center_x: -0.9589130631541409
+    wcs_center_y: 0.19019315507298595
+    wcs_center_z: 0.21050487185745978
+    wcs_corner_x: -0.9588934993887256
+    wcs_corner_y: 0.1901221815546324
+    wcs_corner_z: 0.2106580473443905
