@@ -8,9 +8,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 
-from django.db.models import Q
-from django.db.models import F
-
 
 class MetadataForm(forms.Form):
 
@@ -96,20 +93,19 @@ class MetadataDAO(APIView):
             the lower bound for dec
         decHigh: float
             the upper bound for dec
-        params: Dictionary
-            the dictionary in the paramDict that contains the criterias for metadata object  Ex.(id = 3, processName=fits)
-        
-        
+        metadataParams: key-value pairs
+            the key-value pairs in the paramDict that contains the criterias for metadata object
+                Ex.(id = 3, processName=fits)
 
         Returns
         -------
         results: list of metadata objects
             a list of metadata objects that matches the param specified by users and is in the boundary box.
 
-        Note
+        Notes
         -----
         If users do not specify a dict, the method will return all metadatas.
-        If users do not specify a params, no metadata would be return.
+        If users do not specify a params, it will return an empty list.
         """
         if self.isWcsQueryParamMissing(paramDict):
             return []
@@ -120,7 +116,7 @@ class MetadataDAO(APIView):
                                        float(paramDict.get(self.DECHIGH)))
 
         skyBoundary = self.makeFilterDictForWcs(upperLeft, lowerRight)
-        joinQuery = self.makeJoinQueryForReverseLookup(skyBoundary, paramDict.get(self.JOINPARAMS))
+        joinQuery = self.makeJoinQueryForReverseLookup(skyBoundary, paramDict)
         filteredWcs = Wcs.objects.all().filter(**joinQuery)
         metadataIds = set([metadataId['metadata'] for metadataId in filteredWcs.values('metadata')])
         metadatas = self.getMetadatasByIds(metadataIds)
@@ -195,14 +191,30 @@ class MetadataDAO(APIView):
 
     # Helpers -----------------------------------------
     def makeJoinQueryForReverseLookup(self, skyBoundary, paramDict):
+        """
+        Helper function for formatting the queryDict so that it could lookups that span relationship.
+
+        Parameters
+        ----------
+        skyBoundary: The dict that contains all wcs query info
+        paramDict: the unprocessed paramDict which contains queryInfo from join query
+        """
 
         result = dict()
         for key, val in paramDict.items():
-            result["metadata__" + key] = val
-        
+            if not self.isWcsParam(key):
+                result["metadata__" + key] = val
+
         result.update(skyBoundary)
 
         return result
+
+    def isWcsParam(self, key):
+        """
+        Helper function for verifying if the given key is a wcs query
+
+        """
+        return key == self.RALOW or key == self.RAHIGH or key == self.DECLOW or key == self.DECHIGH
 
     def getMetadatasByIds(self, metadataIds):
         """
@@ -236,8 +248,6 @@ class MetadataDAO(APIView):
             A query dictionary that goes can go into the querySet.filter function
         """
 
-        #TODO change the dict to use Q and F to find either center pixel is in the box,
-        # or if the center pixel is within distance r with the boundary points
         return {
                 "wcs_center_x__gte": upperLeft["x"],
                 "wcs_center_x__lte": lowerRight["x"],
@@ -341,9 +351,62 @@ class WcsQuery(APIView):
 
         Notes
         -------------------
-        if the parameters is not specified correctly, will return a bad request
+        if the parameters is not specified correctly, will return a empty list
         """
         metadatas = self.metadataDao.queryBySpecifiedSky(request.query_params)
+        serializedMetadata = MetadataSerializer(metadatas, many=True)
+
+        return Response(
+                            serializedMetadata.data,
+                            status=status.HTTP_200_OK,
+                        )
+
+
+class WcsJoinMetadataQuery(APIView):
+    """
+    Support Query that returns metadata entry that is in the part of sky and matches
+    the metadata params specified by users.
+
+    Attributes
+    ----------
+    metadataDao: MetadataDao
+        Data accessing objects for metadata table
+
+    """
+
+    def __init__(self):
+        self.metadataDao = MetadataDAO()
+
+    def get(self, request):
+        """
+        Returns the Metadata entries that meets both of the sky specified and the params given by the user
+
+        Parameters
+        ----------
+        raLow: float
+            the lower bound for ra
+        raHigh: float
+            the upper bound for ra
+        decLow: float
+            the lower bound for dec
+        decHigh: float
+            the upper bound for dec
+        metadataParams: key-value pairs
+            the key-value pairs in the paramDict that contains the criterias for metadata object
+                Ex.(id = 3, processName=fits)
+
+        Returns
+        -------
+        results: list of metadata objects
+            a list of metadata objects that matches the param specified by users and is in the boundary box.
+
+        Notes
+        -----
+        If users do not specify a dict, the method will return all metadatas.
+        If users do not specify a params, it will return an empty list.
+        """
+
+        metadatas = self.metadataDao.queryJoinWcsAndMetadataParam(request.query_params)
         serializedMetadata = MetadataSerializer(metadatas, many=True)
 
         return Response(
