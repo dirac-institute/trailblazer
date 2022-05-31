@@ -94,7 +94,7 @@ class MetadataDAO(APIView):
         results: list of metadata objects
             a list of metadata objects that matches the param specified by users.
 
-        Note
+        Notes
         -----
         If users do not specify a dict, the method will return all metadats
         """
@@ -126,9 +126,9 @@ class MetadataDAO(APIView):
         metadatas: list
             list of metadatas that is in the part of sky specified by the users
 
-        Note
+        Notes
         -------------------
-        if the parameters is not specified correctly, will return an empty result
+        if the parameters is not specified correctly, will return an empty list
 
         """
         if self.isWcsQueryParamMissing(paramDict):
@@ -278,7 +278,7 @@ class WcsQuery(APIView):
         decLow: the lower bound for dec
         decHigh: the upper bound for dec
 
-        Note
+        Notes
         -------------------
         if the parameters is not specified correctly, will return a bad request
         """

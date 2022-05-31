@@ -24,6 +24,11 @@ class MetadataSerializer(DynamicMetadataSerializer):
     """
     A MetadataSerializer that takes an additional `fields` argument that
     controls which fields should be displayed.
+
+    Arguments
+    ---------------
+    fields : list[str]
+        List of keys of metadata objects that will be serialized into a response.
     """
     class Meta:
         model = Metadata
