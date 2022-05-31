@@ -86,11 +86,10 @@ class MetadataQueryTest(TestCase):
         self.assertTrue(abs(backToPolar["ra"] - ra < 0.1))
         self.assertTrue(abs(backToPolar["dec"] - dec < 0.1))
 
+
     def testBasicJoinQuery(self):
         """Tests getMeatadataInSpecifiedSky in metadataDao is functional"""
-
-        metadataParams = {"processor_name__icontains": "fits"}
-        paramDict = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000, "metadataParams": metadataParams}
+        paramDict = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000, "processor_name__icontains": "fits"}
         response = self.metadataDao.queryJoinWcsAndMetadataParam(paramDict)
 
         self.assertEqual(len(response), 1)
