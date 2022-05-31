@@ -15,7 +15,6 @@ import os
 
 from . import config
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -45,6 +44,13 @@ SMALL_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.small_r
 LARGE_THUMB_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.thumbnails.large_root)
 DATA_ROOT = siteConfig.resolveAbsFromOrigin(siteConfig.data_root)
 
+
+API_DOC_TITLE = siteConfig.api_doc.title
+API_DOC_DEFAULT_VER = siteConfig.api_doc.version
+API_DOC_DESCRIPTION = siteConfig.api_doc.description
+API_DOC_CONTACT_EMAIL = siteConfig.api_doc.contact_email
+API_DOC_LICENSE_NAME = siteConfig.api_doc.license.name
+API_DOC_LICENSE_URL = siteConfig.api_doc.license.url
 
 STATIC_ROOT = DATA_ROOT
 STATIC_URL = '/static/'
@@ -88,8 +94,16 @@ INSTALLED_APPS = [
     'upload',
     'query',
     'trail',
+    'rest_framework',
+    'drf_yasg',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
 
 LOGGING = loggingConfig.asDict()
 
