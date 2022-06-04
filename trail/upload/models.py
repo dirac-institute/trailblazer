@@ -205,7 +205,7 @@ class Wcs(models.Model, StandardizedKeysMixin):
     """Standardized keys that are tested only in approximate equality."""
 
     # same as above, cascading can orphan WCS entries
-    metadata = models.ForeignKey(Metadata, related_name='metadata', on_delete=models.PROTECT)
+    metadata = models.ForeignKey(Metadata, on_delete=models.PROTECT)
 
     wcs_radius = models.FloatField("distance between center and corner pixel")
 
