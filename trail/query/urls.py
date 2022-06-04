@@ -1,6 +1,7 @@
 from query.views import print_results, index
 from query.rest_views import MetadataView, WcsView
 from django.urls import path
+from django.contrib import admin
 
 
 """Route query URLs to query views here."""
