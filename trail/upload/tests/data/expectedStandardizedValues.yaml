@@ -638,3 +638,27 @@ cutout_GMOSN.i.2021-01-17T14_35_11.5_2PAC.fits:
     wcs_corner_x: -0.9588934993887256
     wcs_corner_y: 0.1901221815546324
     wcs_corner_z: 0.2106580473443905
+cutout_LMI.VR.2021-06-01T04_06_03.67_1PA.fits:
+  runProcessing:
+    True
+  metadata: 
+    processor_name: 'SingleExtensionFits'
+    standardizer_name: 'lowell_discovery_telescope_standardizer'
+    instrument: 'Large Monolithic Imager'
+    telescope: 'Lowell Discovery Telescope'
+    science_program: null
+    obs_lon: 111.4223
+    obs_lat: 34.7444
+    obs_height: 2360
+    datetime_begin: '2021-06-01T04:06:03.670000+00:00'
+    datetime_end: '2021-06-01T04:11:03.670000+00:00'
+    exposure_duration: 300.0
+    filter_name: 'VR'
+  wcs:
+    wcs_radius: 0.00016455022838291115
+    wcs_center_x: -0.8787358657518506
+    wcs_center_y: 0.44016463058488914
+    wcs_center_z: 0.18460329418353755
+    wcs_corner_x: -0.8788071588934548
+    wcs_corner_y: 0.44007024803763367
+    wcs_corner_z: 0.18448890012602304
