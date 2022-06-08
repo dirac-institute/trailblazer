@@ -331,8 +331,8 @@ class FitsProcessor(UploadProcessor):
         else:
             standardizedResult.extendThumbnails(tmpResult)
 
-        if len(standardizedResult.thumbnails) != len(standardizedResult.wcs):
-            raise RuntimeError("Can not unambiguously assign thumbnails to WCSs!")
+        # if len(standardizedResult.thumbnails) != len(standardizedResult.wcs):
+        #     raise RuntimeError("Can not unambiguously assign thumbnails to WCSs!")
 
         for thumb, wcs in zip(standardizedResult.thumbnails, standardizedResult.wcs):
             thumb.wcs = wcs
