@@ -64,7 +64,7 @@ class LbtFits(MultiExtensionFits):
 
     def createThumbnails(self, scaling=(4, 10)):
 
-        # NAXIS1  =                 2304 / Image x size                                   
+        # NAXIS1  =                 2304 / Image x size
         # NAXIS2  =                 4608 / Image y size
         #center :3,466
 
@@ -82,15 +82,17 @@ class LbtFits(MultiExtensionFits):
             elif '3' in ccd.header['EXTNAME']:
                 img[:2304, -4608:]= ccddata.T
             else:
-                img[1162:1162+4608, :2304] = ccddata
+                img[1162:1162+4608, :2304] = np.flip(ccddata)
 
-        img = Image.fromarray(img, 'L')
+        img = (img - img.min()) * 255/(img.max() - img.min())
+        img = Image.fromarray(img.astype(np.uint8), 'L')
+
         newY, newX = int(ydim/2), int(xdim/2)
         img = img.resize((newY, newX), Image.ANTIALIAS)
         newY, newX = int(ydim/4), int(xdim/4)
         smallImg = np.asarray(img.resize((newY, newX), Image.ANTIALIAS))
         img = np.asarray(img)
-        breakpoint()
+
         relSmallPath = self.uploadedFile.basename+'_plane_small.jpg'
         relLargePath = self.uploadedFile.basename+'_plane_large.jpg'
         thumb = Thumbnails(large=relLargePath, small=relSmallPath)
