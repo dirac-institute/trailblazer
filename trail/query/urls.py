@@ -1,4 +1,5 @@
-from query.views import print_results, index, MetadataQuery, WcsQuery, WcsJoinMetadataQuery
+from query.views import print_results, index
+from query.rest_views import MetadataView, WcsView
 from django.urls import path
 
 
@@ -6,9 +7,9 @@ from django.urls import path
 
 
 urlpatterns = [
-   path('', index, name='query'),
-   path('results', print_results, name='results'),
-   path('getMetadata', MetadataQuery.as_view()),
-   path('getMetadataByWcs', WcsQuery.as_view()),
-   path('getWcsJoinMetadata', WcsJoinMetadataQuery.as_view()),
+    path('', index, name='query'),
+    path('results', print_results, name='results'),
+    path('metadata', MetadataView.as_view(), name="metadata"),
+    path('wcs', WcsView.as_view(), name="wcs"),
+
 ]
