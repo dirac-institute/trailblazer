@@ -3,10 +3,24 @@
 {% block upload-nav-state%}active{% endblock %}
 
 {% block head.extend %}
+
 {{block.super}}
 {% endblock %}
 
+
 {% block content %}
+<!-- Post -->
+<section class="post">
+    <header class="major">
+            <h1>Upload</h1>
+            <p>We welcome contributions of satellite-streaked FITS files to Trailblazer.<br />
+               Reduced and photometrically calibrated images are preferred, but not required.<br />
+               By uploading, you agree the files will be used in accordance with a
+               <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a> license.
+            </p>
+    </header>
+</section>
+
 <div id="upload-box" class="text-center" style="width: 100%">
     {{ form_as_html }}
 </div>
