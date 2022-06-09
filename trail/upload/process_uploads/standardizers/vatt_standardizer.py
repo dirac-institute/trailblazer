@@ -62,11 +62,17 @@ class VattStandardizer(HeaderStandardizer):
         begin = begin.replace(tzinfo=timezone.utc)
         end = begin + timedelta(seconds=EXP)
 
+        #The following logic will search the comments of the 
+        #header file to find the filter used in the telescope
         expr = re.compile(r'Filter(.*)')
         comment = str(self.header['COMMENT']).split('\n')
-        matches = [expr.match(line).groups()[0] for line in comment]
+        matches = []
+        for line in comment:
+            if expr.match(line) is not None:
+                matches.append(expr.match(line).groups()[0])
+
         if len(matches) == 1:
-            FILTER = matches[0]
+            FILTER = matches[0].strip()
         else:
             FILTER = None
         
@@ -82,7 +88,7 @@ class VattStandardizer(HeaderStandardizer):
             telescope=self.header["TELESCOP"][3:-1].strip(),
             instrument=self.header["INSTRUME"][3:-1].strip(),
             exposure_duration=self.header["EXPTIME"],
-            filter = FILTER
+            filter_name = FILTER
         )
 
         return meta
