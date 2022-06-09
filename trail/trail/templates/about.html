@@ -12,29 +12,91 @@
 		</header>
 		-->
 
-		<h2>The problem</h2>
-		<p>An increasing population of commercial low-Earth orbit satellites is beginning to significantly impact ground-based astronomical observations.
-			For an overview of the situation and its impacts to astronomy and more, see <a href=https://www.nature.com/articles/s41550-022-01655-6>Lawrence et al. 2022</a>.
-			To minimize some impacts, we aim to enable quantitative studies of streaks from satellites in images over time.</p>
+		<h2>The problem &#128752;</h2>
+		<p>A rapidly increasing population of commercial low-Earth orbit (LEO) satellites is beginning to impact ground-based astronomy.
+			LEO satellites reflect sunlight and cause bright streaks in telescope images.
+			For an overview of the situation and its impacts to optical astronomy and beyond, see <a href=https://ui.adsabs.harvard.edu/abs/2022NatAs...6..428L/abstract>Lawrence et al. 2022</a>.<br /><br />
+		<figure>
+			<span class="image left">
+				<img src="../static/images/lawrence2022_fig1.png" alt="Plot showing increasing numbers of tracked objects in orbit from 1957 to 2021." />
+				<figcaption><br />Growth of all tracked objects in orbital space over time.
+					“Dead” is derelict satellites, “Leftovers” is parts such as rocket stages, and “Debris” is smaller tracked material.
+					Commercial satellite constellations appear in the rapid “Active” line increase, and are much brighter than typical leftovers or debris.
+					Figure 1 from Lawrence et al. 2022.</figcaption>
+			</span>
+		</figure>
+			The impacts on ground-based observational astronomy are expected to be significant — especially for large facilities with wide fields of view, like <a href="https://www.lsst.org/">Vera C. Rubin Observatory</a>.
+			Regulatory filings imply the existence of a commercial LEO satellite population as large as 100,000 by 2030.
+			For comparison, in late 2018, there were only about 2,000 active satellites.<br /><br />
+
+			While astronomers are in dialog with several satellite operator companies, and sincerely appreciate their efforts to darken their satellites, voluntary operator mitigations alone cannot solve the larger issue.
+			In addition, many image reduction pipelines are able to detect and mask (effectively ignore) most streaks from satellites, but it is impossible to erase them entirely.<br /><br />
+
+			Bright satellites are most numerous at twilight, and some science investigations like near-Earth asteroid searches are only possible at twilight.
+			Subtle effects like non-linear crosstalk and spatially correlated noise can further ruin specific science investigations.
+			And as much as astronomers would love more space telescopes, they are not a panacea&mdash;<a href="https://bigthink.com/starts-with-a-bang/ground-based-astronomy/">ground- and space-based telescopes are complementary</a>.
+			Even if funds existed to design, build, and launch dozens of space telescopes beyond LEO, some groundbreaking science can only be accomplished from Earth-based facilties.<br /><br />
+
+			As the <a href="https://baas.aas.org/pub/2021i0205">SATCON2 Executive Summary (2021)</a> put it,
+			<blockquote>We are on the threshold of fundamentally changing a natural resource that since our earliest ancestors has been a source of wonder, storytelling, discovery, and understanding of ourselves and our origins.
+			We transform that at our peril.</blockquote>
+
+			Promptly addressing this urgent issue is crucial to maximize the scientific return of ground-based astronomy worldwide.
+	    </p>
 		<hr />
 
-		<h2>Our approach</h2>
-		<p>Trailblazer is collecting and sharing recent (c. 2020-present) telescope images in the FITS file format known to be affected by satellite streaks.
-			Trailblazer is presently in a prototype stage, and may not successfully upload images from every telescope yet.<br /><br />
-
+		<h2>Our approach &#129321;</h2>
+		<p><strong>To minimize some impacts on astronomy, Trailblazer aims to enable quantitative studies of streaks from satellites in images over time.</strong>
+			Trailblazer collects and shares recent (c. 2020&ndash;present) telescope images in the <a href="https://fits.gsfc.nasa.gov/fits_home.html">FITS file format</a> known to contain one or more satellite streaks.<br /><br />
+			<div class="box">
+				&#128680; <em>Trailblazer is presently in a prototype stage, and may not successfully upload images from every telescope yet</em> &#128680;
+			</div>
 		    Trailblazer stores uploaded FITS images in the cloud and saves key header information in a metadata database.
-			Users can run queries to find satellite-streaked images by time, observer location, sky position (solved by astrometry.net when necessary), telescope, instrument, and band or filter.
-			To better disseminate the impact of satellite streaks on astronomy, each image also appears in a gallery for users to browse.
-			Trailblazer is designed to deal with the fast-changing and growing satellite population, and it is accessible to astronomers and any other stakeholders to collaborate on mitigating the impact of satellite streaks.
-			If you encounter an upload or query failure while using the site, please <a href="https://github.com/dirac-institute/trailblazer/issues">open a GitHub issue</a>.</p>
+			In the future, it will support linking to images that reside in external data repositories.
+			Users can run queries to find satellite-streaked images by time, observatory location, sky position, and other key metadata parameters.<br /><br />
+
+			To better disseminate the impact of satellite streaks on astronomy, each uploaded image also appears in a gallery.
+			Trailblazer will always be public, free, and <a href="https://github.com/dirac-institute/trailblazer">open source</a>, and aims to enable astronomers and any other stakeholders to collaborate on mitigating the impact of satellite streaks.<br /><br />
+		</p>
 		<hr />
 
-		<h2>How to contribute</h2>
-		<p>WIP</p>
+		<h2>How to contribute &#128301;</h2>
+		<p>There are two main Trailblazer user roles:
+			<ol>
+				<li>Astronomers who intentionally or unintentionally observe satellites in their images and wish to salvage some value from them by contributing to Trailblazer, and
+				</li>
+				<li>Groups seeking to characterize the extent of the satellite streak problem who need access to a dataset to better quantify and mitigate impacts as the satellite population changes.
+				</li>
+			</ol>
+
+			If you encounter an upload or query failure while using the site, please <a href="https://github.com/dirac-institute/trailblazer/issues">open a GitHub issue</a>.<br /><br />
+
+			Please <a href="mailto:mrawls@uw.edu, dinob@uw.edu?subject=Trailblazer contribution inquiry">contact us directly</a> if&#8230;
+			<ul>
+				<li>You have more than about 100 images you'd like to upload</li>
+				<li>You have experience with Django and Python and would like to volunteer as a web developer</li>
+			</ul>
+		</p>
 		<hr />
 
-		<h2>The team</h2>
-		<p>WIP</p>
+		<h2>The team &#x1F468;&#x200D;&#x1F4BB;</h2>
+		<p>Trailblazer was conceived and initially developed by <a href="https://staff.washington.edu/mrawls/">Meredith Rawls</a> and <a href="https://github.com/dinobektesevic">Dino Bekte&scaron;evi&#x107;</a>.<br /><br />
+
+			Other contributing team members include:
+			<ul>
+				<li>Siegfried Eggl, University of Illinois at Urbana Champaign (UIUC)</li>
+				<li>Michele Bannister, University of Canterbury New Zealand (UCNZ)</li>
+				<li>Jasmine Watt, UW astronomy undergraduate student</li>
+				<li>Weifeng Li, UW CSE undergraduate student</li>
+				<li>Abas Hersi, UW CSE undergraduate student</li>
+				<li>Anthony Rihani, UIUC aerospace undergraduate student</li>
+				<li>Erin Howard, WWU physics/astronomy undergraduate student</li>
+				<li>Joe Kent, UCNZ undergraduate student</li>
+		    </ul>
+
+			Trailblazer is hosted by the Institute for Data-intensive Research in Astrophysics and Cosmology (<a href="https://dirac.astro.washington.edu">DiRAC</a>) at the University of Washington,
+			and is part of SatHub at the International Astronomical Union Centre for the Protection of the Dark and Quiet Sky from Satellite Constellation Interference (<a href="https://cps.iau.org">IAU CPS</a>).<br /><br />
+			</p>
 		<hr />
 
 <!-- Example HTML things
