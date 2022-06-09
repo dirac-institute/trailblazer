@@ -74,13 +74,14 @@ class LbtFits(MultiExtensionFits):
 
         img = np.zeros((xdim, ydim))
         for ccd in self.exts:
+            # breakpoint()
             ccddata = self.normalizeImage(ccd.data)
             if '1' in ccd.header['EXTNAME']:
-                img[-2304:, -4608:] = ccddata.T
+                img[-2304:, -4608:] = np.fliplr(ccddata.T)
             elif '2' in ccd.header['EXTNAME']:
-                img[2304+padding:2*2304+padding, -4608:] = ccddata.T
+                img[2304+padding:2*2304+padding, -4608:] = np.fliplr(ccddata.T)
             elif '3' in ccd.header['EXTNAME']:
-                img[:2304, -4608:]= ccddata.T
+                img[:2304, -4608:]= np.fliplr(ccddata.T)
             else:
                 img[1162:1162+4608, :2304] = np.flip(ccddata)
 
