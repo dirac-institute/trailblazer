@@ -1,16 +1,13 @@
 """
-Class for processing FITS files processed by DECam Community Pipelines.
+Class for processing FITS files processed by Large Binocular Telescope.
 
 These pipelines will bundle entire focal planes into a single file, which can
 be successfully processed by the MultiExtensionFits class, but for which we can
 create better visualisations.
-
-Note that the focusing and guiding chips are not processed, but are usually
-present in Community Pipelines products.
 """
 
 
-from PIL import Image, ImageOps
+from PIL import Image
 import numpy as np
 
 from .multi_extension_fits import MultiExtensionFits
@@ -18,6 +15,8 @@ from upload.models import Thumbnails
 
 
 __all__ = ["LbtFits", ]
+
+
 class LbtFits(MultiExtensionFits):
 
     name = "LbtFits"
@@ -66,7 +65,7 @@ class LbtFits(MultiExtensionFits):
 
         # NAXIS1  =                 2304 / Image x size
         # NAXIS2  =                 4608 / Image y size
-        #center :3,466
+        # Center of image: 3,466
 
         padding = 10
         xdim = 2304*3 + 2*padding
@@ -74,14 +73,13 @@ class LbtFits(MultiExtensionFits):
 
         img = np.zeros((xdim, ydim))
         for ccd in self.exts:
-            # breakpoint()
             ccddata = self.normalizeImage(ccd.data)
             if '1' in ccd.header['EXTNAME']:
                 img[-2304:, -4608:] = np.fliplr(ccddata.T)
             elif '2' in ccd.header['EXTNAME']:
                 img[2304+padding:2*2304+padding, -4608:] = np.fliplr(ccddata.T)
             elif '3' in ccd.header['EXTNAME']:
-                img[:2304, -4608:]= np.fliplr(ccddata.T)
+                img[:2304, -4608:] = np.fliplr(ccddata.T)
             else:
                 img[1162:1162+4608, :2304] = np.flip(ccddata)
 
