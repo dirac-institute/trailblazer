@@ -573,7 +573,7 @@ cutout_lbcb.20210407.120357.fits:
   runProcessing: 
     True
   metadata:
-    processor_name: 'MultiExtensionFits'
+    processor_name: 'LbtFits'
     standardizer_name: 'large_binocular_telescope_standardizer'
     instrument: 'LBC_BLUE'
     telescope: 'LBT-SX'
