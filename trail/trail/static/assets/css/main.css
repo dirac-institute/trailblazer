@@ -186,7 +186,7 @@ input, select, textarea {
 
 	p {
 		text-align: justify;
-		margin: 0 0 2rem 0;
+		margin: 0 0 0 0;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -2961,7 +2961,7 @@ input, select, textarea {
 		}
 
 		header.major {
-			margin: 0 0 4rem 0;
+			margin: 0 0 0 0;
 			text-align: center;
 		}
 
@@ -3834,7 +3834,7 @@ input, select, textarea {
 			@media screen and (max-width: 1280px) {
 
 				#main > .post {
-					padding: 6rem 4rem 4rem 4rem ;
+					padding: 4rem 4rem 4rem 4rem ;
 				}
 
 			}
