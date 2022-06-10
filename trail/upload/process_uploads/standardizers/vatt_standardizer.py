@@ -53,7 +53,7 @@ class VattStandardizer(HeaderStandardizer):
             The metadata
         """
 
-        #The date and time are seperated in the header, I concatenate them together here
+        # The date and time are seperated in the header, I concatenate them together here
         DATE = self.header["DATE-OBS"]
         TIME = self.header["TIME-OBS"]
         DATEOBS = DATE + 'T' + TIME
@@ -62,8 +62,8 @@ class VattStandardizer(HeaderStandardizer):
         begin = begin.replace(tzinfo=timezone.utc)
         end = begin + timedelta(seconds=EXP)
 
-        #The following logic will search the comments of the 
-        #header file to find the filter used in the telescope
+        # The following logic will search the comments of the
+        # header file to find the filter used in the telescope
         expr = re.compile(r'Filter(.*)')
         comment = str(self.header['COMMENT']).split('\n')
         matches = []
@@ -75,20 +75,20 @@ class VattStandardizer(HeaderStandardizer):
             FILTER = matches[0].strip()
         else:
             FILTER = None
-        
+
         meta = Metadata(
-            obs_lon=-109.892107,#Longitude from google maps
-            obs_lat=32.701328,#Latitude from google maps
+            obs_lon=-109.892107,  # Longitude from google maps
+            obs_lat=32.701328,  # Latitude from google maps
             obs_height=self.header["ELEVAT"],
             datetime_begin=begin.isoformat(),
             datetime_end=end.isoformat(),
-            #Some of the instrument data has a weird format
-            #They begin with a =" and end with a ", the
-            #indices get rid of those extra characters
+            # Some of the instrument data has a weird format
+            # They begin with a =" and end with a ", the
+            # indices get rid of those extra characters
             telescope=self.header["TELESCOP"][3:-1].strip(),
             instrument=self.header["INSTRUME"][3:-1].strip(),
             exposure_duration=self.header["EXPTIME"],
-            filter_name = FILTER
+            filter_name=FILTER
         )
 
         return meta
