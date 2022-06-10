@@ -49,13 +49,13 @@ class RestQueryTest(APITestCase):
         )
         wcs1 = {
             'metadata': meta,
-            'wcs_radius': 1,
-            'wcs_center_x': 0.4,
-            'wcs_center_y': 0.3,
-            'wcs_center_z': 0.7,
-            'wcs_corner_x': 16,
-            'wcs_corner_y': 17,
-            'wcs_corner_z': 0.7
+            'radius': 1,
+            'center_x': 0.4,
+            'center_y': 0.3,
+            'center_z': 0.7,
+            'corner_x': 16,
+            'corner_y': 17,
+            'corner_z': 0.7
         }
 
         meta.save()
@@ -90,22 +90,20 @@ class RestQueryTest(APITestCase):
         url = reverse("metadata")
 
         # test querying /query/metadata just returns all of the data
-        response = self.client.get(url, {"fields": ["instrument", "telescope"],}, format="json")
+        response = self.client.get(url, {"instrument":"HSC", "fields": ["instrument", "telescope"],}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serialized = MetadataSerializer(Metadata.objects.all(), many=True, fields=["instrument", "telescope"])
         self.assertEqual(serialized.data, response.data)
 
-
-    def test_wcs_get(self):
-        """Tests basic Wcs REST queries."""
-        url = reverse("wcs")
-
-        # because they inherit from same basic view we do not have to be detailed here
-        response = self.client.get(url, {}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serialized = WcsSerializer(Wcs.objects.all(), many=True)
-        self.assertEqual(serialized.data, response.data)
-
+#    def test_wcs_get(self):
+#        """Tests basic Wcs REST queries."""
+#        url = reverse("wcs")
+#
+#        # because they inherit from same basic view we do not have to be detailed here
+#        response = self.client.get(url, {}, format="json")
+#        self.assertEqual(response.status_code, status.HTTP_200_OK)
+#        serialized = WcsSerializer(Wcs.objects.all(), many=True)
+#        self.assertEqual(serialized.data, response.data)
 
     def test_get_metadata_and_wcs(self):
         """Tests basic Wcs REST queries."""
@@ -139,6 +137,7 @@ class RestQueryTest(APITestCase):
         qparams = {"raLow":0, "raHigh":1, "decLow":0, "decHigh":1, "getWcs": True}
         response = self.client.get(url, qparams, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        #breakpoint()
-        #serialized = MetadataSerializer(Metadata.objects.all().prefetch_related("wcs"), many=True, keepWcs=True)
-        #self.assertEqual(serialized.data, response.data)
+
+        queryset, qparams = Metadata.query_sky_region(qparams)
+        serialized = MetadataSerializer(queryset, many=True, keepWcs=True)
+        self.assertEqual(serialized.data, response.data)

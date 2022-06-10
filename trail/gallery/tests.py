@@ -35,13 +35,13 @@ class GalleryImageTestCase(TestCase):
         for i in range(100):
             wcs = Wcs(
                 metadata=meta,
-                wcs_radius=1.0,
-                wcs_center_x=1.0,
-                wcs_center_y=1.0,
-                wcs_center_z=1.0,
-                wcs_corner_x=1.0,
-                wcs_corner_y=1.0,
-                wcs_corner_z=1.0
+                radius=1.0,
+                center_x=1.0,
+                center_y=1.0,
+                center_z=1.0,
+                corner_x=1.0,
+                corner_y=1.0,
+                corner_z=1.0
             )
             wcs.save()
             thumbs.append(Thumbnails(wcs=wcs, small="", large=""))

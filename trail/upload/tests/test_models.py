@@ -36,23 +36,23 @@ class TestData:
     }
 
     wcs1 = {
-        'wcs_radius': 12,
-        'wcs_center_x': 13,
-        'wcs_center_y': 14,
-        'wcs_center_z': 15,
-        'wcs_corner_x': 16,
-        'wcs_corner_y': 17,
-        'wcs_corner_z': 18
+        'radius': 12,
+        'center_x': 13,
+        'center_y': 14,
+        'center_z': 15,
+        'corner_x': 16,
+        'corner_y': 17,
+        'corner_z': 18
     }
 
     wcs2 = {
-        'wcs_radius': 12.1,
-        'wcs_center_x': 13.1,
-        'wcs_center_y': 14.1,
-        'wcs_center_z': 15.1,
-        'wcs_corner_x': 16.1,
-        'wcs_corner_y': 17.1,
-        'wcs_corner_z': 18.1
+        'radius': 12.1,
+        'center_x': 13.1,
+        'center_y': 14.1,
+        'center_z': 15.1,
+        'corner_x': 16.1,
+        'corner_y': 17.1,
+        'corner_z': 18.1
     }
 
     flat = copy(metadata1)

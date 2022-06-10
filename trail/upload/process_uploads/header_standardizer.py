@@ -149,15 +149,15 @@ class HeaderStandardizer(ABC):
         ])
 
         unitRadius = np.linalg.norm(unitSphereCenter - unitSphereCorner)
-        standardizedWcs["wcs_radius"] = unitRadius
+        standardizedWcs["radius"] = unitRadius
 
-        standardizedWcs["wcs_center_x"] = unitSphereCenter[0]
-        standardizedWcs["wcs_center_y"] = unitSphereCenter[1]
-        standardizedWcs["wcs_center_z"] = unitSphereCenter[2]
+        standardizedWcs["center_x"] = unitSphereCenter[0]
+        standardizedWcs["center_y"] = unitSphereCenter[1]
+        standardizedWcs["center_z"] = unitSphereCenter[2]
 
-        standardizedWcs["wcs_corner_x"] = unitSphereCorner[0]
-        standardizedWcs["wcs_corner_y"] = unitSphereCorner[1]
-        standardizedWcs["wcs_corner_z"] = unitSphereCorner[2]
+        standardizedWcs["corner_x"] = unitSphereCorner[0]
+        standardizedWcs["corner_y"] = unitSphereCorner[1]
+        standardizedWcs["corner_z"] = unitSphereCorner[2]
 
         return standardizedWcs
 

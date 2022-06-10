@@ -192,6 +192,76 @@ class Metadata(models.Model, StandardizedKeysMixin):
 
         return areEqual and areClose
 
+    @classmethod
+    def query_sky_region(cls, bboxDict, queryset=None):
+        """Queries metadata in a sky region and returns
+        the queryset.
+
+        Parameters
+        ----------
+        bboxDict : `rest_framework.QueryDict` or `dict`
+            Sky Bounding box. Must contain keys `raLow`, `raHigh`, `decLow`
+            and `decHigh`
+        queryset : `django.QuerySet` or `None`, optional
+            If given, performs the query on the queryset,
+            otherwise performs the query on all metadata.
+
+        Returns
+        -------
+        queryset : `django.QuerySet`
+            Metadata within the given bounding box.
+        bboxDict :
+            Given bounding box dictionary, with the required keys
+            removed.
+
+        Raises
+        ------
+        ValueError :
+           When not all of the mandatory keys are present in the
+           bounding box dictionary.
+
+        Notes
+        -----
+        The bounding box dictionary can contain more keys than just the
+        mandatory ones (`raLow`, `raHigh`, `decLow`, `decHigh`) which
+        will be `.pop`-ed from the dictionary. We use this to filter
+        down query keys in rest_api. 
+        """
+        if not all(["raLow" in bboxDict, "raHigh" in bboxDict,
+                    "decLow" in bboxDict, "decHigh" in bboxDict]):
+            raise ValueError(
+                "Insufficient sky region parameters were present. "
+                "Requires `raLow`, `raHight`, `decLow` and `decHight` "
+                "in decimal degrees."
+            )
+
+        if queryset is None:
+            queryset = cls.objects.all()
+
+        # pop them out, so that if there are any leftover qparams we can still
+        # query on them as a regular filter
+        raLow, raHigh = float(bboxDict.pop("raLow")), float(bboxDict.pop("raHigh"))
+        decLow, decHigh = float(bboxDict.pop("decLow")), float(bboxDict.pop("decHigh"))
+
+        lowerRight = getXYZFromWcs(raLow, decLow)
+        upperLeft = getXYZFromWcs(raHigh, decHigh)
+
+        wcsqparams =  {
+            "wcs__center_x__gte": upperLeft["x"],
+            "wcs__center_x__lte": lowerRight["x"],
+            "wcs__center_y__lte": upperLeft["y"],
+            "wcs__center_y__gte": lowerRight["y"],
+            "wcs__center_z__lte": upperLeft["z"],
+            "wcs__center_z__gte": lowerRight["z"]
+        }
+
+        # add filtering on WCS information
+        queryset = queryset.filter(**wcsqparams)
+
+        # return the queryset for further filtering.
+        return queryset, bboxDict
+
+
 
 class Wcs(models.Model, StandardizedKeysMixin):
     """Model schema for standardized WCS entries.
@@ -199,23 +269,23 @@ class Wcs(models.Model, StandardizedKeysMixin):
     entry.
     """
 
-    _closeEqualityKeys = ['wcs_radius', 'wcs_center_x', 'wcs_center_y',
-                          'wcs_center_z', 'wcs_corner_x', 'wcs_corner_y',
-                          'wcs_corner_z']
+    _closeEqualityKeys = ['radius', 'center_x', 'center_y',
+                          'center_z', 'corner_x', 'corner_y',
+                          'corner_z']
     """Standardized keys that are tested only in approximate equality."""
 
     # same as above, cascading can orphan WCS entries
     metadata = models.ForeignKey(Metadata, related_name="wcs", on_delete=models.PROTECT)
 
-    wcs_radius = models.FloatField("distance between center and corner pixel")
+    radius = models.FloatField("distance between center and corner pixel")
 
-    wcs_center_x = models.FloatField("unit sphere coordinate of central pixel")
-    wcs_center_y = models.FloatField("unit sphere coordinate of central pixel")
-    wcs_center_z = models.FloatField("unit sphere coordinate of central pixel")
+    center_x = models.FloatField("unit sphere coordinate of central pixel")
+    center_y = models.FloatField("unit sphere coordinate of central pixel")
+    center_z = models.FloatField("unit sphere coordinate of central pixel")
 
-    wcs_corner_x = models.FloatField("unit sphere coordinate of corner pixel")
-    wcs_corner_y = models.FloatField("unit sphere coordinate of corner pixel")
-    wcs_corner_z = models.FloatField("unit sphere coordinate of corner pixel")
+    corner_x = models.FloatField("unit sphere coordinate of corner pixel")
+    corner_y = models.FloatField("unit sphere coordinate of corner pixel")
+    corner_z = models.FloatField("unit sphere coordinate of corner pixel")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

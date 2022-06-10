@@ -14,16 +14,6 @@ from query.serializers import MetadataSerializer, WcsSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 
-def getXYZFromWcs(ra, dec):
-    """Convert ra and dec into xyz coordinates
-    """
-    x = np.cos(dec) * np.cos(ra)
-    y = np.cos(dec) * np.sin(ra)
-    z = np.sin(dec)
-
-    return {"x": x, "y": y, "z": z}
-
-
 class GenericTableView(mixins.ListModelMixin, APIView):
     queryset = None
     serializer_class = None
@@ -81,7 +71,7 @@ class GenericTableView(mixins.ListModelMixin, APIView):
         # off from and then do all of the filtering we want.
         try:
             queryset = self.query(qparams, querysetParams)
-        except FieldError as e:
+        except (FieldError, ValueError) as e:
             return self.bad_request(e.args)
 
         serializer = self.serializer_class(queryset, many=True, **serializerParams)
@@ -118,69 +108,13 @@ class MetadataView(GenericTableView):
         return any(["raLow" in qparams, "raHigh" in qparams,
                     "decLow" in qparams, "decHigh" in qparams])
 
-    def query_sky_region(self, qparams, queryset=None):
-        if not all(["raLow" in qparams, "raHigh" in qparams,
-                    "decLow" in qparams, "decHigh" in qparams]):
-            raise FieldError(
-                "Insufficient sky region parameters were present. "
-                "Requires `raLow`, `raHight`, `decLow` and `decHight` "
-                "in decimal degrees."
-            )
-
-        # pop them out, so that if there are any leftover qparams we can still
-        # query on them as a regular filter
-        raLow, raHigh = float(qparams.pop("raLow")), float(qparams.pop("raHigh"))
-        decLow, decHigh = float(qparams.pop("decLow")), float(qparams.pop("decHigh"))
-
-        lowerRight = getXYZFromWcs(raLow, decLow)
-        upperLeft = getXYZFromWcs(raHigh, decHigh)
-
-        wcsqparams =  {
-            "wcs__wcs_center_x__gte": upperLeft["x"],
-            "wcs__wcs_center_x__lte": lowerRight["x"],
-            "wcs__wcs_center_y__lte": upperLeft["y"],
-            "wcs__wcs_center_y__gte": lowerRight["y"],
-            "wcs__wcs_center_z__lte": upperLeft["z"],
-            "wcs__wcs_center_z__gte": lowerRight["z"]
-        }
-
-        # if no pre-filtered queryset was given, use the default one
-        if queryset is None:
-            queryset = self.get_queryset(getWcs=True)
-
-        # add filtering on WCS information
-        queryset = queryset.filter(**wcsqparams)
-
-        # return the queryset for further filtering.
-        return queryset, qparams
-
     def query(self, qparams, querysetParams):
         queryset = self.get_queryset(**querysetParams)
 
         if self.is_sky_region_query(qparams):
-            queryset, qparams = self.query_sky_region(qparams, queryset)
-        elif qparams:
+            queryset, qparams = Metadata.query_sky_region(qparams, queryset)
+
+        if qparams:
             queryset = queryset.filter(**qparams)
 
         return queryset.all()
-
-
-class WcsView(GenericTableView):
-    queryset = Wcs.objects.all()
-    serializer_class = WcsSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        return self.queryset
-
-    def get_non_query_keys(self, queryDict, *args, **kwargs):
-        # no-op
-        return queryDict, {}, {}
-
-    def query(self,  qparams, querysetParams):
-        queryset = self.get_queryset(**querysetParams)
-        if qparams:
-            queryset = queryset.filter(**qparams)
-        else:
-            queryset = queryset.all()
-
-        return queryset
