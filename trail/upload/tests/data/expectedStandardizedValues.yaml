@@ -679,10 +679,10 @@ cutout_m20211212UT_image0110.new.fits:
     exposure_duration: 300.0
     filter_name: 'Bottom 5: GG495'
   wcs:
-    wcs_radius: 0.0005135850854141722
-    wcs_center_x: -0.7906773720317767
-    wcs_center_y: 0.5632244800639483
-    wcs_center_z: 0.24001557952270178
+    wcs_radius: 0.0002567786846299073
+    wcs_center_x: -0.7908174965146706
+    wcs_center_y: 0.56310357935485
+    wcs_center_z: 0.2398375411065271
     wcs_corner_x: -0.7909575490395206 
     wcs_corner_y: 0.5629826660364876
     wcs_corner_z: 0.239659494616514
