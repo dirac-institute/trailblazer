@@ -331,12 +331,22 @@ class FitsProcessor(UploadProcessor):
         else:
             standardizedResult.extendThumbnails(tmpResult)
 
-        if len(standardizedResult.thumbnails) != len(standardizedResult.wcs):
-            raise RuntimeError("Can not unambiguously assign thumbnails to WCSs!")
-
-        for thumb, wcs in zip(standardizedResult.thumbnails, standardizedResult.wcs):
-            thumb.wcs = wcs
+        # TODO: standardizedResult assume each wcs will have a thumbnail,
+        # which is technically true, but not each thumbnail is only of that wcs
+        # Some thumbnails link to many wcs's - this is a BUG, URGENT FIX, thumbs
+        # is not 1-to-1 relationship with wcs but 1 thumb can have many wcs's
+        # (probably breaks gallery, so I can't handle it atm)
+        if len(standardizedResult.thumbnails) == 1:
+            thumb = standardizedResult.thumbnails[0]
+            for wcs in standardizedResult.wcs:
+                thumb.wcs = wcs
             thumb.save()
+        elif len(standardizedResult.thumbnails) == len(standardizedResult.wcs):
+            for thumb, wcs in zip(standardizedResult.thumbnails, standardizedResult.wcs):
+                thumb.wcs = wcs
+                thumb.save()
+        else:
+            raise RuntimeError("Can not unambiguously assign thumbnails to WCSs!")
 
         # lastly, don't forget to upload the original science data.
         logger.info(f"ID {self.uploadInfo.id}: Uploading raw file.")
