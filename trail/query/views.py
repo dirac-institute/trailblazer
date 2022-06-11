@@ -1,3 +1,4 @@
+from datetime import date
 from django import forms
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -14,32 +15,50 @@ from django.contrib import messages
 from django.template import Library
 from urllib3 import HTTPResponse
 from django_tables2 import SingleTableView
-from .observations import ObservationTable
+from .query_table import QueryTable
 import csv
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 
 Metadata = apps.get_model('upload', 'Metadata')
 Wcs = apps.get_model('upload', 'Wcs')
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
 class MetadataForm(forms.Form):
 
     """Defines the variables corresponding to the metadata columns.
     """
-    # unique_instrument = ["DECam", "ff09", "Imager on SDSS 2.5m"]
     unique_instrument = Metadata.objects.values("instrument").distinct()
-    unique_instrument = [obj["instrument"] for obj in unique_instrument]
+    #unique_instrument = [(i, obj["instrument"]) for i, obj in enumerate(unique_instrument)]
+    unique_instrument = [(obj["instrument"], obj["instrument"]) for obj in unique_instrument]
     instrument = forms.CharField(max_length=20, widget=forms.Select(choices=unique_instrument))
-    telescope = forms.CharField(max_length=20, required=False)
-    processor_name = forms.CharField(max_length=20, required=False)
-    ra = forms.CharField(max_length=20, required=False)
-    dec = forms.CharField(max_length=20, required=False)
-    obs_height = forms.CharField(max_length=20, required=False)
-    processor_name = forms.CharField(max_length=20, required=False)
-    science_program = forms.CharField(max_length=20, required=False)
-    standardizer_name = forms.CharField(max_length=20, required=False)
-    filter_name = forms.CharField(max_length=20, required=False)
+    telescope = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Telescope'}), required=False)
+    datetime_begin = forms.DateField(widget=DateInput, required=False)
+    datetime_end =  forms.DateField(widget=DateInput, required=False)
+    ra = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Right Ascension(°)'}), required=False)
+    dec = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Declination(°)'}), required=False)
+    box_size = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Box Size(u)'}), required=False)
+    lon = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Longitude'}), required=False)
+    lat = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Lattitude'}), required=False)
+    obs_height = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Observatory Height (m)'}), required=False)
+    unique_filter = Metadata.objects.values("filter_name").distinct()
+    uniqfilt = []
+    for i, obj in enumerate(unique_filter):
+        if obj["filter_name"] == "":
+            uniqfilt.append((i, "Unknown"))
+        else:
+            uniqfilt.append((i, obj["filter_name"]))
+    #filter_name = forms.CharField(max_length=20, widget=forms.Select(choices=uniqfilt))
 
-
+    # def __init__(self, *args, **kwargs):
+    #     super(MetadataForm, self).__init__(*args, **kwargs)
+    #     self.fields['dec'].widget.attrs['style']  = 'placeholder=\"Right Ascension(°)\";'
+    #     # self.fields['box_size'].widget.attrs['style']  = 'width:15%;'
+    #     # self.fields['ra'].widget.attrs['style']  = 'width:15%;'
+    #     # self.fields['datetime_begin'].widget.attrs['style']  = 'float: left;'
+    #     # self.fields['datetime_end'].widget.attrs['style']  = 'float: left;'
     def get_query(self, casesensitive=True):
         new_dict = {}
         ra = ""
@@ -58,8 +77,11 @@ class MetadataForm(forms.Form):
             print("_______")
             ra = coordinates.cartesian.x
             dec = coordinates.cartesian.y
+            # new_dict["filter_name__contains"] = self.uniqfilt[int(self.data["filter_name"])][1]
         for key in self.data:
             if self.data[key] and key != 'csrfmiddlewaretoken':
+                if key == "box_size":
+                    continue
                 if casesensitive:
                     if key == "ra":
                         key = "obs_lon__contains"
@@ -96,7 +118,7 @@ def index(request):
 
 class ObservatonView(SingleTableView):
     model = Metadata
-    table_class = ObservationTable
+    table_class = QueryTable
     template_name = 'templates/query.html'
 
 def print_results(request):
@@ -110,14 +132,24 @@ def print_results(request):
         if form.is_valid():
             MDAO = MetadataDAO()
             rform = form.get_query()
+            query_results = MDAO.queryByParams(rform)
             if len(rform) == 0:
                 messages.error(request, "Invalid Entry. Please check values again")
-            query_results = MDAO.queryByParams(rform)
+                query_results = []
+            elif len(query_results) == 0:
+                 messages.error(request, "No Results found")
+            else:
+                for i in query_results:
+                    i.obs_lon = round(i.obs_lon, 2)
+                    i.obs_lat = round(i.obs_lat, 2)
+                    i.obs_height = round(i.obs_height, 2)
+                    if i.filter_name == "":
+                        i.filter_name = "Unknown"
             wcs_list = []
             for obj in query_results:
                 wcs_info = obj.wcs_set.all()
                 wcs_list.append(wcs_info)
-            table =  ObservationTable(query_results)
+            table =  QueryTable(query_results)
     else:
         messages.error(request, "Invalid Entry. Please check values again")
         query_results = []
@@ -125,7 +157,7 @@ def print_results(request):
         wcs_list = []
 
     return render(request, "query.html",
-                  {"data": query_results, "wcsdata": wcs_list, "table": table.as_html(request),
+                  {"data": query_results, "wcsdata": wcs_list, "table": table,
                   "queryform": form, "show_table": True})
 
 
@@ -358,9 +390,9 @@ def download_query(request):
     query_results = None
     if curForm.is_valid():
             MDAO = MetadataDAO()
-            query_results = MDAO.queryByParams(curForm.get_query()).all().values_list('instrument','telescope', 'datetime_begin', 'exposure_duration', 'obs_lon', 'obs_lat', 'obs_height', 'processor_name', 'science_program', 'standardizer_name', 'wcs', 'filter_name')
+            query_results = MDAO.queryByParams(curForm.get_query()).all().values_list('instrument','telescope', 'datetime_begin', 'datetime_end', 'exposure_duration', 'obs_lon', 'obs_lat', 'obs_height', 'filter_name')
     writer = csv.writer(response)
-    writer.writerow(['instrument','telescope', 'datetime_begin', 'exposure_duration', 'obs_lon', 'obs_lat', 'obs_height', 'processor_name', 'science_program', 'standardizer_name', 'wcs', 'filter_name'])
+    writer.writerow(['INSTRUMENT NAME','TELESCOPE', 'UTC AT EXPOSURE START', 'UTC AT EXPOSURE END', 'EXPOSURE TIME (S)', 'OBSERVATORY LONGITUDE (DEG)', 'OBSERVATORY LATITUDE (DEG)', 'OBSERVATORY HEIGHT (M)', 'FILTER NAME'])
     fields = query_results
     for field in fields:
         writer.writerow(field)

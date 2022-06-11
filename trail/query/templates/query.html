@@ -16,13 +16,6 @@
 
 {% block content %}
 
-{% if messages %}
-        <ul class="messages">
-               {% for message in messages %}
-                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-               {% endfor %}
-       </ul>
-{% endif %}
 <!-- Post -->
 <section class="post">
 		<header class="major">
@@ -33,11 +26,23 @@
 		</header>
 </section>
 
-<form action="results" method="post">
-    {% csrf_token %}
-    {{ queryform }}
-    <input type="submit" class="btn-primaryg" value="submit" >
+{% include "queryform.html" %}
+
+{% if show_table %}
+{% load render_table from django_tables2 %}
+{% render_table table %}
+
+{% if messages %}
+        <ul class="messages">
+               {% for message in messages %}
+                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+               {% endfor %}
+       </ul>
+{% endif %}
+
+<form action="download" method="get">
+       <input type="submit" class="btn-primaryg" value="Download" >
 </form>
 
-
+{% endif %}
 {% endblock %}
