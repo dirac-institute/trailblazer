@@ -11,6 +11,8 @@ from typing import Sequence
 from django.db import models
 from django.conf import settings
 
+from query.coord_conversion import getXYZFromWcs
+
 from PIL import Image
 import numpy as np
 
@@ -225,7 +227,7 @@ class Metadata(models.Model, StandardizedKeysMixin):
         The bounding box dictionary can contain more keys than just the
         mandatory ones (`raLow`, `raHigh`, `decLow`, `decHigh`) which
         will be `.pop`-ed from the dictionary. We use this to filter
-        down query keys in rest_api. 
+        down query keys in rest_api.
         """
         if not all(["raLow" in bboxDict, "raHigh" in bboxDict,
                     "decLow" in bboxDict, "decHigh" in bboxDict]):
@@ -246,7 +248,7 @@ class Metadata(models.Model, StandardizedKeysMixin):
         lowerRight = getXYZFromWcs(raLow, decLow)
         upperLeft = getXYZFromWcs(raHigh, decHigh)
 
-        wcsqparams =  {
+        wcsqparams = {
             "wcs__center_x__gte": upperLeft["x"],
             "wcs__center_x__lte": lowerRight["x"],
             "wcs__center_y__lte": upperLeft["y"],
@@ -260,7 +262,6 @@ class Metadata(models.Model, StandardizedKeysMixin):
 
         # return the queryset for further filtering.
         return queryset, bboxDict
-
 
 
 class Wcs(models.Model, StandardizedKeysMixin):

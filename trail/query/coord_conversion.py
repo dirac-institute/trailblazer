@@ -1,6 +1,7 @@
-import numpy
+import numpy as np
 
-def getXYZFromWcs(self, ra, dec):
+
+def getXYZFromWcs(ra, dec):
     """Convert ra and dec into xyz coordinates.
     """
     x = np.cos(dec) * np.cos(ra)
@@ -8,6 +9,7 @@ def getXYZFromWcs(self, ra, dec):
     z = np.sin(dec)
 
     return {"x": x, "y": y, "z": z}
+
 
 def isWcsQueryParamMissing(self, queryParams):
     """Check if the sky boundary is correctly specified."""

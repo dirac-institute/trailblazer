@@ -2,9 +2,7 @@ from django import forms
 from django.shortcuts import render
 
 from upload.models import Metadata
-from upload.models import Wcs
 
-import numpy as np
 
 
 class MetadataForm(forms.Form):
