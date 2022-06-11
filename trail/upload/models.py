@@ -11,7 +11,7 @@ from typing import Sequence
 from django.db import models
 from django.conf import settings
 
-from query.coord_conversion import getXYZFromWcs
+from query.coord_conversion import equatorial_to_unitsphere
 
 from PIL import Image
 import numpy as np
@@ -245,8 +245,8 @@ class Metadata(models.Model, StandardizedKeysMixin):
         raLow, raHigh = float(bboxDict.pop("raLow")), float(bboxDict.pop("raHigh"))
         decLow, decHigh = float(bboxDict.pop("decLow")), float(bboxDict.pop("decHigh"))
 
-        lowerRight = getXYZFromWcs(raLow, decLow)
-        upperLeft = getXYZFromWcs(raHigh, decHigh)
+        lowerRight = equatorial_to_unitsphere(raLow, decLow)
+        upperLeft = equatorial_to_unitsphere(raHigh, decHigh)
 
         wcsqparams = {
             "wcs__center_x__gte": upperLeft["x"],

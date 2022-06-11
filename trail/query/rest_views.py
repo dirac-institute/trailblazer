@@ -12,23 +12,27 @@ from query.serializers import MetadataSerializer, WcsSerializer
 class GenericTableView(mixins.ListModelMixin, APIView):
     """
      GenericTableView that serves as an interface to provide one unify rest api query
-     to different tables
+     to different tables.
+     All child class must specify a querySet and a serializer_class in order
+     to work.
     """
 
     queryset = None
+    """Initial queryset on which the table queries will subsequently be executed"""
     serializer_class = None
+    """Appropriate serializer to serialize the returned data."""
 
     def get_shared_non_query_keys(self, queryDict):
         """
-        Extracts the keys and values not directly related to the query from the given query dict,
-        and copies them into a queryset related parameter
+        Extracts the keys and values not directly related to the query from the
+        given query dict,and copies them into a queryset related parameter
         and serializer related parameter dictionaries.
         Extracts only those keys and values that are shared among all table views,
         such as fields or casesensitive
 
         Parameters
         ----------
-        queryDict: django.QueryDict
+        queryDict: django.http.QueryDict
             The queryDict converted from user inputs
 
         Returns
@@ -57,18 +61,18 @@ class GenericTableView(mixins.ListModelMixin, APIView):
 
         Parameters
         ----------
-        queryDict: django.QueryDict
+        queryDict: django.http.QueryDict
             The queryDict converted from user inputs
 
         Returns
         -------
-        queryDict : Dictionary
+        queryDict : dict
             The cleaned dictionary that only has fields related to the query for
             the table.
-        serializerParams : Dictionary
+        serializerParams : dict
             The dictionary containing all serializerParams that is not related to the query,
             but meant for the serializers.
-        querysetParams : Dictionary
+        querysetParams : dict
             The dictionary containing all querySet that is not related to the query,
             but meant for the prefetching/changing the field lookup types.
             See link for more in field lookups
@@ -91,13 +95,13 @@ class GenericTableView(mixins.ListModelMixin, APIView):
 
         Returns
         -------
-        queryDict : Dictionary
+        queryDict : dict
             The cleaned dictionary that only has fields related to the query for
             the table.
-        serializerParams : Dictionary
+        serializerParams : dict
             The dictionary containing all serializerParams that is not related to the query,
             but meant for the serializers.
-        querysetParams : Dictionary
+        querysetParams : dict
             The dictionary containing all querySet that is not related to the query,
             but meant for the prefetching/changing the field lookup types.
             See link for more in field lookups
@@ -245,9 +249,9 @@ class MetadataView(GenericTableView):
 
         Parameters
         ----------
-        qparams: Dictionary
+        qparams: dict
             The cleaned user given query dictionary
-        querysetParams: Dictionary
+        querysetParams: dict
             The extracted pre-processing indicator fields dictionary
 
         Returns
