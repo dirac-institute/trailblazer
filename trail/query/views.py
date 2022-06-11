@@ -4,7 +4,6 @@ from django.shortcuts import render
 from upload.models import Metadata
 
 
-
 class MetadataForm(forms.Form):
 
     """Defines the variables corresponding to the metadata columns.
