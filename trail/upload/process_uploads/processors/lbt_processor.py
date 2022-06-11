@@ -17,6 +17,27 @@ from upload.models import Thumbnails
 __all__ = ["LbtFits", ]
 
 
+class LbtConstants:
+    """Defines the dimensions of individual CCDs, the focal
+    plane and the placement of CCDs in the focal plane.
+    """
+
+    fill = 10
+    """Padding between CCDs on the final image."""
+
+    ccdx = 2304
+    """Width, in pixels, of ccd."""
+
+    ccdy = 4608
+    """Height, in pixles, of a ccd."""
+
+    focx = 3*ccdx + 2*fill
+    """Width, in pixels, of the focal plane."""
+
+    focy = ccdy + fill + ccdx
+    """Height, in pixels, of the focal plane."""
+
+
 class LbtFits(MultiExtensionFits):
 
     name = "LbtFits"
@@ -46,49 +67,33 @@ class LbtFits(MultiExtensionFits):
             return True
         return False
 
-    def _createFocalPlaneImage(self, focalPlane):
-        for ext in self.exts:
-            # no matter how painful this is, if we don't, normalize will mutate
-            # in science data in place....
-            image = ext.data.copy()
-            image = self.normalizeImage(image)
+    def createThumbnails(self, scaling=(4, 10), dim=None):
+        if dim is None:
+            dim = LbtConstants()
 
-            # TODO: test here if the step-vise resizing is faster...
-            image = image.resize((focalPlane.scaledY, focalPlane.scaledX),
-                                 Image.ANTIALIAS)
+        img = np.zeros((dim.focx, dim.focy))
 
-            focalPlane.add_image(image, ext.header["DETPOS"])
-
-        return focalPlane
-
-    def createThumbnails(self, scaling=(4, 10)):
-
-        # NAXIS1  =                 2304 / Image x size
-        # NAXIS2  =                 4608 / Image y size
-        # Center of image: 3,466
-
-        padding = 10
-        xdim = 2304*3 + 2*padding
-        ydim = 4608 + padding + 2304
-
-        img = np.zeros((xdim, ydim))
         for ccd in self.exts:
             ccddata = self.normalizeImage(ccd.data)
             if '1' in ccd.header['EXTNAME']:
-                img[-2304:, -4608:] = np.fliplr(ccddata.T)
+                img[-dim.ccdx:, -dim.ccdy:] = np.fliplr(ccddata.T)
             elif '2' in ccd.header['EXTNAME']:
-                img[2304+padding:2*2304+padding, -4608:] = np.fliplr(ccddata.T)
+                startx = dim.ccdx + dim.fill
+                endx = 2*dim.ccdx + dim.fill
+                img[startx:endx, -dim.ccdy:] = np.fliplr(ccddata.T)
             elif '3' in ccd.header['EXTNAME']:
-                img[:2304, -4608:] = np.fliplr(ccddata.T)
+                img[:dim.ccdx, -dim.ccdy:] = np.fliplr(ccddata.T)
             else:
-                img[1162:1162+4608, :2304] = np.flip(ccddata)
+                # top row we start half-way through first ccd
+                startx, endx = int(dim.ccdx/2)+dim.fill, int(dim.focx/2) + dim.ccdx
+                img[startx:endx, :dim.ccdx] = np.flip(ccddata)
 
         img = (img - img.min()) * 255/(img.max() - img.min())
         img = Image.fromarray(img.astype(np.uint8), 'L')
 
-        newY, newX = int(ydim/2), int(xdim/2)
+        newY, newX = int(dim.focy/scaling[0]), int(dim.focx/scaling[0])
         img = img.resize((newY, newX), Image.ANTIALIAS)
-        newY, newX = int(ydim/4), int(xdim/4)
+        newY, newX = int(dim.focy/scaling[1]), int(dim.focx/scaling[1])
         smallImg = np.asarray(img.resize((newY, newX), Image.ANTIALIAS))
         img = np.asarray(img)
 
