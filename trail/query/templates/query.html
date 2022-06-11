@@ -6,11 +6,7 @@
 
 
 {% block head.extend %}
-<style>
- table, th, td {
-     border: 1px solid black;
- }
-</style>
+<link rel="stylesheet" href="{% static 'assets/css/query_table.css' %}" />
 {% endblock %}
 
 
@@ -29,9 +25,15 @@
 {% include "queryform.html" %}
 
 {% if show_table %}
+<div style="border:  none;">
+
+<form action="download" method="get">
+    <input type="submit" class="btn-primaryg" value="Download" >
+</form>
+
 {% load render_table from django_tables2 %}
 {% render_table table %}
-
+</div>
 {% if messages %}
         <ul class="messages">
                {% for message in messages %}
@@ -39,10 +41,6 @@
                {% endfor %}
        </ul>
 {% endif %}
-
-<form action="download" method="get">
-       <input type="submit" class="btn-primaryg" value="Download" >
-</form>
 
 {% endif %}
 {% endblock %}
