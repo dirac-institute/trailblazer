@@ -6,54 +6,38 @@
 
 
 {% block head.extend %}
-<style>
- table, th, td {
-     border: 1px solid black;
- }
-</style>
+<link rel="stylesheet" href="{% static 'assets/css/query_table.css' %}" />
 {% endblock %}
 
 
 {% block content %}
+
 <!-- Post -->
 <section class="post">
 		<header class="major">
 				<h1>Web Query</h1>
 				<p>Quickly find satellite-streaked images of interest.<br />
-                   A RESTful API query interface is coming soon!
 				</p>
 		</header>
 </section>
 
-<form action="results" method="post">
-    {% csrf_token %}
-    {{ queryform }}
-    <input type="submit" class="btn-primaryg" value="submit" >
-</form>
+{% include "queryform.html" %}
 
-{% if render_table %}
-<h2>Results</h2>
-<table style="width:100%">
-    <tr>
-        <th>{Instrument}</th>
-        <th>Telescope</th>
-        <th>Observation Start</th>
-        <th>Duration [s]</th>
-        <th>Longitude</th>
-        <th>wcs_radius</th>
-    </tr>
-    {% for dat in data %}
-        {% for wcs in wcsdata %}
-        <tr>
-            <td>{{ dat.instrument }}</td>
-            <td>{{ dat.telescope }}</td>
-            <td>{{ dat.datetime_begin }}</td>
-            <td>{{ dat.exposure_duration }}</td>
-            <td>{{ dat.obs_lon }}</td>
-            <td>{{ wcs }}</td>
-        </tr>
-        {% endfor %}
-	{% endfor %}
-</table>
+{% if show_table %}
+<div style="border:  none;">
+    <!--<form action="download" method="get">
+        <input type="submit" class="btn-primaryg" value="Download" >
+    </form> -->
+    {% load render_table from django_tables2 %}
+    {% render_table table %}
+</div>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 {% endif %}
 {% endblock %}

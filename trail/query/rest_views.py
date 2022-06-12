@@ -9,6 +9,9 @@ from upload.models import Metadata, Wcs
 from query.serializers import MetadataSerializer, WcsSerializer
 
 
+__all__ = ["MetadataView", "WcsView"]
+
+
 class GenericTableView(mixins.ListModelMixin, APIView):
     """
      GenericTableView that serves as an interface to provide one unify rest api query
@@ -191,16 +194,19 @@ class MetadataView(GenericTableView):
     serializer_class = MetadataSerializer
 
     def get_non_query_keys(self, queryDict):
-        """
-            Follows the same logic as GenericTableView.get_non_query_keys
-
-        """
-
         querysetParams = {}
-        querysetParams["getWcs"] = queryDict.get("getWcs", False)
-        queryDict.pop("getWcs", False)
-        querysetParams["exactMatch"] = queryDict.get("exactMatch", False)
-        queryDict.pop("exactMatch", False)
+
+        # query dict stringifies True and False, so when we get something
+        # we need to check if someone explicitly just game "False"
+        getWcs = queryDict.pop("getWcs", False)
+        if not isinstance(getWcs, bool):
+            getWcs = False if getWcs[0].lower() == "false" else True
+        querysetParams["getWcs"] = getWcs
+
+        exactMatch = queryDict.pop("exactMatch", False)
+        if not isinstance(exactMatch, bool):
+            exactMatch = False if exactMatch[0].lower() == "false" else True
+        querysetParams["exactMatch"] = exactMatch
 
         # in case something about a get_queryset requires modifying serializer
         # in some way add that logic here. Here, for example, the user requested
@@ -236,12 +242,19 @@ class MetadataView(GenericTableView):
         return self.queryset
 
     def is_sky_region_query(self, qparams):
-        """
-            Helper function for describing if the query is a query base on
-            sky area.
+        """Returns True if any of `raLow`, `raHigh`, `decLow` or `decHigh` keys
+        exist in `qparams`.
         """
         return any(["raLow" in qparams, "raHigh" in qparams,
                     "decLow" in qparams, "decHigh" in qparams])
+
+    def make_inexact(self, qparams, keys=("instrument", "telescope", "filter")):
+        for key in keys:
+            val = qparams.pop(key, None)
+            if val:
+                qparams[key+"__icontains"] = val
+
+        return qparams
 
     def query(self, qparams, querysetParams):
         """
@@ -270,8 +283,8 @@ class MetadataView(GenericTableView):
             queryset, qparams = Metadata.query_sky_region(qparams, queryset)
 
         if qparams:
-            if querysetParams["exactMatch"] == 'False':
-                qparams = {key + "__icontains": val for key, val in qparams.items()}
+            if not querysetParams["exactMatch"]:
+                qparams = self.make_inexact(qparams)
             queryset = queryset.filter(**qparams)
 
         return queryset.all()

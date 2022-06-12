@@ -9,6 +9,7 @@ from django.urls import path
 urlpatterns = [
     path('', index, name='query'),
     path('results', print_results, name='results'),
+    # path('download', download_query, name='download_query'),
     path('metadata', MetadataView.as_view(), name="metadata"),
     path('wcs', WcsView.as_view(), name="wcs"),
 ]
