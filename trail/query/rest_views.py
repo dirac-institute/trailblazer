@@ -195,10 +195,18 @@ class MetadataView(GenericTableView):
 
     def get_non_query_keys(self, queryDict):
         querysetParams = {}
-        querysetParams["getWcs"] = queryDict.get("getWcs", False)
-        queryDict.pop("getWcs", False)
-        querysetParams["exactMatch"] = queryDict.get("exactMatch", False)
-        queryDict.pop("exactMatch", False)
+
+        # query dict stringifies True and False, so when we get something
+        # we need to check if someone explicitly just game "False"
+        getWcs = queryDict.pop("getWcs", False)
+        if not isinstance(getWcs, bool):
+            getWcs = False if getWcs[0].lower() == "false" else True
+        querysetParams["getWcs"] = getWcs
+
+        exactMatch = queryDict.pop("exactMatch", False)
+        if not isinstance(exactMatch, bool):
+            exactMatch = False if exactMatch[0].lower() == "false" else True
+        querysetParams["exactMatch"] = exactMatch
 
         # in case something about a get_queryset requires modifying serializer
         # in some way add that logic here. Here, for example, the user requested

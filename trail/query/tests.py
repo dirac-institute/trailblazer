@@ -90,7 +90,7 @@ class RestQueryTest(APITestCase):
         # test querying /query/metadata just returns all of the data
         response = self.client.get(url, {"instrument": "HSC", "fields": ["instrument", "telescope"]}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serialized = MetadataSerializer(Metadata.objects.all(), many=True, fields=["instrument", "telescope"])
+        serialized = MetadataSerializer(Metadata.objects.filter(instrument__icontains="HSC"), many=True, fields=["instrument", "telescope"])
         self.assertEqual(serialized.data, response.data)
 
     def test_metadata_get_non_exact_match(self):
@@ -100,7 +100,7 @@ class RestQueryTest(APITestCase):
         # test querying /query/metadata just returns all of the data
         response = self.client.get(url, {"instrument": "hsc", "exactMatch": False}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serialized = MetadataSerializer(Metadata.objects.all(), many=True)
+        serialized = MetadataSerializer(Metadata.objects.filter(instrument__icontains="hsc"), many=True)
         self.assertEqual(serialized.data, response.data)
 
     def test_wcs_get(self):
