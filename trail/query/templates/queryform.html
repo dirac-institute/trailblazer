@@ -1,67 +1,67 @@
 <!-- {{ form.non_field_errors }} -->
 
 <form action="results" method="post">
-  {% csrf_token %}
-  <div class="row" style="display: flex; margin-left: 5%; flex-wrap: wrap;">
-    <div style="width: auto; max-width: 33%; border-color: #000000; border: thick solid black; margin: 2%; padding: 2%;" class="col-6 col-12-small">
-      <div style="width: 100%; background-color: #000000; text-align: center;">
-      <h3 style="color: #e0e2e5; opacity: 75%; text-align: center;">Sky<br>Region</h3>
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.ra.name}}:</label>
-        {{ queryform.ra }}
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.dec.name}}:</label>
-        {{ queryform.dec }}
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.box_size.name}}:</label>
-        {{ queryform.box_size }}
-      </div>
+    {% csrf_token %}
+    <div class="row" style="display: flex; margin-left: 5%; flex-wrap: wrap;">
+        <div style="width: auto; max-width: 33%; border-color: #000000; border: thick solid black; margin: 2%; padding: 2%;" class="col-6 col-12-small">
+            <div style="width: 100%; background-color: #000000; text-align: center;">
+                <h3 style="color: #e0e2e5; opacity: 75%; text-align: center;">Sky<br>Region</h3>
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.ra.id_for_label }}">{{ queryform.ra.label }}:</label>
+                {{ queryform.ra }}
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.dec.id_for_label }}">{{ queryform.dec.label }}:</label>
+                {{ queryform.dec }}
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.box_size.id_for_label }}">{{ queryform.box_size.label }}:</label>
+                {{ queryform.box_size }}
+            </div>
+        </div>
+        <div style="width: auto; max-width: 33%; border-color: #000000; border: thick solid black; margin: 2%; padding: 2%;" class="col-6 col-12-small">
+            <div style="width: 100%; background-color: #000000; text-align: center;">
+                <h3 style="color: #e0e2e5; opacity: 75%; text-align: center;">Date<br>Range</h3>
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.datetime_begin.id_for_label }}">{{ queryform.datetime_begin.label  }}:</label>
+                {{ queryform.datetime_begin }}
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.datetime_end.id_for_label }}">{{ queryform.datetime_end.label }}:</label>
+                {{ queryform.datetime_end }}
+            </div>
+        </div>
+        <div style="width: auto; max-width: 33%; border-color: #000000; border: thick solid black; margin: 2%; padding: 2%;" class="col-6 col-12-small">
+            <div style="width: 100%; background-color: #000000; text-align: center;">
+                <h3 style="color: #e0e2e5; opacity: 75%; text-align: center;">Observatory<br>Location</h3>
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.lat.id_for_label }}">{{ queryform.lat.label }}:</label>
+                {{ queryform.lat }}
+            </div>
+            <div class="fieldWrapper" style="margin-bottom: 2%;">
+                <label for="{{ queryform.lon.id_for_label }}">{{ queryform.lon.label }}:</label>
+                {{ queryform.lon }}
+            </div>
+            <!-- <div class="fieldWrapper" style="margin-bottom: 2%;">
+                 <label for="{{ queryform.obs_height.id_for_label }}">Height:</label>
+                 {{ queryform.obs_height}}
+                 </div> -->
+        </div>
     </div>
-    <div style="width: auto; max-width: 33%; border-color: #000000; border: thick solid black; margin: 2%; padding: 2%;" class="col-6 col-12-small">
-      <div style="width: 100%; background-color: #000000; text-align: center;">
-      <h3 style="color: #e0e2e5; opacity: 75%; text-align: center;">Date<br>Range</h3>
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.datetime_begin.name}}:</label>
-        {{ queryform.datetime_begin }}
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.datetime_end.name}}:</label>
-        {{ queryform.datetime_end }}
-      </div>
-    </div>
-    <div style="width: auto; max-width: 33%; border-color: #000000; border: thick solid black; margin: 2%; padding: 2%;" class="col-6 col-12-small">
-      <div style="width: 100%; background-color: #000000; text-align: center;">
-      <h3 style="color: #e0e2e5; opacity: 75%; text-align: center;">Observatory<br>Location</h3>
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.lat.name}}:</label>
-        {{ queryform.lat }}
-      </div>
-      <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">{{queryform.lon.name}}:</label>
-        {{ queryform.lon }}
-      </div>
-      <!-- <div class="fieldWrapper" style="margin-bottom: 2%;">
-        <label for="{{ form.subject.id_for_label }}">Height:</label>
-        {{ queryform.obs_height}}
-      </div> -->
-    </div>
-  </div>
-  <div class="fieldWrapper" style="margin-bottom: 2%;">
-    <label for="{{ form.subject.id_for_label }}">{{queryform.instrument.name}}:</label>
-    {{ queryform.instrument }}
+    <div class="fieldWrapper" style="margin-bottom: 2%;">
+        <label for="{{ queryform.instrument.id_for_label }}">{{ queryform.instrument.label }}:</label>
+        {{ queryform.instrument }}
     </div>
     <!-- <div class="fieldWrapper" style="margin-bottom: 2%;">
-      <label for="{{ form.subject.id_for_label }}">{{ queryform.filter_name.name }}:</label>
-      {{ queryform.filter_name }}
-    </div> -->
+         <label for="{{ queryform.filter_name.id_for_label }}">{{ queryform.filter_name.label }}:</label>
+         {{ queryform.filter_name }}
+         </div> -->
     <div class="fieldWrapper" style="margin-bottom: 2%;">
-      <label for="{{ form.subject.id_for_label }}">{{queryform.telescope.name}}:</label>
-      {{ queryform.telescope }}
+        <label for="{{ queryform.telescope.id_for_label }}">{{ queryform.telescope.label }}:</label>
+        {{ queryform.telescope }}
     </div>
-      <input type="submit" class="btn-primaryg" value="submit" >
+    <input type="submit" class="btn-primaryg" value="submit" >
 </form>

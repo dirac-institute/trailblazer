@@ -17,7 +17,6 @@
 		<header class="major">
 				<h1>Web Query</h1>
 				<p>Quickly find satellite-streaked images of interest.<br />
-                   A RESTful API query interface is coming soon!
 				</p>
 		</header>
 </section>
@@ -26,20 +25,18 @@
 
 {% if show_table %}
 <div style="border:  none;">
-
-<form action="download" method="get">
-    <input type="submit" class="btn-primaryg" value="Download" >
-</form>
-
-{% load render_table from django_tables2 %}
-{% render_table table %}
+    <!--<form action="download" method="get">
+        <input type="submit" class="btn-primaryg" value="Download" >
+    </form> -->
+    {% load render_table from django_tables2 %}
+    {% render_table table %}
 </div>
 {% if messages %}
-        <ul class="messages">
-               {% for message in messages %}
-                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-               {% endfor %}
-       </ul>
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
 {% endif %}
 
 {% endif %}
