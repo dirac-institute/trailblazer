@@ -243,7 +243,7 @@ class MetadataView(GenericTableView):
 
     def is_sky_region_query(self, qparams):
         """Returns True if any of `raLow`, `raHigh`, `decLow` or `decHigh` keys
-        exist in `qparams`. 
+        exist in `qparams`.
         """
         return any(["raLow" in qparams, "raHigh" in qparams,
                     "decLow" in qparams, "decHigh" in qparams])

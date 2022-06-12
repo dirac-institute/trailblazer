@@ -3,7 +3,7 @@ import django_tables2 as tables
 from django.apps import apps
 
 
-__all__ = ["QueryTable", "DownloadTable"]
+__all__ = ["QueryTable", ]
 
 
 Metadata = apps.get_model('upload', 'Metadata')

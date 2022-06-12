@@ -1,13 +1,10 @@
-from datetime import date
-import csv
-
 from django import forms, apps
 from django.contrib import messages
 from django.shortcuts import render
 
 import astropy.units as u
 
-from .rest_views import MetadataView, WcsView
+from .rest_views import MetadataView
 from .query_table import QueryTable
 
 Metadata = apps.apps.get_model('upload', 'Metadata')
@@ -203,31 +200,36 @@ def print_results(request, exactMatch=False):
                 {"exactMatch": exactMatch}
             )
             show_table = True
-            table =  QueryTable(query_results)
+            table = QueryTable(query_results)
     else:
         messages.error(request, "Invalid Entry. Please check values again")
         form = MetadataForm()
-        show_table=False
+        show_table = False
         table = None
 
     return render(
         request, "query.html",
         {"queryform": form,
          "show_table": show_table,
-         "table": table,}
+         "table": table, }
     )
 
 
-#def download_query(request):
+# def download_query(request):
 #    response = HttpResponse(content_type='text/csv')
 #    response['Content-Disposition'] = 'attachment; filename="query.csv"'
 #    global curForm
 #    query_results = None
 #    if curForm.is_valid():
 #            MDAO = MetadataDAO()
-#            query_results = MDAO.queryByParams(curForm.get_query()).all().values_list('instrument','telescope', 'datetime_begin', 'datetime_end', 'exposure_duration', 'obs_lon', 'obs_lat', 'obs_height', 'filter_name')
+#            query_results = MDAO.queryByParams(curForm.get_query())
+# .all().values_list('instrument','telescope', 'datetime_begin',
+# 'datetime_end', 'exposure_duration', 'obs_lon', 'obs_lat', 'obs_height',
+# 'filter_name')
 #    writer = csv.writer(response)
-#    writer.writerow(['INSTRUMENT NAME','TELESCOPE', 'UTC AT EXPOSURE START', 'UTC AT EXPOSURE END', 'EXPOSURE TIME (S)', 'OBSERVATORY LONGITUDE (DEG)', 'OBSERVATORY LATITUDE (DEG)', 'OBSERVATORY HEIGHT (M)', 'FILTER NAME'])
+#    writer.writerow(['INSTRUMENT NAME','TELESCOPE', 'UTC AT EXPOSURE START',
+# 'UTC AT EXPOSURE END', 'EXPOSURE TIME (S)', 'OBSERVATORY LONGITUDE (DEG)',
+# 'OBSERVATORY LATITUDE (DEG)', 'OBSERVATORY HEIGHT (M)', 'FILTER NAME'])
 #    fields = query_results
 #    for field in fields:
 #        writer.writerow(field)
