@@ -1,15 +1,15 @@
-from django.test import TestCase
-from upload.models import Metadata
-from upload.models import UploadInfo, Wcs
-from query.views import MetadataDAO
-from coordinates import getXYZFromWcs, getRaDecFromXYZ
-import numpy as np
+from django.urls import reverse
+
+from rest_framework.test import APITestCase
+from rest_framework import status
+
+from upload.models import Metadata, UploadInfo, Wcs
+from query.serializers import MetadataSerializer, WcsSerializer
 
 # Create your tests here.
 
 
-class MetadataQueryTest(TestCase):
-    metadataDao = MetadataDAO()
+class RestQueryTest(APITestCase):
 
     def setUp(self):
         info = UploadInfo()
@@ -28,7 +28,7 @@ class MetadataQueryTest(TestCase):
             datetime_begin='2009-10-17T01:53:42.1',
             datetime_end='2009-10-18T01:53:42.1',
             exposure_duration=30.0,
-            filter_name='i'
+            filter_name='r'
         )
         meta2 = Metadata(
             upload_info=info,
@@ -47,46 +47,102 @@ class MetadataQueryTest(TestCase):
         )
         wcs1 = {
             'metadata': meta,
-            'wcs_radius': 1,
-            'wcs_center_x': 0.4,
-            'wcs_center_y': 0.3,
-            'wcs_center_z': 0.7,
-            'wcs_corner_x': 16,
-            'wcs_corner_y': 17,
-            'wcs_corner_z': 0.7
+            'radius': 1,
+            'center_x': 0.4,
+            'center_y': 0.3,
+            'center_z': 0.7,
+            'corner_x': 16,
+            'corner_y': 17,
+            'corner_z': 0.7
         }
+
         meta.save()
         meta2.save()
 
         self.wcs = Wcs(**wcs1)
         self.wcs.save()
 
-    def testBasicQueries(self):
-        """Tests getMetadataByParams in metadataDao is functional"""
-        queryParam = {"processor_name__icontains": "fits"}
-        response = self.metadataDao.queryByParams(queryParam)
+    def test_metadata_get(self):
+        """Test basic Metadata REST queries."""
+        url = reverse("metadata")
 
-        self.assertEqual(len(response), 2)
-        for metadata in response:
-            self.assertTrue("fits" in metadata.processor_name.lower())
+        # test querying /query/metadata just returns all of the data
+        response = self.client.get(url, {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serialized = MetadataSerializer(Metadata.objects.all(), many=True)
+        self.assertEqual(serialized.data, response.data)
 
-    def testBasicWcsQuery(self):
-        """Tests getMeatadataInSpecifiedSky in metadataDao is functional"""
-        queryParam = {"raLow": 0, "raHigh": 1000, "decLow": 0, "decHigh": 1000}
-        response = self.metadataDao.queryBySpecifiedSky(queryParam)
+        # test querying with parameters, i.e. querying:
+        # /query/metadata?instrument=HSC&filter_name=r
+        response = self.client.get(url,
+                                   {"instrument": "HSC", "filter_name": "r"},
+                                   format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        queryset = Metadata.objects.filter(instrument="HSC", filter_name="r")
+        serialized = MetadataSerializer(queryset, many=True)
+        self.assertEqual(serialized.data, response.data)
 
-        self.assertEqual(len(response), 1)
+        # test querying with bad params returns a bad request response
+        response = self.client.get(url, {"nonsense": "bad_data"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def testCoordinateConversion(self):
-        ra = 200 * np.pi / 180
-        dec = 87 * np.pi / 180
+    def test_metadata_get_fields(self):
+        """Test Metadata REST queries with specified return fields."""
+        url = reverse("metadata")
 
-        cartersian = getXYZFromWcs(ra, dec)
+        # test querying /query/metadata just returns all of the data
+        response = self.client.get(url,
+                                   {"instrument": "HSC",
+                                    "fields": ["instrument", "telescope"]},
+                                   format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        qset = Metadata.objects.filter(instrument__icontains="HSC")
+        serialized = MetadataSerializer(qset, many=True, fields=["instrument", "telescope"])
+        self.assertEqual(serialized.data, response.data)
 
-        self.assertTrue(abs(cartersian["x"] - (-0.049) < 0.1))
-        self.assertTrue(abs(cartersian["y"] - (-0.018) < 0.1))
-        self.assertTrue(abs(cartersian["z"] - (0.9986) < 0.1))
+    def test_metadata_get_non_exact_match(self):
+        """Test Metadata REST queries with exact match being False."""
+        url = reverse("metadata")
 
-        backToPolar = getRaDecFromXYZ(cartersian["x"], cartersian["y"], cartersian["z"])
-        self.assertTrue(abs(backToPolar["ra"] - ra < 0.1))
-        self.assertTrue(abs(backToPolar["dec"] - dec < 0.1))
+        # test querying /query/metadata just returns all of the data
+        response = self.client.get(url,
+                                   {"instrument": "hsc", "exactMatch": False},
+                                   format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        qset = Metadata.objects.filter(instrument__icontains="hsc")
+        serialized = MetadataSerializer(qset, many=True)
+        self.assertEqual(serialized.data, response.data)
+
+    def test_wcs_get(self):
+        """Tests basic Wcs REST queries."""
+        url = reverse("wcs")
+
+        # because they inherit from same basic view we do not have to be detailed here
+        response = self.client.get(url, {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serialized = WcsSerializer(Wcs.objects.all(), many=True)
+        self.assertEqual(serialized.data, response.data)
+
+    def test_get_metadata_and_wcs(self):
+        """Tests basic Wcs REST queries."""
+        url = reverse("metadata")
+
+        # because they inherit from same basic view we do not have to be detailed here
+        response = self.client.get(url, {"getWcs": True, }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        qset = Metadata.objects.all().prefetch_related("wcs")
+        serialized = MetadataSerializer(qset, many=True, keepWcs=True)
+        self.assertEqual(serialized.data, response.data)
+
+    def test_get_metadata_in_sky_region(self):
+        """Tests basic Wcs REST queries."""
+        url = reverse("metadata")
+
+        # because they inherit from same basic view we do not have to be detailed here
+        qparams = {"raLow": 0, "raHigh": 1, "decLow": 0, "decHigh": 1, "getWcs": True}
+        response = self.client.get(url, qparams, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        queryset, qparams = Metadata.query_sky_region(qparams)
+        serialized = MetadataSerializer(queryset, many=True, keepWcs=True)
+        self.assertEqual(serialized.data, response.data)
