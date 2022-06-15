@@ -1,0 +1,22 @@
+<div id="tablecontent">
+{% if show_table %}
+
+<div style="border:  none;">
+
+<form action="download" method="get">
+    <input type="submit" class="btn-primaryg" value="Download" >
+</form>
+
+{% load render_table from django_tables2 %}
+{% render_table table %}
+</div>
+{% if messages %}
+        <ul class="messages">
+               {% for message in messages %}
+                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+               {% endfor %}
+       </ul>
+{% endif %}
+
+{% endif %}
+</div>
