@@ -30,7 +30,6 @@ TRAILBLAZER_CONFIG_DIR = Path(os.environ.get("TRAILBLAZER_CONFIG_DIR",
 siteConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "site.yaml")
 loggingConfig = config.Config.fromYaml(TRAILBLAZER_CONFIG_DIR / "logging.yaml")
 
-
 # avoids problematic Windows file permissions when loading default YAMLs by
 # instantiating from existing hardcoded defaults...
 if TRAILBLAZER_ENV == "local":
@@ -58,10 +57,8 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = SMALL_THUMB_ROOT
 MEDIA_URL = '/media/'
 
-# ASTROMETRY_KEY = siteConfig.astrometry_net.key
-# ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
-ASTROMETRY_KEY = ""
-ASTROMETRY_TIMEOUT = ""
+ASTROMETRY_KEY = siteConfig.astrometry_net.key
+ASTROMETRY_TIMEOUT = siteConfig.astrometry_net.timeout
 
 if "gallery_image_count" in siteConfig:
     GALLERY_IMAGE_COUNT = siteConfig.gallery_image_count
@@ -179,6 +176,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+# max filesize, in bytes, before it's streamed to disk
+FILE_UPLOAD_MAX_MEMORY_SIZE = 521440
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

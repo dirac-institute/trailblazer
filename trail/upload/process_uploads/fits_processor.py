@@ -189,7 +189,7 @@ class FitsProcessor(UploadProcessor):
         # docstring inherited from UploadProcessor; TODO: check it's True
         canProcess, hdulist = False, None
 
-        if uploadedFile.extension in cls.extensions:
+        if uploadedFile.extension.lower() in cls.extensions:
             try:
                 hdulist = fits.open(uploadedFile.tmpfile.temporary_file_path())
             except OSError:
