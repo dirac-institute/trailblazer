@@ -37,7 +37,15 @@ class WhippleStandardizer(HeaderStandardizer):
         # (height specifically) and implement conditions to handle them
         # http://www.sao.arizona.edu/FLWO/whipple.html
         # This is the Ridge location height
-        height = 2340
+        height = self.header.get("HEIGHT", None)
+        if height is None:
+            if "cecilia" in self.header["TELESCOP"].lower() or "ben" in self.header["TELESCOP"]:
+                height = 1268.00
+            else:
+                raise RuntimeError(
+                    "Unable to parse height of the instrument. Header does "
+                    "not contain key HEIGHT or is not one of the supported "
+                    "known instruments at Whipple Observatory.")
 
         meta = Metadata(
             obs_lon=self.header["LONGITUD"],
