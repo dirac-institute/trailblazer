@@ -111,7 +111,7 @@ class UploadForm(forms.Form):
                 "standardizer": res.metadata.standardizer_name,
                 "obs_lon": round(res.metadata.obs_lon, 2),
                 "obs_lat": round(res.metadata.obs_lat, 2),
-                "datetime": res.metadata.datetime_begin.replace("T", " "),
+                "datetime": res.metadata.datetime_begin
             })
 
         html = render_to_string(
